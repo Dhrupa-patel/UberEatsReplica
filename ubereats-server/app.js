@@ -5,8 +5,11 @@ var app = express();
 var bodyParser = require('body-parser');
 //require express session
 var session = require('express-session');
+const cors = require('cors');
 
 app.use(bodyParser.json());
+app.use(express.json());
+app.use(cors());
 
 app.use(session({
     secret: 'cmpe_273_secure_string',
@@ -27,9 +30,16 @@ con.connect(function(err){
     console.log("connected");
 
 })
-app.get('/log', (req,res)=>{
-
+app.get('/', (req,res)=>{
    console.log("hello world"); 
 });
+
+app.post('/setuser', (req,res)=>{
+  console.log('log method called', req.body);
+  if(!req.session.userType){
+    req.session.userType = req.body.user;
+  }
+  res.send('Success');
+})
 
 module.exports = app;

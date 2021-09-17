@@ -1,7 +1,7 @@
-import './App.css';
+import "./App.css";
 // import axiosInstance from './helper/axios';
-import Main from './components/Main';
-import { BrowserRouter} from 'react-router-dom'
+import Main from "./components/Main";
+import { BrowserRouter} from "react-router-dom";
 
 function App() { 
 

@@ -30,7 +30,7 @@ app.use(session({
 //     console.log("connected");
 
 // })
-app.get('/', (req,res)=>{
+app.get("/", (req,res)=>{
    console.log("hello world"); 
 });
 

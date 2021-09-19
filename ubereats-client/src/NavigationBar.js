@@ -10,6 +10,11 @@ class NavigationBar extends Component{
             name:localStorage.getItem("name")
         }
     }
+    componentDidMount(){
+        this.setState({
+            userType
+        })
+    }
     render(){
         let navUser = null;
         let pendingOrders = null;

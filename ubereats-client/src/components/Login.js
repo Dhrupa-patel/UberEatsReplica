@@ -1,58 +1,94 @@
 import React, {Component} from "react";
 import { Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { useHistory } from "react-router";
 import axiosInstance from "../helper/axios";
 
-function Login() {
-    const history = useHistory();
-    const loadSuccess = () => {
-        history.push("/dashboard");
+class Login extends Component {
+    constructor(){
+        super();
+        this.state={};
     }
 
-    function login(){
-        axiosInstance.post("/setuser", {user:document.getElementById("usertype").value}).then((response)=>{
-            console.log(response);
+    onChange = (e) => {
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+    }
+
+    onSubmit(){
+        const data = {
+            email_id: this.state.email,
+            password: this.state.password
+        }
+
+        this.props.userLogin(data);
+        this.setState({
+            loggedIn:true
         });
-        loadSuccess();
     }
-    return(
-        <div>
+
+    render(){
+        console.log("login props", this.props);
+        let redirectVar = null;
+        let message="";
+        if(this.props.user && this.props.user.user_id){
+            localStorage.setItem("username",this.props.user.name);
+            localStorage.setItem("email_id",this.props.user.email_id);
+            localStorage.setItem("user_id",this.props.user.userid);
+            redirectVar = <Redirect to="/home"/>
+        }
+        else if(this.props.user==="NO_USER" && this.state.loggedIn){
+            message = "No user registered with this email ID";
+        }
+        else if(this.props.user==="INCORRECT_PASSWORD" && this.state.loggedIn){
+            message = "Incorrect Password";
+        }
+        return(
             <div>
-                <Row>
-                    <Col>
-                        <div class="login-form">
-                            <div class='main-div'>
-                                <div class='panel'>
-                                    <h2>SignIn with your UberEats Account</h2>
-                                </div><br/>
-                                <form>
-                                    <div>Login In</div><br />
-                                    <div class="form-group">
-                                        <input type="email" class="form-control" name="email" placeholder="Enter your EmailID" required/>
+                {redirectVar}
+                <div>
+                    <Row>
+                        <Col>
+                            <div class="login-form">
+                                <div class="main-div">
+                                    <div class="panel">
+                                        <h2>SignIn with your UberEats Account</h2>
+                                    </div><br/>
+                                    <form onSubmit={this.onSubmit}>
+                                        <div>{message}</div><br />
+                                        <div class="form-group">
+                                            <input type="email" class="form-control" onChange={this.onchange} name="email" placeholder="Enter your EmailID" required/>
 
-                                    </div>
-                                    <div>
-                                        <input type="password" class="form-control" name="password" placeholder="Enter Password" required />
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" class="form-control" onChange={this.onchange} name="password" placeholder="Enter Password" required />
 
-                                    </div>
-                                    <div>
-                                        <label for="usertype">Country:</label>
-                                        <select name="usertype" id='usertype'>
-                                            <option value="owner">Restaurant Owner</option>
-                                            <option value="customer">Customer</option>
-                                        </select>
-                                    </div>
-                                    <button type="button" onClick={()=> login()} class="btn btn-primary">SignIn</button><br /><br />
-                                    <div><center><Link to="/CustomerSignup">Create new Account</Link></center></div>
-                                </form>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="usertype">Country:</label>
+                                            <select name="usertype" id="usertype">
+                                                <option value="owner">Restaurant Owner</option>
+                                                <option value="customer">Customer</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">SignIn</button><br /><br />
+                                        <div><center><Link to="/CustomerSignup">Create new Account</Link></center></div>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    </Col>
-                </Row>
+                        </Col>
+                    </Row>
+                </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
-export default Login;
+const mapStateToProps = state =>{
+    return({
+        user: state.login.user
+    })
+};
+
+export default connect(mapStateToProps,{ userLogin })(Login);

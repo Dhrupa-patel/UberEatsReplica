@@ -10,17 +10,13 @@ class NavigationBar extends Component{
             name:localStorage.getItem("name")
         }
     }
-    componentDidMount(){
-        this.setState({
-            userType
-        })
-    }
+
     render(){
         let navUser = null;
         let pendingOrders = null;
         let nameMsg = null;
 
-        if("userType" in sessionStorage && sessionStorage.getItem("userType")==="owner"){
+        if(localStorage.getItem("userType") && localStorage.getItem("userType")==="owner"){
             pendingOrders = (<Dropdown.Item><Link to="/orders">Pending Orders</Link></Dropdown.Item>);
         }
 
@@ -38,8 +34,8 @@ class NavigationBar extends Component{
             </Dropdown>
         );
 
-        if("userType" in sessionStorage){
-            if(sessionStorage.getItem("userType")==="owner"){
+        if("userType" in localStorage){
+            if(localStorage.getItem("userType")==="owner"){
                 navUser = (
                     <div>
                         <Nav className="mr-auto">

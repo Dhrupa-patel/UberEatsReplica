@@ -8,13 +8,11 @@ class Home extends Component{
     render(){
         let homecomponent = null;
         let redirectvar = null;
-        if('userType' in sessionStorage){
-            if(sessionStorage.getItem("userType")==="customer"){
-                homecomponent = <CustomerHome />
-            }
-            else{
-                homecomponent = <OwnerHome />
-            }
+        if(localStorage.getItem("userType")==="customer"){
+            homecomponent = <CustomerHome />
+        }
+        else if(localStorage.getItem("usertType")==="owner"){
+            homecomponent = <OwnerHome />
         }
         else{
             redirectvar = <Redirect to="/" />

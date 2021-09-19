@@ -6,10 +6,14 @@ var bodyParser = require('body-parser');
 //require express session
 var session = require('express-session');
 const cors = require('cors');
-
+const corsConfig = {
+  credentials: true,
+  origin: true,
+};
+app.use(cors(corsConfig));
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
 
 app.use(session({
     secret: 'cmpe_273_secure_string',
@@ -30,16 +34,43 @@ app.use(session({
 //     console.log("connected");
 
 // })
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Content-Type','application/json, text/plain')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
+  res.setHeader('Cache-Control', 'no-cache');
+  next();
+});
+
 app.get("/", (req,res)=>{
    console.log("hello world"); 
 });
 
-app.post("/setuser", (req,res)=>{
-  console.log("log method called", req.body);
-  if(!req.session.userType){
-    req.session.userType = req.body.user;
-  }
-  res.send("Success");
-})
+app.post("/login/customer", (req,res)=>{
+  console.log("called", req.body);
+  let userObj = {user_id:"1", name:"Dhrupa", email_id:"dhrupa@gmail.com",password:"abc"};
+  res.writeHead(200,{
+    "Content-Type":"text/plain"
+  })
+  res.end(JSON.stringify(userObj));
+});
+
+app.post("/signup/customer", (req,res)=>{
+  console.log("added customer", req.body);
+ 
+  res.writeHead(200,{
+    "Content-Type":"text/plain"
+  })
+  res.end("USER_ADDED");
+});
+
+app.post("/signup/owner", (req,res)=>{
+
+  console.log("added signup");
+
+});
+
+
 
 module.exports = app;

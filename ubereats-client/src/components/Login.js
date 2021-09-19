@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import { Row, Col } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { useHistory } from "react-router";
-import axiosInstance from "../helper/axios";
+import {connect} from "react-redux";
+import { userLogin } from "../actions/loginAction"
 
 class Login extends Component {
     constructor(){
@@ -16,13 +16,16 @@ class Login extends Component {
         })
     }
 
-    onSubmit(){
+    onSubmit = (e) => {
+        e.preventDefault();
+        console.log("onsubmit login", this.state);
         const data = {
             email_id: this.state.email,
             password: this.state.password
         }
-
+        console.log("data",data);
         this.props.userLogin(data);
+        console.log("onsubmit prop",this.props);
         this.setState({
             loggedIn:true
         });
@@ -33,6 +36,7 @@ class Login extends Component {
         let redirectVar = null;
         let message="";
         if(this.props.user && this.props.user.user_id){
+            console.log("props calles");
             localStorage.setItem("username",this.props.user.name);
             localStorage.setItem("email_id",this.props.user.email_id);
             localStorage.setItem("user_id",this.props.user.userid);
@@ -58,20 +62,20 @@ class Login extends Component {
                                     <form onSubmit={this.onSubmit}>
                                         <div>{message}</div><br />
                                         <div class="form-group">
-                                            <input type="email" class="form-control" onChange={this.onchange} name="email" placeholder="Enter your EmailID" required/>
+                                            <input type="email" class="form-control" onChange={this.onChange} name="email" placeholder="Enter your EmailID" required/>
 
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control" onChange={this.onchange} name="password" placeholder="Enter Password" required />
+                                            <input type="password" class="form-control" onChange={this.onChange} name="password" placeholder="Enter Password" required />
 
                                         </div>
-                                        <div class="form-group">
+                                        {/* <div class="form-group">
                                             <label for="usertype">Country:</label>
                                             <select name="usertype" id="usertype">
                                                 <option value="owner">Restaurant Owner</option>
                                                 <option value="customer">Customer</option>
                                             </select>
-                                        </div>
+                                        </div> */}
                                         <button type="submit" class="btn btn-primary">SignIn</button><br /><br />
                                         <div><center><Link to="/CustomerSignup">Create new Account</Link></center></div>
                                     </form>
@@ -86,6 +90,7 @@ class Login extends Component {
 }
 
 const mapStateToProps = state =>{
+    console.log(state);
     return({
         user: state.login.user
     })

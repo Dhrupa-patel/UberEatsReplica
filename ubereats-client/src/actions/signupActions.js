@@ -23,7 +23,7 @@ export const customerSignup = (customerData) => dispatch => {
     });
 }
 
-export const OwnerSignup = (ownerData) => dispatch =>{
+export const ownerSignup = (ownerData) => dispatch =>{
     axios.defaults.withCredentials=true;
     axios.post(`${backendServer}/signup/owner`,ownerData)
     .then(response => dispatch({

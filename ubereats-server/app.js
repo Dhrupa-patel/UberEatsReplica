@@ -49,15 +49,34 @@ app.get("/", (req,res)=>{
 
 app.post("/login/customer", (req,res)=>{
   console.log("called", req.body);
-  let userObj = {user_id:"1", name:"Dhrupa", email_id:"dhrupa@gmail.com",password:"abc"};
+  let userObj = {user_id:"1", name:"Dhrupa Patel", email:"dhrupa@gmail.com",password:"abc"};
   res.writeHead(200,{
     "Content-Type":"text/plain"
   })
   res.end(JSON.stringify(userObj));
 });
 
+app.post("/login/owner", (req,res)=>{
+  console.log("called", req.body);
+  let userObj = {user_id:"2", name:"XYZ", lastName:"patel", email:"dhrupa@gmail.com",password:"abc"};
+  res.writeHead(200,{
+    "Content-Type":"text/plain"
+  })
+  res.end(JSON.stringify(userObj));
+});
+
+
 app.post("/signup/customer", (req,res)=>{
   console.log("added customer", req.body);
+ 
+  res.writeHead(200,{
+    "Content-Type":"text/plain"
+  })
+  res.end("USER_ADDED");
+});
+
+app.post("/signup/owner", (req,res)=>{
+  console.log("added owner", req.body);
  
   res.writeHead(200,{
     "Content-Type":"text/plain"

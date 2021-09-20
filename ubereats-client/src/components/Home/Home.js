@@ -11,7 +11,8 @@ class Home extends Component{
         if(localStorage.getItem("userType")==="customer"){
             homecomponent = <CustomerHome />
         }
-        else if(localStorage.getItem("usertType")==="owner"){
+        else if(localStorage.getItem("userType")==="owner"){
+            console.log("hello");
             homecomponent = <OwnerHome />
         }
         else{

@@ -1,6 +1,5 @@
 
 var express = require('express');
-var mysql = require('mysql');
 var app = express();
 var bodyParser = require('body-parser');
 //require express session
@@ -21,19 +20,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// const con = mysql.createConnection({
-//   host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
-//   user:"admin",
-//   password:"Siddhi*5501",
-//   ssl: true,
-//   database:"UberEats",
-// })
 
-// con.connect(function(err){
-//     if (err) throw err;
-//     console.log("connected");
-
-// })
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Content-Type','application/json, text/plain')
@@ -46,50 +33,6 @@ app.use(function(req, res, next) {
 app.get("/", (req,res)=>{
    console.log("hello world"); 
 });
-
-app.post("/login/customer", (req,res)=>{
-  console.log("called", req.body);
-  let userObj = {user_id:"1", name:"Dhrupa Patel", email:"dhrupa@gmail.com",password:"abc"};
-  res.writeHead(200,{
-    "Content-Type":"text/plain"
-  })
-  res.end(JSON.stringify(userObj));
-});
-
-app.post("/login/owner", (req,res)=>{
-  console.log("called", req.body);
-  let userObj = {user_id:"2", name:"XYZ", lastName:"patel", email:"dhrupa@gmail.com",password:"abc"};
-  res.writeHead(200,{
-    "Content-Type":"text/plain"
-  })
-  res.end(JSON.stringify(userObj));
-});
-
-
-app.post("/signup/customer", (req,res)=>{
-  console.log("added customer", req.body);
- 
-  res.writeHead(200,{
-    "Content-Type":"text/plain"
-  })
-  res.end("USER_ADDED");
-});
-
-app.post("/signup/owner", (req,res)=>{
-  console.log("added owner", req.body);
- 
-  res.writeHead(200,{
-    "Content-Type":"text/plain"
-  })
-  res.end("USER_ADDED");
-});
-
-app.post("/signup/owner", (req,res)=>{
-
-  console.log("added signup");
-
-});
-
 
 
 module.exports = app;

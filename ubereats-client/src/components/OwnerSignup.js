@@ -18,6 +18,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { connect } from "react-redux";
 import { ownerSignup } from "../actions/signupActions";
+import { TextareaAutosize } from "@mui/material";
 
 
 class OwnerSignup extends Component{
@@ -39,12 +40,13 @@ class OwnerSignup extends Component{
         e.preventDefault();
         console.log("called submit ownersignup", this.state);
         const data = {
-            firstName: this.state.name,
+            name: this.state.name,
             email: this.state.email,
             password: this.state.password,
             city: this.state.city,
             state: this.state.state,
             country: this.state.country,
+            description: this.state.description
         }
         
         this.props.ownerSignup(data);
@@ -61,6 +63,7 @@ class OwnerSignup extends Component{
             redirectVar = <Redirect to="/home" />
         }
         else if(this.props.user === "USER_ADDED" && this.state.signup){
+            console.log("alert called");
             alert("Successfully registered");
             redirectVar = <Redirect to="/login" />
         }
@@ -162,6 +165,14 @@ class OwnerSignup extends Component{
                                 <MenuItem value={"Australia"}>Australia</MenuItem>
                                 </Select>
                                 </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextareaAutosize aria-label="Description"
+                                placeholder="What makes your restaurant the BEST?"
+                                name="description"
+                                id="description"
+                                onChange={this.onChange}
+                                ></TextareaAutosize>
                             </Grid>
                         </Grid>
                         <Button

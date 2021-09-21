@@ -49,11 +49,11 @@ class CustomerSignup extends Component{
             lastName: this.state.lastName,
             email: this.state.email,
             password: this.state.password,
-            nickname: this.state.nickname,
+            // nickname: this.state.nickname,
             city: this.state.city,
             state: this.state.state,
             country: this.state.country,
-            dateofbirth: this.state.dateofbirth
+            // dateofbirth: this.state.dateofbirth
         }
         
         this.props.customerSignup(data);
@@ -70,6 +70,7 @@ class CustomerSignup extends Component{
             redirectVar = <Redirect to="/home" />
         }
         else if(this.props.user === "USER_ADDED" && this.state.signup){
+            console.log("alert called");
             alert("Successfully registered");
             redirectVar = <Redirect to="/login" />
         }

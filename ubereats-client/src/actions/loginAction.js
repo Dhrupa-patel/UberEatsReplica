@@ -11,7 +11,7 @@ export const userLogin = (loginData) => dispatch =>{
     .then(response => dispatch({
         type: USER_LOGIN,
         payload: response.data
-    },console.log("respons = ",response.data)))
+    },console.log("response action = ",response.data)))
     .catch(error => {
         if(error.response && error.response.data){
             return dispatch({

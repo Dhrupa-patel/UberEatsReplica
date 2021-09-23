@@ -19,6 +19,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { connect } from "react-redux";
 import { ownerSignup } from "../actions/signupActions";
 import { TextareaAutosize } from "@mui/material";
+import axios from "axios";
+import backendServer from "../webConfig";
 
 
 class OwnerSignup extends Component{
@@ -27,6 +29,21 @@ class OwnerSignup extends Component{
         this.state={
             theme:createTheme()
         }
+    }
+    componentDidMount(){
+        axios.get(`${backendServer}/login/owner/`).then(response =>{
+            console.log("response data", response.data);
+            if(response.data){
+                this.setState({
+                    emails_ids:response.data
+                })
+            }
+        }).catch(error =>{
+            if(error.response && error.response.data){
+                console.log(error.response.data);
+            }
+        })
+        console.log(this.state.emails_ids);
     }
 
     onChange = (e) =>{
@@ -39,21 +56,30 @@ class OwnerSignup extends Component{
     onSubmit = (e) =>{
         e.preventDefault();
         console.log("called submit ownersignup", this.state);
-        const data = {
-            name: this.state.name,
-            email: this.state.email,
-            password: this.state.password,
-            city: this.state.city,
-            state: this.state.state,
-            country: this.state.country,
-            description: this.state.description
+        if (this.state.emails_ids["Emails"].includes(this.state.email)){
+            console.log("already exists");
+            this.setState({
+                email_id_exists:true
+            });
+            return;
         }
-        
-        this.props.ownerSignup(data);
-        this.setState({
-            signup:true
-        });
-        console.log(this.props)
+        else{
+            const data = {
+                name: this.state.name,
+                email: this.state.email,
+                password: this.state.password,
+                city: this.state.city,
+                state: this.state.state,
+                country: this.state.country,
+                description: this.state.description
+            }
+            
+            this.props.ownerSignup(data);
+            this.setState({
+                signup:true
+            });
+            console.log(this.props)
+        }
     }
 
     render(){
@@ -67,7 +93,7 @@ class OwnerSignup extends Component{
             alert("Successfully registered");
             redirectVar = <Redirect to="/login" />
         }
-        else if(this.props.user === "USER_EXISTS" && this.state.signup){
+        else if(this.state.email_id_exists){
             message = "Email ID is already registered";
         }
         return(
@@ -90,7 +116,7 @@ class OwnerSignup extends Component{
                         Sign up
                     </Typography>
                     <p>{message}</p>
-                    <Box component="form" noValidate onSubmit={this.onSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" onSubmit={this.onSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField

@@ -2,7 +2,6 @@ import { Component } from "react";
 import { Redirect } from "react-router";
 import CustomerHome from "./CustomerHome";
 import OwnerHome from "./OwnerHome";
-import NavigationBar from "../../NavigationBar";
 
 class Home extends Component{
     render(){
@@ -22,7 +21,6 @@ class Home extends Component{
         return(
             <div>
                 { redirectvar }
-                <NavigationBar />
                 { homecomponent }
             </div>
         );

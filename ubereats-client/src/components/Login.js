@@ -88,7 +88,7 @@ class Login extends Component {
                   Sign in
                 </Typography>
                 <p>{message}</p>
-                <Box component="form" onSubmit={this.onSubmit} noValidate sx={{ mt: 1 }}>
+                <Box component="form" onSubmit={this.onSubmit} sx={{ mt: 1 }}>
                   <TextField
                     margin="normal"
                     required

@@ -3,21 +3,17 @@ import { Redirect } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
 import { connect } from "react-redux";
 import { customerSignup } from "../actions/signupActions";
-
+import axios from "axios";
+import backendServer from "../webConfig";
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -34,6 +30,22 @@ class CustomerSignup extends Component{
         }
     }
 
+    componentDidMount(){
+        axios.get(`${backendServer}/login/customer`).then(response =>{
+            console.log("response data", response.data);
+            if(response.data){
+                this.setState({
+                    emails_ids:response.data
+                })
+            }
+        }).catch(error =>{
+            if(error.response && error.response.data){
+                console.log(error.response.data);
+            }
+        })
+        console.log(this.state.emails_ids);
+    }
+
     onChange = (e) =>{
         e.preventDefault();
         this.setState({
@@ -44,23 +56,32 @@ class CustomerSignup extends Component{
     onSubmit = (e) =>{
         e.preventDefault();
         console.log("called submit customersignup", this.state);
-        const data = {
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            email: this.state.email,
-            password: this.state.password,
-            // nickname: this.state.nickname,
-            city: this.state.city,
-            state: this.state.state,
-            country: this.state.country,
-            // dateofbirth: this.state.dateofbirth
+        if (this.state.emails_ids["Emails"].includes(this.state.email)){
+            console.log("already exists");
+            this.setState({
+                email_id_exists:true
+            });
+            return;
         }
-        
-        this.props.customerSignup(data);
-        this.setState({
-            signup:true
-        });
-        console.log(this.props)
+        else{
+            const data = {
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                email: this.state.email,
+                password: this.state.password,
+                // nickname: this.state.nickname,
+                city: this.state.city,
+                state: this.state.state,
+                country: this.state.country,
+                // dateofbirth: this.state.dateofbirth
+            }
+            
+            this.props.customerSignup(data);
+            this.setState({
+                signup:true
+            });
+            console.log(this.props)
+        }
     }
 
     render(){
@@ -74,7 +95,7 @@ class CustomerSignup extends Component{
             alert("Successfully registered");
             redirectVar = <Redirect to="/login" />
         }
-        else if(this.props.user === "USER_EXISTS" && this.state.signup){
+        else if(this.state.email_id_exists){
             message = "Email ID is already registered";
         }
 
@@ -100,7 +121,7 @@ class CustomerSignup extends Component{
                         Sign up
                     </Typography>
                     <p>{message}</p>
-                    <Box component="form" noValidate onSubmit={this.onSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" onSubmit={this.onSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField

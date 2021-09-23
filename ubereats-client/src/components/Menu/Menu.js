@@ -28,12 +28,13 @@ class CustomerHome extends Component{
     constructor(){
         super();
         this.state={
-            datas:[]
+            datas:[],
+            userType:localStorage.getItem("userType")
         }
     }
 
     componentDidMount(){
-        axios.get(`${backendServer}/restaurants/getDetails`).then(response =>{
+        axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("user_id")}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({
@@ -48,20 +49,31 @@ class CustomerHome extends Component{
         console.log(this.state.datas);
     }
 
+    addToCart = ()=>{
+
+    }
+    delete = (e)=>{
+        var id = {"dish_id":e.target.value};
+        axios.post(`${backendServer}/menu/delete`,id).then(response =>{
+            console.log("deleted the item");
+        }).catch(error =>{
+            if(error.response && error.response.data){
+                console.log(error.response.data);
+            }
+        })
+        this.setState({
+            deleted:true
+        })
+    }
+
     render(){
-        let restaurants = this.state.datas.map(data => {
+        let dishes = this.state.datas.map(data => {
             console.log(data)
             return(
                 <Grid item xs={4}>
                     <Card style = {{width:"100%", height:"100%"}}>
                     <CardHeader
-                        avatar={
-                        <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                            {data.Res_Name[0]}
-                        </Avatar>
-                        }
-                        title={data.Res_Name}
-                        subheader={data.Res_City}
+                        title={data.Dish_Name}
                     />
                     <CardMedia
                         component="img"
@@ -71,16 +83,22 @@ class CustomerHome extends Component{
                     />
                     <CardContent>
                         <Typography variant="body2" color="text.secondary">
-                        {data.Description}<br/>
-                        Timings: {data.Timings}<br/>
-                        State: {data.Res_State}<br/>
-                        Phone Number: {data.Phone_Number}<br/>
+                        {data.Dish_Category}<br/>
+                        Dish Description: {data.Dish_Description}<br/>
+                        Dish Price: {data.Dish_Price}<br/>
+                        Ingredients:{data.Ingredients}
                         </Typography>
                     </CardContent>
                     <CardActions disableSpacing>
-                        <IconButton aria-label="add to favorites">
-                        <FavoriteIcon />
-                        </IconButton>
+                    <CardActions>
+                        {this.state.userType==="customer" ? ( 
+                            <Button onClick={this.addToCart} size="small">Add to Cart</Button>
+                        ):
+                        (
+                            <Button onClick={this.delete} value={data.Dish_ID} size="small">Delete Item</Button>
+                        )}
+
+                    </CardActions>
                     </CardActions>
                     </Card>
                 </Grid>
@@ -92,7 +110,7 @@ class CustomerHome extends Component{
                 <NavigationBar />
                 <Box component="form" onSubmit={this.onSubmit} sx={{ mt: 3 }}>
                     <Grid container spacing={2}>
-                    {restaurants}
+                    {dishes}
                     </Grid>
                 </Box>
             </div>

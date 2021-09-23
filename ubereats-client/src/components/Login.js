@@ -54,9 +54,9 @@ class Login extends Component {
         let user="/customersignup";
         if(this.props.user && this.props.user.user_id){
             console.log("props calles");
-            localStorage.setItem("username",this.props.user.name);
-            localStorage.setItem("email_id",this.props.user.email);
-            localStorage.setItem("user_id",this.props.user.user_id);
+            sessionStorage.setItem("username",this.props.user.name);
+            sessionStorage.setItem("email_id",this.props.user.email);
+            sessionStorage.setItem("user_id",this.props.user.user_id);
             redirectVar = <Redirect to="/home"/>
         }
         else if(this.props.user==="NO_USER" && this.state.loggedIn){
@@ -82,7 +82,6 @@ class Login extends Component {
                 }}
               >
                 <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                  <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
                   Sign in

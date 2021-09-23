@@ -102,8 +102,9 @@ class NavigationBar extends Component{
             if(localStorage.getItem("userType")==="owner"){
                 navbar=(
                     <Grid sx={6}>
-                        <Link to="/profile"><Button style={{color: "black"}} onClick={this.profile} type="button" color="inherit">Profile</Button></Link>
-                        <Link to="/addDishes"><Button style={{color: "black"}} type="button" color="inherit">Add/Edit Dishes</Button></Link>
+                        <Link to="/home"><Button style={{color: "black"}} type="button" color="inherit">Home</Button></Link>
+                        <Link to="/profile"><Button style={{color: "black"}} type="button" color="inherit">Profile</Button></Link>
+                        <Link to="/addEditDishes"><Button style={{color: "black"}} type="button" color="inherit">Add/Edit Dishes</Button></Link>
                         <Link to="/pendingOrders"><Button style={{color: "black"}} type="button" color="inherit">Pending Orders</Button></Link>
                     </Grid>
                 )
@@ -111,8 +112,9 @@ class NavigationBar extends Component{
             else if(localStorage.getItem("userType")==="customer"){
                 navbar = (
                     <Grid>
-                        <Button style={{color: "black"}} type="button" color="inherit">Profile</Button>
-                        <Button style={{color: "black"}} type="button" color="inherit">Cart</Button>
+                        <Link to="/home"><Button style={{color: "black"}} type="button" color="inherit">Home</Button></Link>
+                        <Link to="/profile"><Button style={{color: "black"}} type="button" color="inherit">Profile</Button></Link>
+                        <Link to="/cart"><Button style={{color: "black"}} type="button" color="inherit">Cart</Button></Link>
                     </Grid>
                 )
                 searchbar = (

@@ -8,6 +8,8 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Button, CardActionArea} from '@mui/material';
+import customerImage from "../images/customer.png";
+import ownerImage from "../images/restaurant3.jpg";
 
 class LandingPage extends Component{
     constructor(){
@@ -39,8 +41,8 @@ class LandingPage extends Component{
                         <Card sx={{ maxWidth: 345 }}>
                             <CardMedia
                                 component="img"
-                                height="140"
-                                image="customer.jpg"
+                                height="250"
+                                image={customerImage}
                                 onClick = {this.addUser}
                                 alt="Customer Login"
                             />
@@ -52,7 +54,7 @@ class LandingPage extends Component{
                             <CardActions>
                                 <Button onClick={this.addUser} value="customer" 
                                 fullWidth
-                                sx={{ mt: 3, mb: 2 }} size="medium" color="primary">
+                                sx={{ mt: 1, mb: 1 }} size="medium" color="primary">
                                 Login
                                 </Button>
                             </CardActions>
@@ -62,8 +64,8 @@ class LandingPage extends Component{
                         <Card sx={{ maxWidth: 345 }} >
                             <CardMedia
                                 component="img"
-                                height="140"
-                                image="owner.jpg"
+                                height="250"
+                                image={ownerImage}
                                 alt="Restaurant Owner Login"
                             />
                             <CardContent>
@@ -74,7 +76,7 @@ class LandingPage extends Component{
                             <CardActions>
                                 <Button onClick={this.addUser} value="owner" 
                                 fullWidth
-                                sx={{ mt: 3, mb: 2 }}
+                                sx={{ mt: 1, mb: 1 }}
                                 size="medium" color="primary">
                                 Login
                                 </Button>

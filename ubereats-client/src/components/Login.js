@@ -57,6 +57,7 @@ class Login extends Component {
             sessionStorage.setItem("username",this.props.user.name);
             sessionStorage.setItem("email_id",this.props.user.email);
             sessionStorage.setItem("user_id",this.props.user.user_id);
+            sessionStorage.setItem("location", this.props.user.location);
             redirectVar = <Redirect to="/home"/>
         }
         else if(this.props.user==="NO_USER" && this.state.loggedIn){

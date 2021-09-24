@@ -18,18 +18,20 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { withRouter } from "react-router";
 import Grid from '@mui/material/Grid';
 import NavigationBar from "../../NavigationBar";
 import axios from "axios";
 import backendServer from "../../webConfig";
+import { Redirect } from "react-router-dom";
 
 class CustomerHome extends Component{
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state={
             datas:[],
-            userType:localStorage.getItem("userType")
+            userType:localStorage.getItem("userType"),
         }
     }
 
@@ -46,28 +48,30 @@ class CustomerHome extends Component{
                 console.log(error.response.data);
             }
         })
-        console.log(this.state.datas);
+        console.log(this.state);
     }
 
     addToCart = ()=>{
 
     }
-    delete = (e)=>{
-        var id = {"dish_id":e.target.value};
+    delete = (e,index)=>{
+        var id = {"dish_id":e.target.value[0]};
         axios.post(`${backendServer}/menu/delete`,id).then(response =>{
-            console.log("deleted the item");
+            console.log("deleted");
         }).catch(error =>{
             if(error.response && error.response.data){
                 console.log(error.response.data);
             }
-        })
+        });
+        let items = [...this.state.datas];
+        items.splice(e.target.value[1],1);
         this.setState({
-            deleted:true
+            datas: items
         })
     }
 
     render(){
-        let dishes = this.state.datas.map(data => {
+        let dishes = this.state.datas.map((data,index) => {
             console.log(data)
             return(
                 <Grid item xs={4}>
@@ -95,7 +99,7 @@ class CustomerHome extends Component{
                             <Button onClick={this.addToCart} size="small">Add to Cart</Button>
                         ):
                         (
-                            <Button onClick={this.delete} value={data.Dish_ID} size="small">Delete Item</Button>
+                            <Button onClick={this.delete} value={[data.Dish_ID,index]} size="small">Delete Item</Button>
                         )}
 
                     </CardActions>
@@ -118,4 +122,4 @@ class CustomerHome extends Component{
     }
 
 }
-export default CustomerHome;
+export default withRouter(CustomerHome);

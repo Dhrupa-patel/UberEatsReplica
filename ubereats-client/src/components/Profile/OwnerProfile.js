@@ -105,7 +105,7 @@ class Profile extends Component{
                 {redirectVar}
                 {submitButton}
                 {updateButton}
-                <Avatar style={{height:"15%", width:"15%", align:"center", margin:"0% auto"}} alt="Dhrupa Patel" src="../public/cust1.png" />
+                <Avatar style={{height:"150px", width:"150px", align:"center", margin:"0% auto"}} alt="" src="../public/cust1.png" />
                 <br />
                 <Grid container spacing={2}>
                     {profile}

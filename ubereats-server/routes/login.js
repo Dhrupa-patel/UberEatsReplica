@@ -39,6 +39,7 @@ router.post("/customer", (req,res)=>{
     let sql = "SELECT * FROM Customers WHERE Cust_Email='"+req.body.email+"'";
     console.log(sql);
     con.query(sql, (err, result)=>{
+        console.log(err);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -100,7 +101,7 @@ router.post("/owner", (req, res)=>{
         if(result && result.length>0){
             if(req.body.password === result[0].Res_Password){
                 req.session.userEmailId = req.body.email;
-                let userObj = {user_id:result[0].Res_ID ,name:result[0].Name, email:result[0].Res_Email, password:result[0].Res_Password};
+                let userObj = {user_id:result[0].Res_ID ,name:result[0].Res_Name, location:result[0].Res_State, email:result[0].Res_Email, password:result[0].Res_Password};
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
                 res.end(JSON.stringify(userObj));

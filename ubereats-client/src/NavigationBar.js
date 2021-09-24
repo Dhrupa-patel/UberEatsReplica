@@ -117,19 +117,6 @@ class NavigationBar extends Component{
                         <Link to="/cart"><Button style={{color: "black"}} type="button" color="inherit">Cart</Button></Link>
                     </Grid>
                 )
-                searchbar = (
-                    <Grid xs={3}>
-                        <Search>
-                            <SearchIconWrapper>
-                            <SearchIcon />
-                            </SearchIconWrapper>
-                            <StyledInputBase
-                            placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }}
-                            />
-                        </Search>
-                    </Grid>
-                )
             }
             else{
                 redirectVar = <Redirect to="/" />
@@ -152,7 +139,6 @@ class NavigationBar extends Component{
                             </Typography>
                         </Grid>
                         {navbar}
-                        {searchbar}
                         <Grid xs={2}>
                             <Button style={{color: "black"}} type="submit" onClick={this.logout} color="inherit">Logout</Button>
                         </Grid>

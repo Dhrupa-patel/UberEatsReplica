@@ -21,6 +21,7 @@ router.get("/getDetails/:user_id", (req,res)=>{
     console.log("menu res called",req.params);
     let sql = "SELECT * FROM Dishes WHERE Res_ID='"+req.params.user_id+"'";
     con.query(sql, (err, result)=>{
+        console.log(err);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -52,12 +53,39 @@ router.post("/delete", (req,res)=>{
         }
         else{
             console.log(result);
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+        }
+    });
+});
+
+router.get("/getRestaurantIDs/:search", (req, res)=>{
+    console.log("called resIDS", req.params);
+    let sql = "SELECT DISTINCT(Res_ID) FROM Dishes WHERE Dish_Name LIKE '"+req.params.search+"%' OR Location LIKE '"+req.params.search+"%' OR Restaurant_Name LIKE '"+req.params.search+"%'";
+    console.log(sql);
+    con.query(sql, (err, result)=>{
+        if(err){
+            console.log(err);
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
             if(result && result.length>0){
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
-                res.end("success");
+                res.end(JSON.stringify(result));
+            }
+            else{
+                res.statusCode = 200;
+                res.setHeader("Content-Type","text/plain");
+                res.end("");
             }
         }
     });
 });
+
 module.exports = router;

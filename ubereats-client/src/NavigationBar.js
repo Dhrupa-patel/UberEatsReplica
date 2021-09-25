@@ -115,6 +115,7 @@ class NavigationBar extends Component{
                         <Link to="/home"><Button style={{color: "black"}} type="button" color="inherit">Home</Button></Link>
                         <Link to="/profile"><Button style={{color: "black"}} type="button" color="inherit">Profile</Button></Link>
                         <Link to="/cart"><Button style={{color: "black"}} type="button" color="inherit">Cart</Button></Link>
+                        <Link to="/favorites"><Button style={{color: "black"}} type="button" color="inherit">Favorites</Button></Link>
                     </Grid>
                 )
             }

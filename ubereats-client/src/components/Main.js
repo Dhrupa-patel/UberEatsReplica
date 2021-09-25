@@ -8,6 +8,7 @@ import Home from "./Home/Home";
 import Cart from "./Cart/Cart";
 import Profile from "./Profile/Profile";
 import Menu from "./Menu/Menu";
+import Favorites from "./Favorites/Favorites";
 
 
 class Main extends Component{
@@ -22,6 +23,7 @@ class Main extends Component{
                 <Route exact path="/cart" component={Cart} />
                 <Route exact path="/profile" component={Profile} />
                 <Route exact path="/menu" component={Menu} />
+                <Route exact path="/favorites" component={Favorites} />
             </div>
         )
     }

@@ -118,6 +118,19 @@ class CustomerHome extends Component{
         return;
     }
 
+    addFavorite = (res_id)=>{
+        console.log(res_id);
+        let data = {"Cust_id":sessionStorage.getItem("user_id"), "res_id":res_id};
+        console.log("called addfav", data);
+        axios.post(`${backendServer}/customer/addfavorites`,data).then(response =>{
+            console.log("Added to favorites");
+        }).catch(error =>{
+            if(error.response && error.response.data){
+                console.log(error.response.data);
+            }
+        });
+    }
+
     render(){
         let restaurants = this.state.newData.map(data => {
             console.log(data)
@@ -148,9 +161,8 @@ class CustomerHome extends Component{
                         </Typography>
                     </CardContent>
                     <CardActions disableSpacing>
-                        <IconButton aria-label="add to favorites">
-                        <FavoriteIcon />
-                        </IconButton>
+                        <IconButton onClick={() => this.addFavorite(data.Res_ID)} size="small"><FavoriteIcon /></IconButton>
+                        {/* <Button onClick={this.addFavorite} value={data.Res_ID} aria-label="add to favorites"> */}
                     </CardActions>
                     </Card>
                 </Grid>

@@ -96,7 +96,7 @@ class CustomerHome extends Component{
                     <CardActions disableSpacing>
                     <CardActions>
                         {this.state.userType==="customer" ? ( 
-                            <Button onClick={this.addToCart} size="small">Add to Cart</Button>
+                            <Button onClick={this.addToCart} size="small">Place an Order</Button>
                         ):
                         (
                             <Button onClick={this.delete} value={[data.Dish_ID,index]} size="small">Delete Item</Button>

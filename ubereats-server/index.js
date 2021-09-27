@@ -6,6 +6,7 @@ const restaurant = require("./routes/restraurants");
 const profile = require("./routes/profile");
 const menu = require("./routes/menu");
 const customer = require("./routes/customer");
+const images = require("./routes/fileuploads/profile")
 
 app.use("/login", login);
 app.use("/signup", signup);  
@@ -13,6 +14,7 @@ app.use("/restaurants", restaurant);
 app.use("/profile", profile);
 app.use("/menu", menu);
 app.use("/customer", customer);
+app.use("/images",images);
 
 
 const port = process.env.PORT || 3002;

@@ -9,7 +9,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Button, CardActionArea} from '@mui/material';
 import customerImage from "../images/customer.png";
-import ownerImage from "../images/restaurant3.jpg";
+import ownerImage from "../images/restaurant3.jpeg";
 
 class LandingPage extends Component{
     constructor(){

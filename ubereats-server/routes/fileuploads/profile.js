@@ -3,8 +3,22 @@ const aws = require( 'aws-sdk' );
 const multerS3 = require( 'multer-s3' );
 const multer = require('multer');
 const path = require( 'path' );
-
+const mysql = require("mysql");
 const router = express.Router();
+
+const con = mysql.createConnection({
+    host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
+    user:"admin",
+    password:"Siddhi*5501",
+    ssl: true,
+    port: 3306,
+    database:"UberEats",
+  })
+  
+con.connect(function(err){
+    if (err) throw err;
+    console.log("connected");
+})
 
 const s3 = new aws.S3({
     accessKeyId: 'AKIASRTSBCEJVE6F26UK',
@@ -82,7 +96,23 @@ const s3 = new aws.S3({
                 image: imageName,
                 location: imageLocation
                 } );
-                console
+                const sql =
+                "UPDATE Customers SET Cust_ProfileName =?, Cust_ProfileImageLocation=? WHERE Cust_ID =?"
+                var values = [
+                imageName, imageLocation, 1
+                ];
+                con.query(sql, values, function (error, results) {
+                    if (error) {            
+                        console.log(error)              
+                        res.writeHead(200, {              
+                            "Content-Type": "text/plain",            
+                        });            
+                        res.end(error.code);          
+                    } else {
+                        console.log(results);
+                        res.end(JSON.stringify(results));
+                    }
+                });
             }
         }
     });

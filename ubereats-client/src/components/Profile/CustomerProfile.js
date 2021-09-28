@@ -22,7 +22,8 @@ class Profile extends Component{
         super()
         this.state={
             datas:[],
-            selectedFile:null
+            selectedFile:null,
+            fileName:""
         }
     }
     componentDidMount(){
@@ -30,21 +31,55 @@ class Profile extends Component{
             console.log("response data",response.data);
             if(response.data){
                 this.setState({
-                    datas:[response.data]
+                    datas:[response.data.profile],
+                    fileName:response.data.fileName
                 })
+                console.log(this.state);
             }
         }).catch(error =>{
             if(error.response && error.response.data){
                 console.log(error.response.data);
             }
         })
-        console.log(this.state.datas);
     }
     update = (e)=>{
         this.setState({
             update:true
         })
 
+    }
+
+    onChange =(e)=>{
+        this.setState({
+            [e.target.name]:e.target.value
+        })
+    }
+
+    onSubmit =(e)=>{
+        console.log(this.state);
+        var userID = {
+            "email":this.state["Email ID"],
+            "DOB":this.state["Date of Birth"],
+            "city":this.state.City,
+            "state":this.state.State,
+            "country":this.state.Country,
+            "name":this.state.Name,
+            "user_id":sessionStorage.getItem("user_id")}
+        console.log("sending data ",userID);
+        axios.post(`${backendServer}/profile/updatecustomerprofile`, userID).then(response =>{
+            if(response.data){
+                this.setState({
+                    datas:[response.data.profile],
+                    fileName:response.data.fileName
+                })
+                this.setState({
+                    update:false
+                })
+                console.log("updated");
+            }
+        }).catch( (error) => {
+            console.log(error);
+        });
     }
 
     singleFileChangedHandler = async(e)=>{
@@ -58,9 +93,6 @@ class Profile extends Component{
         {
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
-            for(var key of form_data.entries()){
-                console.log(key[0],key[1]);
-            }
             axios.post( `${backendServer}/images/profile-img-upload`, form_data, {
                 headers: {
                 'accept': 'application/json',
@@ -80,8 +112,10 @@ class Profile extends Component{
                     }
                     } else {
                     // Success
-                    let fileName = response.data;
-                    console.log( 'fileName', fileName );
+                    console.log(response.data.location);
+                    this.setState({
+                        fileName:response.data.location
+                    })
                     alert( 'File Uploaded');
                     }
                 }
@@ -95,50 +129,6 @@ class Profile extends Component{
         alert( 'Please upload file');
         }
     }    
-
-    singleFileUploadHandler = (e)=>{
-        console.log("calling here");
-        const data = new FormData();// If file selected
-        if ( this.state.selectedFile ) 
-        {
-            console.log("inside upload button",this.state)
-            data.append( 'CustomerImage', this.state.selectedFile, this.state.selectedFile.name );
-            console.log("data",data);
-            axios.post(`${backendServer}/images/profile-img-upload`, data, {
-                headers: {
-                'accept': 'application/json',
-                'Accept-Language': 'en-US,en;q=0.8',
-                'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-                }
-            })
-            .then( ( response ) => {
-                if ( 200 === response.status ) {
-                    // If file size is larger than expected.
-                    if( response.data.error ) {
-                    if ( 'LIMIT_FILE_SIZE' === response.data.error.code ) {
-                    alert( 'Max size: 2MB');
-                    } else {
-                    console.log( response.data );// If not the given file type
-                    alert( response.data.error);
-                    }
-                    } else {
-                    // Success
-                    let fileName = response.data;
-                    console.log( 'fileName', fileName );
-                    alert( 'File Uploaded');
-                    }
-                }
-            }).catch( ( error ) => {
-            // If another error
-            alert( error );
-            });
-        } 
-        else {
-        // if file not selected throw error
-        alert( 'Please upload file');
-        }
-    }
-
 
     render(){
         let profile = [];
@@ -154,7 +144,6 @@ class Profile extends Component{
                                 label={key}
                                 id={key}
                                 autoComplete={key}
-                                onLoad = {this.change}
                                 onChange={this.onChange}
                                 />
                     )} 
@@ -162,43 +151,45 @@ class Profile extends Component{
             }
         }
         let submitButton = null;
-        if (this.state.update){
-            submitButton = <Button type="button" onClick={this.submit}>Submit</Button>
-        }
         let updateButton = null;
-        if(!this.state.update){
+        let ImageUploadButton = null;
+        if(this.state.update){
+            submitButton = <Button type="button" onClick={this.onSubmit}>Submit</Button>
+            ImageUploadButton = (<label htmlFor="btn-upload">
+            <input
+                id="btn-upload"
+                name="btn-upload"
+                style={{ display: 'none' }}
+                type="file"
+                accept="image/*"
+                onChange = {this.singleFileChangedHandler}
+                />
+                <Button
+                    className="btn-choose"
+                    variant="outlined"
+                    component="span" 
+                    onChange={this.singleFileUploadHandler}
+                    >
+                    Choose Image
+                </Button>
+            </label>)
+        }
+       else if(!this.state.update){
             updateButton = <Button type="button" onClick={this.update}>update</Button>
         }
         let redirectVar = null;
         if(this.state.submit){
             redirectVar = <Redirect to="/profile"></Redirect>
         }
-
+    
         return(
             <Box component="form" sx={{ mt: 5, alignItems: 'center'}} >
                 {redirectVar}
                 {submitButton}
                 {updateButton}
-                <Avatar style={{height:"15%", width:"15%", align:"center", margin:"0% auto"}} alt="Dhrupa Patel" src="" />
+                <Avatar style={{height:"15%", width:"15%", align:"center", margin:"0% auto"}} alt="Dhrupa Patel" src={this.state.fileName} />
                 <br />
-                <label htmlFor="btn-upload">
-                <input
-                    id="btn-upload"
-                    name="btn-upload"
-                    style={{ display: 'none' }}
-                    type="file"
-                    accept="image/*"
-                    onChange = {this.singleFileChangedHandler}
-                    />
-                    <Button
-                        className="btn-choose"
-                        variant="outlined"
-                        component="span" 
-                        onChange={this.singleFileUploadHandler}
-                        >
-                        Choose Image
-                    </Button>
-                </label>
+                {ImageUploadButton}
                 <Grid container spacing={2}>
                     {profile}
                 </Grid>

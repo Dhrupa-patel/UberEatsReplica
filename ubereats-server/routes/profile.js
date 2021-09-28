@@ -31,13 +31,35 @@ router.get("/restaurantprofile/:user_id", (req,res)=>{
                 res.setHeader("Content-Type","text/plain");
                 let userObj = {"Name":result[0].Name, "Email_ID":result[0].Res_Email, "Description":result[0].Description,
             "Country":result[0].Country, "State":result[0].Res_State, "City":result[0].Res_City,
-        "Dishes":[], "Timings":result[0].Timings};
+        "Dishes":[], "Timings":result[0].Timings,};
                 res.end(JSON.stringify(userObj));
             }
 
         }
     });
 });
+
+router.post("/updatecustomerprofile", (req,res)=>{
+    console.log(req.body);
+    let sql = "UPDATE Customers SET Cust_Email=?, Cust_DOB=?, Cust_City =?,"+
+    "Cust_State=?, Cust_Country=?, Name=? WHERE Cust_ID =?";
+    var values = [
+        req.body.email, req.body.DOB, req.body.city, req.body.state,
+        req.body.country, req.body.name, req.body.user_id];
+
+    con.query(sql, values, (err,result)=>{
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            res.send("sucess");
+        }
+    })
+
+})
 
 router.get("/customerprofile/:user_id", (req,res)=>{
     console.log("profile res called",req.params);
@@ -53,9 +75,9 @@ router.get("/customerprofile/:user_id", (req,res)=>{
             if(result && result.length>0){
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
-                let userObj = {"Name":result[0].Name, "Email ID":result[0].Cust_Email,
+                let userObj = {"profile":{"Name":result[0].Name, "Email ID":result[0].Cust_Email,
             "Country":result[0].Cust_Country, "State":result[0].Cust_State, "City":result[0].Cust_City,
-        "Date of Birth": result[0].Cust_DOB};
+        "Date of Birth": result[0].Cust_DOB},"fileName":result[0].Cust_ProfileImageLocation};
                 res.end(JSON.stringify(userObj));
             }
 

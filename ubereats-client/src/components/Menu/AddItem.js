@@ -44,7 +44,7 @@ class CustomerHome extends Component{
 
     onSubmit = (e)=>{
         let data = {
-            "Res_ID":sessionStorage.getItem("user_id"),
+            "Res_ID":sessionStorage.getItem("res_user_id"),
             "Dish_Name": this.state.dishName,
             "Dish_Description": this.state.dishDescription,
             "Dish_Category": this.state.dishCategory,

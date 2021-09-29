@@ -1,7 +1,7 @@
 import { Component } from "react";
 import NavigationBar from "../../NavigationBar";
 
-class Cart extends Component{
+class Orders extends Component{
 
     render(){
         return(
@@ -11,4 +11,4 @@ class Cart extends Component{
         )
     }
 }
-export default Cart;
+export default Orders;

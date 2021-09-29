@@ -85,7 +85,7 @@ class OwnerSignup extends Component{
     render(){
         let redirectVar = null;
         let message="";
-        if(localStorage.getItem("user_id")){
+        if(localStorage.getItem("res_user_id")){
             redirectVar = <Redirect to="/home" />
         }
         else if(this.props.user === "USER_ADDED" && this.state.signup){

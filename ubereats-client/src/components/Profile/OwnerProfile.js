@@ -27,7 +27,7 @@ class Profile extends Component{
         };
     }
     componentDidMount(){
-        axios.get(`${backendServer}/profile/restaurantprofile/${sessionStorage.getItem("user_id")}`).then(response =>{
+        axios.get(`${backendServer}/profile/restaurantprofile/${sessionStorage.getItem("res_user_id")}`).then(response =>{
             console.log("response data",response.data);
             if(response.data){
                 this.setState({
@@ -54,7 +54,7 @@ class Profile extends Component{
     }
 
     submit = (e)=>{
-        axios.post(`${backendServer}/profile/setrestaurantprofile/${sessionStorage.getItem("user_id")}`).then(response =>{
+        axios.post(`${backendServer}/profile/setrestaurantprofile/${sessionStorage.getItem("res_user_id")}`).then(response =>{
             console.log(response.data);
         }).catch(error =>{
             if(error.response && error.response.data){

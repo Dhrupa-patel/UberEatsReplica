@@ -36,7 +36,7 @@ class CustomerHome extends Component{
     }
 
     componentDidMount(){
-        axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("user_id")}`).then(response =>{
+        axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("res_user_id")}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({
@@ -51,7 +51,49 @@ class CustomerHome extends Component{
         console.log(this.state);
     }
 
-    addToCart = ()=>{
+    addItem = (data)=>{
+        axios.post(`${backendServer}/cart/additem`,data).then(response =>{
+            console.log("item added");
+        }).catch(error =>{
+            if(error.response && error.response.data){
+                console.log(error.response.data);
+            }
+        });
+        sessionStorage.setItem("cart_res_id",data.Res_ID);
+    }
+    clearAndAddItem = (item)=>{
+        var Res_ID = {"Res_ID":sessionStorage.getItem("cart_res_id")}
+        console.log("resid", Res_ID);
+        axios.post(`${backendServer}/cart/removeitems`,Res_ID).then(response =>{
+            console.log("items deleted");
+            console.log("confirm", item);
+            this.addItem(item);
+        }).catch(error =>{
+            if(error.response && error.response.data){
+                console.log(error.response.data);
+            }
+        });
+    }
+
+    addToCart = (item)=>{
+        console.log("here",item);
+        var data = {
+            "Dish_Name":item.Dish_Name,
+            "Res_ID":item.Res_ID,
+            "Dish_Price":item.Dish_Price,
+            "Cust_ID":sessionStorage.getItem("cust_user_id"),
+            "Dish_ID":item.Dish_ID
+        }
+        if("cart_res_id" in sessionStorage && sessionStorage.getItem("cart_res_id")!=item.Res_ID){
+            var response = window.confirm("want to empty cart?");
+            if(response){
+                this.clearAndAddItem(data);
+            }
+        }
+        else{
+            console.log("additem data", data);
+            this.addItem(data)
+        }
 
     }
     delete = (e,index)=>{
@@ -96,7 +138,7 @@ class CustomerHome extends Component{
                     <CardActions disableSpacing>
                     <CardActions>
                         {this.state.userType==="customer" ? ( 
-                            <Button onClick={this.addToCart} size="small">Place an Order</Button>
+                            <Button onClick={() => this.addToCart(data)}  value={[data]} size="small">Add to Cart</Button>
                         ):
                         (
                             <Button onClick={this.delete} value={[data.Dish_ID,index]} size="small">Delete Item</Button>

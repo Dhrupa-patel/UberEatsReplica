@@ -53,10 +53,15 @@ class Login extends Component {
         let message="";
         let user="/customersignup";
         if(this.props.user && this.props.user.user_id){
-            console.log("props calles");
+            console.log("props calles", this.props.user);
             sessionStorage.setItem("username",this.props.user.name);
             sessionStorage.setItem("email_id",this.props.user.email);
-            sessionStorage.setItem("user_id",this.props.user.user_id);
+            if(localStorage.getItem("userType")==="owner"){
+              sessionStorage.setItem("res_user_id",this.props.user.user_id);
+            }
+            else{
+              sessionStorage.setItem("cust_user_id",this.props.user.user_id);
+            }
             sessionStorage.setItem("location", this.props.user.location);
             redirectVar = <Redirect to="/home"/>
         }

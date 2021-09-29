@@ -120,7 +120,7 @@ class CustomerHome extends Component{
 
     addFavorite = (res_id)=>{
         console.log(res_id);
-        let data = {"Cust_id":sessionStorage.getItem("user_id"), "res_id":res_id};
+        let data = {"Cust_id":sessionStorage.getItem("cust_user_id"), "res_id":res_id};
         console.log("called addfav", data);
         axios.post(`${backendServer}/customer/addfavorites`,data).then(response =>{
             console.log("Added to favorites");
@@ -129,6 +129,11 @@ class CustomerHome extends Component{
                 console.log(error.response.data);
             }
         });
+    }
+
+    menu = (e)=>{
+        sessionStorage.setItem("res_user_id",e.target.value);
+        this.props.history.push("/ownerhome");
     }
 
     render(){
@@ -162,6 +167,7 @@ class CustomerHome extends Component{
                     </CardContent>
                     <CardActions disableSpacing>
                         <IconButton onClick={() => this.addFavorite(data.Res_ID)} size="small"><FavoriteIcon /></IconButton>
+                        <Button onClick={this.menu} value={data.Res_ID} variant="contained">Select</Button>
                         {/* <Button onClick={this.addFavorite} value={data.Res_ID} aria-label="add to favorites"> */}
                     </CardActions>
                     </Card>
@@ -193,4 +199,4 @@ class CustomerHome extends Component{
     }
 
 }
-export default CustomerHome;
+export default withRouter(CustomerHome);

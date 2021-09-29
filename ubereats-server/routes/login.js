@@ -49,7 +49,7 @@ router.post("/customer", (req,res)=>{
         if(result && result.length>0){
             if(req.body.password == result[0].Cust_Password){
                 req.session.userEmailId = req.body.email;
-                let userObj = {user_id:result[0].Cust_ID ,name:result[0].Name, email:result[0].Cust_Email, password:result[0].Cust_password};
+                let userObj = {user_id:result[0].Cust_ID, name:result[0].Name, location:result[0].Cust_State, email:result[0].Cust_Email, password:result[0].Cust_password};
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
                 res.end(JSON.stringify(userObj));

@@ -17,6 +17,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import {Route, withRouter } from "react-router";
+import { Modal } from "@mui/material";
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -116,6 +117,7 @@ class NavigationBar extends Component{
                         <Link to="/profile"><Button style={{color: "black"}} type="button" color="inherit">Profile</Button></Link>
                         <Link to="/cart"><Button style={{color: "black"}} type="button" color="inherit">Cart</Button></Link>
                         <Link to="/favorites"><Button style={{color: "black"}} type="button" color="inherit">Favorites</Button></Link>
+                        <Link to="/orders"><Button style={{color: "black"}} type="button" color="inherit">Orders</Button></Link>
                     </Grid>
                 )
             }
@@ -131,7 +133,7 @@ class NavigationBar extends Component{
         return(
             <Box>
                     {redirectVar}
-                    <AppBar position="static">
+                <AppBar position="static">
                     <Toolbar>
                     <Grid container>
                         <Grid item xs={2}>
@@ -146,6 +148,7 @@ class NavigationBar extends Component{
                     </Grid>
                     </Toolbar>
                 </AppBar>
+
             </Box>
 
 

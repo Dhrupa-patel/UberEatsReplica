@@ -18,8 +18,7 @@ class Profile extends Component{
     render(){
         let profileComponent = null;
         let redirectVar = null;
-        console.log("called here",sessionStorage.getItem("user_id"))
-        if(localStorage.getItem("userType") && sessionStorage.getItem("user_id")){
+        if(localStorage.getItem("userType") && (sessionStorage.getItem("res_user_id")||sessionStorage.getItem("cust_user_id"))){
             if(localStorage.getItem("userType")==="customer"){
                 profileComponent = <CustomerProfile />
             }

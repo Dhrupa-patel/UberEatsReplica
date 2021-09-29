@@ -25,7 +25,7 @@ class Favorites extends Component{
         }
     }
     componentDidMount(){
-        axios.get(`${backendServer}/customer/getFavorites/${sessionStorage.getItem("user_id")}`).then(response =>{
+        axios.get(`${backendServer}/customer/getFavorites/${sessionStorage.getItem("cust_user_id")}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({

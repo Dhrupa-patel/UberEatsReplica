@@ -27,7 +27,7 @@ class Profile extends Component{
         }
     }
     componentDidMount(){
-        axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("user_id")}`).then(response =>{
+        axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("cust_user_id")}`).then(response =>{
             console.log("response data",response.data);
             if(response.data){
                 this.setState({
@@ -64,7 +64,7 @@ class Profile extends Component{
             "state":this.state.State,
             "country":this.state.Country,
             "name":this.state.Name,
-            "user_id":sessionStorage.getItem("user_id")}
+            "user_id":sessionStorage.getItem("cust_user_id")}
         console.log("sending data ",userID);
         axios.post(`${backendServer}/profile/updatecustomerprofile`, userID).then(response =>{
             if(response.data){

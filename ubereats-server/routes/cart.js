@@ -61,9 +61,9 @@ router.post("/removeitems", (req,res)=>{
     })
 });
 
-router.get("/getItems/:cust_id/:res_id", (req,res)=>{
+router.get("/getItems/:cust_id", (req,res)=>{
     console.log(req.params);
-    let sql = "SELECT * FROM Cart WHERE Cust_ID ="+req.params.cust_id+" AND Res_ID="+req.params.res_id+";"
+    let sql = "SELECT * FROM Cart WHERE Cust_ID ="+req.params.cust_id+";"
 
     con.query(sql, (err, result)=>{
         if(err){
@@ -77,11 +77,66 @@ router.get("/getItems/:cust_id/:res_id", (req,res)=>{
             console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
-            res.end("got items");
+            res.end(JSON.stringify(result));
             return;
         }
     })
-})
+});
+
+router.get("/getCartResID/:cust_id", (req,res)=>{
+    console.log(req.params,"called in get cart res");
+    let sql = "SELECT DISTINCT(Res_ID) FROM Cart WHERE Cust_ID ="+req.params.cust_id+";"
+
+    con.query(sql, (err, result)=>{
+        if(err){
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            ans = []
+            for (var i in result){
+                ans.push(result[i].Res_ID);
+            }
+            console.log(ans);
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end(JSON.stringify(ans));
+            return;
+        }
+    })
+});
+router.get("/Order/:cust_id", (req,res)=>{
+    console.log(req.params);
+    let sql = "SELECT * FROM Cart WHERE Cust_ID ="+req.params.cust_id+";"
+
+    con.query(sql, (err, result)=>{
+        if(err){
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            console.log(result);
+            var ans = {"items":result}
+            var total=0;
+            for(var idx in result){
+                total=total+result[idx]["Dish_Price"];
+            }
+            ans["total"] = total;
+            console.log(ans)
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end(JSON.stringify(ans));
+            return;
+        }
+    })
+});
+
 
 
 module.exports = router;

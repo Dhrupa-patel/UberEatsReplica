@@ -29,7 +29,7 @@ router.get("/restaurantprofile/:user_id", (req,res)=>{
             if(result && result.length>0){
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
-                let userObj = {"Name":result[0].Name, "Email_ID":result[0].Res_Email, "Description":result[0].Description,
+                let userObj = {"Name":result[0].Res_Name, "Email_ID":result[0].Res_Email, "Description":result[0].Description,
             "Country":result[0].Country, "State":result[0].Res_State, "City":result[0].Res_City,
         "Dishes":[], "Timings":result[0].Timings,};
                 res.end(JSON.stringify(userObj));

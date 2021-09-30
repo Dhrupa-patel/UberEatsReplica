@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Button, Dropdown, DropdownButton, FormControl, InputGroup, Row } from "react-bootstrap";
+import Button from '@mui/material/Button';
 import Profile from "../Profile/Profile";
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
@@ -32,6 +32,7 @@ class CustomerHome extends Component{
         this.state={
             datas:[],
             userType:localStorage.getItem("userType"),
+            cartRes:[]
         }
     }
 
@@ -41,6 +42,18 @@ class CustomerHome extends Component{
             if(response.data){
                 this.setState({
                     datas:response.data
+                })
+            }
+        }).catch(error =>{
+            if(error.response && error.response.data){
+                console.log(error.response.data);
+            }
+        })
+        axios.get(`${backendServer}/cart/getCartResID/${sessionStorage.getItem("cust_user_id")}`).then(response=>{
+            console.log("cart data", response.data);
+            if(response.data){
+                this.setState({
+                    cartRes:response.data
                 })
             }
         }).catch(error =>{
@@ -84,7 +97,7 @@ class CustomerHome extends Component{
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
             "Dish_ID":item.Dish_ID
         }
-        if("cart_res_id" in sessionStorage && sessionStorage.getItem("cart_res_id")!=item.Res_ID){
+        if(!this.state.cartRes.includes(item.Res_ID)){
             var response = window.confirm("want to empty cart?");
             if(response){
                 this.clearAndAddItem(data);
@@ -138,10 +151,20 @@ class CustomerHome extends Component{
                     <CardActions disableSpacing>
                     <CardActions>
                         {this.state.userType==="customer" ? ( 
-                            <Button onClick={() => this.addToCart(data)}  value={[data]} size="small">Add to Cart</Button>
+                            <Button 
+                            onClick={() => this.addToCart(data)}  
+                            value={[data]} 
+                            size="small">
+                                Add to Cart
+                            </Button>
                         ):
                         (
-                            <Button onClick={this.delete} value={[data.Dish_ID,index]} size="small">Delete Item</Button>
+                            <Button 
+                            onClick={this.delete} 
+                            value={[data.Dish_ID,index]} 
+                            size="small">
+                                Delete Item
+                            </Button>
                         )}
 
                     </CardActions>

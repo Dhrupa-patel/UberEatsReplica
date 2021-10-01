@@ -25,11 +25,13 @@ export const customerSignup = (customerData) => dispatch => {
 
 export const ownerSignup = (ownerData) => dispatch =>{
     axios.defaults.withCredentials=true;
+    console.log("signupactions called",ownerData);
     axios.post(`${backendServer}/signup/owner`,ownerData)
     .then(response => dispatch({
         type:OWNER_SIGNUP,
         payload:response.data
-    }))
+    },console.log("response res = ",response.data)
+    ))
     .catch(error => {
         if(error.response && error.response.data){
             return dispatch({

@@ -90,7 +90,7 @@ class OwnerSignup extends Component{
         }
         else if(this.props.user === "USER_ADDED" && this.state.signup){
             console.log("alert called");
-            alert("Successfully registered");
+            message = "Successfully got Added!"
             redirectVar = <Redirect to="/login" />
         }
         else if(this.state.email_id_exists){

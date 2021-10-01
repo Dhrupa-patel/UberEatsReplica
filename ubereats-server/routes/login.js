@@ -1,6 +1,7 @@
 const express = require("express")
 const mysql = require("mysql");
 const router = express.Router();
+var bcrypt = require("bcrypt"); 
 // const con = require("../serverConfig");
 
 const con = mysql.createConnection({
@@ -16,7 +17,7 @@ con.connect(function(err){
     if (err) throw err;
     console.log("connected");
 })
-
+const saltRounds = 10;
 router.get("/customer", (req, res)=>{
     console.log("customer get API called");
     con.query("SELECT DISTINCT(Cust_Email) from Customers", (err, result)=>{
@@ -38,7 +39,7 @@ router.post("/customer", (req,res)=>{
     console.log("Customer Login", req.body);
     let sql = "SELECT * FROM Customers WHERE Cust_Email='"+req.body.email+"'";
     console.log(sql);
-    con.query(sql, (err, result)=>{
+    con.query(sql, async(err, result)=>{
         console.log(err);
         if(err){
             res.statusCode = 500;
@@ -47,9 +48,14 @@ router.post("/customer", (req,res)=>{
             return;
         }
         if(result && result.length>0){
-            if(req.body.password == result[0].Cust_Password){
+            console.log(result[0])
+            const encryptedPassword = await bcrypt.compare(
+                req.body.password,
+                result[0].Cust_Password
+              );
+            if(encryptedPassword){
                 req.session.userEmailId = req.body.email;
-                let userObj = {user_id:result[0].Cust_ID, name:result[0].Name, location:result[0].Cust_State, email:result[0].Cust_Email, password:result[0].Cust_password};
+                let userObj = {user_id:result[0].Cust_ID, name:result[0].Name, location:result[0].Cust_State, email:result[0].Cust_Email, password:req.body.password};
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
                 res.end(JSON.stringify(userObj));
@@ -74,6 +80,7 @@ router.get("/owner", (req, res)=>{
     console.log("owner get API called");
     con.query("SELECT DISTINCT(Res_Email) from Restaurants", (err, result)=>{
         if(err){
+            console.log(err)
             res.send([]);
         }
         else{
@@ -81,6 +88,7 @@ router.get("/owner", (req, res)=>{
             for(let i=0; i<result.length;i++){
                 emails["Emails"].push(result[i]["Res_Email"]);
             }
+            console.log(emails)
             res.setHeader("Content-Type","text/plain");
             res.end(JSON.stringify(emails));
         }
@@ -90,7 +98,7 @@ router.get("/owner", (req, res)=>{
 router.post("/owner", (req, res)=>{
     console.log("owner Login", req.body);
     let sql = "SELECT * FROM Restaurants WHERE Res_Email='"+req.body.email+"'";
-    con.query(sql, (err, result)=>{
+    con.query(sql, async(err, result)=>{
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -99,7 +107,11 @@ router.post("/owner", (req, res)=>{
         }
         //var result = JSON.stringify(result);
         if(result && result.length>0){
-            if(req.body.password === result[0].Res_Password){
+            const encryptedPassword = await bcrypt.compare(
+                req.body.password,
+                result[0].Res_Password
+              );
+            if(encryptedPassword){
                 req.session.userEmailId = req.body.email;
                 let userObj = {user_id:result[0].Res_ID ,name:result[0].Res_Name, location:result[0].Res_State, email:result[0].Res_Email, password:result[0].Res_Password};
                 res.statusCode = 200;

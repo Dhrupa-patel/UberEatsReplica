@@ -1,5 +1,4 @@
 import {Component} from "react";
-import { Row, Col } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import {connect} from "react-redux";
 import { userLogin } from "../actions/loginAction"
@@ -8,12 +7,9 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -53,7 +49,7 @@ class Login extends Component {
         let message="";
         let user="/customersignup";
         if(this.props.user && this.props.user.user_id){
-            console.log("props calles", this.props.user);
+            console.log("props called", this.props.user);
             sessionStorage.setItem("username",this.props.user.name);
             sessionStorage.setItem("email_id",this.props.user.email);
             if(localStorage.getItem("userType")==="owner"){
@@ -99,6 +95,7 @@ class Login extends Component {
                     required
                     fullWidth
                     id="email"
+                    type="email"
                     label="Email Address"
                     name="email"
                     autoComplete="email"
@@ -135,55 +132,6 @@ class Login extends Component {
               </Box>
             </Container>
           </ThemeProvider>
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // <div>
-            //     {redirectVar}
-            //     <div>
-            //         <Row>
-            //             <Col>
-            //                 <div class="login-form">
-            //                     <div class="main-div">
-            //                         <div class="panel">
-            //                             <h2>SignIn with your UberEats Account</h2>
-            //                         </div><br/>
-            //                         <form onSubmit={this.onSubmit}>
-            //                             <div>{message}</div><br />
-            //                             <div class="form-group">
-            //                                 <input type="email" class="form-control" onChange={this.onChange} name="email" placeholder="Enter your EmailID" required/>
-
-            //                             </div>
-            //                             <div class="form-group">
-            //                                 <input type="password" class="form-control" onChange={this.onChange} name="password" placeholder="Enter Password" required />
-
-            //                             </div>
-            //                             {/* <div class="form-group">
-            //                                 <label for="usertype">Country:</label>
-            //                                 <select name="usertype" id="usertype">
-            //                                     <option value="owner">Restaurant Owner</option>
-            //                                     <option value="customer">Customer</option>
-            //                                 </select>
-            //                             </div> */}
-            //                             <button type="submit" class="btn btn-primary">SignIn</button><br /><br />
-            //                             <div><center><Link to="/CustomerSignup">Create new Account</Link></center></div>
-            //                         </form>
-            //                     </div>
-            //                 </div>
-            //             </Col>
-            //         </Row>
-            //     </div>
-            // </div>
         )
     }
 }

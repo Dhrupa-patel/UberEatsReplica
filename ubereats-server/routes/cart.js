@@ -41,7 +41,7 @@ router.post("/addItem", (req,res)=>{
 
 router.post("/removeitems", (req,res)=>{
     console.log(req.body);
-    let sql = "DELETE FROM Cart WHERE Res_ID="+Number(req.body.Res_ID);
+    let sql = "DELETE FROM Cart WHERE "+req.body.type+"="+Number(req.body[req.body.type]);
 
     con.query(sql, (err, result)=>{
         if(err){
@@ -112,7 +112,7 @@ router.get("/Order/:cust_id", (req,res)=>{
     console.log(req.params);
     let sql = "SELECT * FROM Cart WHERE Cust_ID ="+req.params.cust_id+";"
 
-    con.query(sql, (err, result)=>{
+    con.query(sql, async(err, result)=>{
         if(err){
             console.log(err);
             res.statusCode = 500;
@@ -121,6 +121,7 @@ router.get("/Order/:cust_id", (req,res)=>{
             return;
         }
         else{
+            console.log(result);
             console.log(result);
             var ans = {"items":result}
             var total=0;
@@ -136,6 +137,38 @@ router.get("/Order/:cust_id", (req,res)=>{
         }
     })
 });
+
+router.post("/placeorder", (req,res)=>{
+    console.log(req.body);
+    let sql = "INSERT INTO Orders (Cust_ID, Dish_Name, Delivery_Status, Order_Status, Total_Price, Order_Mode, Res_ID, Order_Date, Order_Time)"+
+    "Values (?)";
+    let dateObj = new Date()
+    let date = dateObj.getFullYear()+"-"+dateObj.getMonth()+"-"+dateObj.getDate();
+    let time = dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds();
+    console.log(date,time);
+    values = [];
+    for(idx in req.body.items){
+        values.push([req.body.items[idx]["Cust_ID"], req.body.items[idx]["Dish_Name"],'New Order','Order Recieved',req.body.price,'Pickup', req.body.items[idx]["Res_ID"], date, time]);
+    }
+    console.log(values);
+    con.query(sql, values, (err, result)=>{
+        if(err){
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            console.log(result);
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Deleted");
+            return;
+        }
+    })
+});
+
 
 
 

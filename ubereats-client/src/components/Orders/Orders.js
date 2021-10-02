@@ -7,11 +7,13 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { Button } from "@mui/material";
 import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
+import { Redirect } from "react-router-dom";
 import axios from "axios";
 import backendServer from "../../webConfig";
 
@@ -40,7 +42,8 @@ class Orders extends Component{
         this.state={
             rows:[],
             resData:{Name:"",State:""},
-            total:0
+            total:0,
+            home:false
         }
     }
 
@@ -62,8 +65,39 @@ class Orders extends Component{
             
         })
     }
+    emptyCart = ()=>{
+        var data={
+            "Cust_ID":sessionStorage.getItem("cust_user_id"),
+            "type":"Cust_ID"
+        }
+        axios.post(`${backendServer}/cart/removeitems`,data).then(response =>{
+            console.log("cart got empty!");
+        }).catch(error =>{
+            console.log(error);
+        })
+        this.setState({
+            home:true
+        })
+    }
+
+    checkout = ()=>{
+        var data = {
+            "items":this.state.rows,
+            "price":this.state.total
+        }
+        axios.post(`${backendServer}/cart/placeorder`,data).then(response =>{
+            console.log("added to orders");
+        }).catch(error =>{
+            console.log(error);
+        })
+        this.emptyCart()
+    }
 
     render(){
+        let redirectVar = null;
+        if(this.state.home){
+            redirectVar = <Redirect to="/home" />
+        }
         let order = (
         <div>
             <Card sx={{ maxWidth: "100%" }}>
@@ -106,10 +140,12 @@ class Orders extends Component{
         );
         return(
             <div>
+                {redirectVar}
                 <NavigationBar />
                 <Container>
                     <h3>Confirm Your Order</h3>
                     {order}
+                    <Button onClick = {this.checkout} >Place an Order</Button>
                 </Container>
             </div>
         )

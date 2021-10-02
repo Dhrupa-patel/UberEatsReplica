@@ -75,7 +75,7 @@ class CustomerHome extends Component{
         sessionStorage.setItem("cart_res_id",data.Res_ID);
     }
     clearAndAddItem = (item)=>{
-        var Res_ID = {"Res_ID":sessionStorage.getItem("cart_res_id")}
+        var Res_ID = {"Res_ID":sessionStorage.getItem("cart_res_id"), "type":"Res_ID"}
         console.log("resid", Res_ID);
         axios.post(`${backendServer}/cart/removeitems`,Res_ID).then(response =>{
             console.log("items deleted");

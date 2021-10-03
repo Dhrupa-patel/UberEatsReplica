@@ -70,7 +70,7 @@ class Cart extends Component{
         </TableContainer>
         <Button
             size="small">
-            <Link to="/orders">
+            <Link to="/checkout">
             Proceed to Checkout
             </Link> 
         </Button>

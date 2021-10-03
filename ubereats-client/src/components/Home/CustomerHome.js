@@ -77,9 +77,8 @@ class CustomerHome extends Component{
             newData:[]
         }
     }
-
-    componentDidMount(){
-        axios.get(`${backendServer}/restaurants/getDetails`).then(response =>{
+    getResDetails = ()=>{
+        axios.get(`${backendServer}/restaurants/getDetails/${sessionStorage.getItem("location")}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({
@@ -92,6 +91,10 @@ class CustomerHome extends Component{
                 console.log(error.response.data);
             }
         })
+    }
+
+    componentDidMount(){
+        this.getResDetails();
         console.log(this.state.datas);
     }
     getResids(ids){

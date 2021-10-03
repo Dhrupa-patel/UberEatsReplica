@@ -11,6 +11,7 @@ import Menu from "./Menu/Menu";
 import Favorites from "./Favorites/Favorites";
 import OwnerHome from "./Home/OwnerHome";
 import Orders from "./Orders/Orders";
+import Checkout from "./Orders/Checkout";
 
 
 class Main extends Component{
@@ -27,6 +28,7 @@ class Main extends Component{
                 <Route exact path="/menu" component={Menu} />
                 <Route exact path="/favorites" component={Favorites} />
                 <Route exact path="/ownerhome" component={OwnerHome} />
+                <Route exact path="/checkout" component={Checkout} />
                 <Route exact path="/orders" component={Orders} />
             </div>
         )

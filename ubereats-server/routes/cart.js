@@ -140,7 +140,7 @@ router.get("/Order/:cust_id", (req,res)=>{
 
 router.post("/placeorder", (req,res)=>{
     console.log(req.body);
-    let sql = "INSERT INTO Orders (Cust_ID, Dish_Name, Delivery_Status, Order_Status, Total_Price, Order_Mode, Res_ID, Order_Date, Order_Time)"+
+    let sql = "INSERT INTO Orders (Cust_ID, Cust_Name, Dish_Name, Delivery_Status, Order_Status, Total_Price, Order_Mode, Res_ID, Order_Date, Order_Time)"+
     "Values (?)";
     let dateObj = new Date()
     let date = dateObj.getFullYear()+"-"+dateObj.getMonth()+"-"+dateObj.getDate();
@@ -148,7 +148,7 @@ router.post("/placeorder", (req,res)=>{
     console.log(date,time);
     values = [];
     for(idx in req.body.items){
-        values.push([req.body.items[idx]["Cust_ID"], req.body.items[idx]["Dish_Name"],'New Order','Order Recieved',req.body.price,'Pickup', req.body.items[idx]["Res_ID"], date, time]);
+        values.push([req.body.items[idx]["Cust_ID"], req.body.Cust_Name, req.body.items[idx]["Dish_Name"],'New Order','Order Recieved',req.body.price,'Pickup', req.body.items[idx]["Res_ID"], date, time]);
     }
     console.log(values);
     con.query(sql, values, (err, result)=>{

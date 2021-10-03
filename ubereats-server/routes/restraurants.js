@@ -16,13 +16,24 @@ con.connect(function(err){
     console.log("connected");
 })
 
-router.get("/getDetails", (req,res)=>{
-
-    con.query("SELECT * from Restaurants", (err, result)=>{
+router.get("/getDetails/:location", (req,res)=>{
+    console.log("called here",req.params);
+    let sql = null;
+    if(!req.params.location==="~"){
+        sql = "SELECT * from Restaurants WHERE Res_State = '"+req.params.location+"'";
+    }
+    else{
+        sql = "SELECT * from Restaurants";
+    }
+    console.log(sql)
+    con.query(sql, (err, result)=>{
         if(err){
-            res.send([]);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end([]);
         }
         else{
+            res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end(JSON.stringify(result));
         }

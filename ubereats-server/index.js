@@ -8,6 +8,7 @@ const menu = require("./routes/menu");
 const customer = require("./routes/customer");
 const images = require("./routes/fileuploads/profile");
 const cart = require("./routes/cart");
+const orders = require("./routes/orders");
 
 app.use("/login", login);
 app.use("/signup", signup);  
@@ -17,6 +18,7 @@ app.use("/menu", menu);
 app.use("/customer", customer);
 app.use("/images",images);
 app.use("/cart", cart);
+app.use("/orders", orders);
 
 
 const port = process.env.PORT || 3002;

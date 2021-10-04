@@ -73,8 +73,8 @@ const s3 = new aws.S3({
  * @desc Upload post image
  * @access public
  */
- router.post( '/profile-img-upload', ( req, res ) => {
-     console.log(req.body);
+ router.post( '/profile-img-upload/:id/:type', ( req, res ) => {
+     console.log(req.body, req.params);
     profileImgUpload( req, res, ( error ) => {
     console.log( 'requestfile', req.file);
     // console.log( 'error', error );
@@ -96,11 +96,20 @@ const s3 = new aws.S3({
                 image: imageName,
                 location: imageLocation
                 } );
-                const sql =
-                "UPDATE Customers SET Cust_ProfileName =?, Cust_ProfileImageLocation=? WHERE Cust_ID =?"
-                var values = [
-                imageName, imageLocation, 1
-                ];
+                let sql = null;
+                if(req.params.type==="customer"){
+                    sql =
+                    "UPDATE Customers SET Cust_ProfileName =?, Cust_ProfileImageLocation=? WHERE Cust_ID =?";
+                }
+                else if(req.params.type==="owner"){
+                    sql =
+                    "UPDATE Restaurants SET Res_ProfileName =?, Res_ProfileImageLocation=? WHERE Res_ID =?";
+                }
+                else{
+                    sql = 
+                    "UPDATE Dishes SET Dish_ProfileName =?, Dish_ProfileImageLocation=? WHERE Dish_ID =?";
+                }
+                var values = [imageName, imageLocation, Number(req.params.id)];
                 con.query(sql, values, function (error, results) {
                     if (error) {            
                         console.log(error)              

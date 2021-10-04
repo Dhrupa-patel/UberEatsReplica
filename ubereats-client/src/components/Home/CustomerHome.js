@@ -74,11 +74,12 @@ class CustomerHome extends Component{
         super();
         this.state={
             datas:[],
-            newData:[]
+            newData:[],
+            delivery_type:"Delivery"
         }
     }
     getResDetails = ()=>{
-        axios.get(`${backendServer}/restaurants/getDetails/${sessionStorage.getItem("location")}`).then(response =>{
+        axios.get(`${backendServer}/restaurants/getDetails/${sessionStorage.getItem("location")}/${this.state.delivery_type}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({
@@ -97,6 +98,7 @@ class CustomerHome extends Component{
         this.getResDetails();
         console.log(this.state.datas);
     }
+
     getResids(ids){
 
         let resids = [];
@@ -105,20 +107,28 @@ class CustomerHome extends Component{
         }
         return resids;
     }
-    search = async (e)=>{
+    search = async(e)=>{
         let search = e.target.value;
         if(search==""){
-            this.setState({
+            await this.setState({
                 newData:this.state.datas
             })
         }
         let resids = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}`);
         resids = await this.getResids(resids.data);
         let newData = await this.state.datas.filter(data => resids.includes(data.Res_ID));
-        this.setState({
+        await this.setState({
             newData:newData
         })
         return;
+    }
+
+    updateDelivertype = async(e)=>{
+        await this.setState({
+            delivery_type:e.target.value
+        })
+        console.log(this.state.delivery_type);
+        this.getResDetails()
     }
 
     addFavorite = (res_id)=>{
@@ -193,7 +203,21 @@ class CustomerHome extends Component{
                             />
                         </Search>
                     </Grid>
-                    <Grid item xs={6}></Grid>
+                    <Grid item xs={6}>
+                        {this.state.delivery_type==="Delivery"?(
+                            <div>
+                                <Button onClick={this.updateDelivertype} value="Delivery" variant="contained">Delivery</Button>
+                                <Button onClick={this.updateDelivertype} value="Pickup" variant="contained">Pickup</Button>
+                            </div>
+                        ):(
+                            <div>
+                                <Button onClick={this.updateDelivertype} value="Delivery" variant="contained">Delivery</Button>
+                                <Button onClick={this.updateDelivertype} value="Pickup" variant="contained">Pickup</Button>
+                            </div>
+                        )}
+                        
+                    </Grid>
+                    <Grid item xs={12}></Grid>
                     {restaurants}
                     </Grid>
                 </Box>

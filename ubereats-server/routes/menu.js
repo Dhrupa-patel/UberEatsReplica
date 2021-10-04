@@ -88,4 +88,29 @@ router.get("/getRestaurantIDs/:search", (req, res)=>{
     });
 });
 
+router.post("/additem", (req,res)=>{
+    console.log("add item called",req.body);
+    let sql = "INSERT INTO Dishes (Res_ID, Dish_Name, Dish_Description, Dish_Category, Restaurant_Name, Dish_Price, Ingredients, Location)"+
+    " Values (?)";
+    values = [req.body.Res_ID, req.body.Dish_Name, req.body.Dish_Description, req.body.Dish_Category, req.body.Restaurant_Name,
+    req.body.Dish_Price, req.body.Ingredients, req.body.Location];
+    console.log(sql);
+    con.query(sql, [values], (err, result)=>{
+        if(err){
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            console.log(result);
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+        }
+    });
+});
+
+
 module.exports = router;

@@ -197,7 +197,7 @@ class CustomerSignup extends Component{
                                 <Select
                                 labelId="country"
                                 id="country"
-                                value={"India"}
+                                defaultValue={"India"}
                                 label="Country"
                                 name="country"
                                 onChange={this.onChange}

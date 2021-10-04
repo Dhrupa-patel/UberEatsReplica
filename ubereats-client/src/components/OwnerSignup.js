@@ -30,8 +30,9 @@ class OwnerSignup extends Component{
             theme:createTheme()
         }
     }
-    componentDidMount(){
-        axios.get(`${backendServer}/login/owner/`).then(response =>{
+    
+    async componentDidMount(){
+        await axios.get(`${backendServer}/login/owner/`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({
@@ -53,12 +54,12 @@ class OwnerSignup extends Component{
         });
     }
 
-    onSubmit = (e) =>{
+    onSubmit = async(e) =>{
         e.preventDefault();
         console.log("called submit ownersignup", this.state);
         if (this.state.emails_ids["Emails"].includes(this.state.email)){
             console.log("already exists");
-            this.setState({
+            await this.setState({
                 email_id_exists:true
             });
             return;
@@ -75,7 +76,7 @@ class OwnerSignup extends Component{
             }
             
             this.props.ownerSignup(data);
-            this.setState({
+            await this.setState({
                 signup:true
             });
             console.log(this.props)
@@ -181,7 +182,7 @@ class OwnerSignup extends Component{
                                 <Select
                                 labelId="country"
                                 id="country"
-                                value={"India"}
+                                defaultValue={"India"}
                                 label="Country"
                                 name="country"
                                 onChange={this.onChange}
@@ -193,12 +194,31 @@ class OwnerSignup extends Component{
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12}>
-                                <TextareaAutosize aria-label="Description"
-                                placeholder="What makes your restaurant the BEST?"
-                                name="description"
-                                id="description"
+                                <FormControl fullWidth>
+                                <InputLabel id="Delivery_Type">Delivery Type</InputLabel>
+                                <Select
+                                labelId="Delivery_Type"
+                                id="DeliveryType"
+                                defaultValue={"Delivery"}
+                                label="DeliveryType"
+                                name="DeliveryType"
                                 onChange={this.onChange}
-                                ></TextareaAutosize>
+                                >
+                                <MenuItem value={"Delivery"}>Delivery</MenuItem>
+                                <MenuItem value={"Pickup"}>Pickup</MenuItem>
+                                </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name="description"
+                                    label="Description"
+                                    id="description"
+                                    autoComplete="What's your tagline!"
+                                    onChange={this.onChange}
+                                    />
                             </Grid>
                         </Grid>
                         <Button

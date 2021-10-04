@@ -50,16 +50,18 @@ class Orders extends Component{
         }
     }
 
-    getOrders = ()=>{
+    getOrders = async()=>{
         axios.get(`${backendServer}/orders/ResOrders/${sessionStorage.getItem("res_user_id")}`).then(response =>{
             console.log("called from orders table", response.data)
             this.setState({
-                rows:response.data,
-                update:false
+                rows:response.data
             })
         }).catch(error =>{
             console.log(error);
         });
+        await this.setState({
+            update:false
+        })
     }
 
     componentDidMount(){
@@ -72,8 +74,8 @@ class Orders extends Component{
         })
     }
 
-    enableEdit = (row)=>{
-        this.setState({
+    enableEdit = async(row)=>{
+        await this.setState({
             update:true,
             id:row.Order_ID
         })
@@ -123,7 +125,7 @@ class Orders extends Component{
                         <Select
                         labelId="update"
                         id="update"
-                        value={"Order Recieved"}
+                        defaultValue={"Order Recieved"}
                         label="Order Status"
                         name="update"
                         onChange={this.onChange}

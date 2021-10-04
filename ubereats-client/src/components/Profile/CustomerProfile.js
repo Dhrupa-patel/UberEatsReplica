@@ -42,8 +42,8 @@ class Profile extends Component{
             }
         })
     }
-    update = (e)=>{
-        this.setState({
+    update = async(e)=>{
+        await this.setState({
             update:true
         })
 
@@ -52,6 +52,15 @@ class Profile extends Component{
     onChange =(e)=>{
         this.setState({
             [e.target.name]:e.target.value
+        })
+    }
+    updateProfile = async(data)=>{
+        await axios.post(`${backendServer}/profile/updatecustomerprofile`, data).then(response =>{
+        }).catch( (error) => {
+            console.log(error);
+        });
+        await this.setState({
+            update:false
         })
     }
 
@@ -66,20 +75,8 @@ class Profile extends Component{
             "name":this.state.Name,
             "user_id":sessionStorage.getItem("cust_user_id")}
         console.log("sending data ",userID);
-        axios.post(`${backendServer}/profile/updatecustomerprofile`, userID).then(response =>{
-            if(response.data){
-                this.setState({
-                    datas:[response.data.profile],
-                    fileName:response.data.fileName
-                })
-                this.setState({
-                    update:false
-                })
-                console.log("updated");
-            }
-        }).catch( (error) => {
-            console.log(error);
-        });
+        this.updateProfile(userID);
+        console.log("updated");
     }
 
     singleFileChangedHandler = async(e)=>{
@@ -93,7 +90,8 @@ class Profile extends Component{
         {
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
-            axios.post( `${backendServer}/images/profile-img-upload`, form_data, {
+            var data
+            axios.post( `${backendServer}/images/profile-img-upload/${sessionStorage.getItem("cust_user_id")}/customer`, form_data, {
                 headers: {
                 'accept': 'application/json',
                 'Accept-Language': 'en-US,en;q=0.8',
@@ -142,7 +140,10 @@ class Profile extends Component{
                                 required
                                 name={key}
                                 label={key}
+                                style = {{width:"50%"}}
                                 id={key}
+                                // defaultValue={this.state.datas[0][key]}
+                                // value = {this.state.datas[0][key]}
                                 autoComplete={key}
                                 onChange={this.onChange}
                                 />

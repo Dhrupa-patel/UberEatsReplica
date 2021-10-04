@@ -16,14 +16,14 @@ con.connect(function(err){
     console.log("connected");
 })
 
-router.get("/getDetails/:location", (req,res)=>{
+router.get("/getDetails/:location/:deliveryType", (req,res)=>{
     console.log("called here",req.params);
     let sql = null;
-    if(!req.params.location==="~"){
-        sql = "SELECT * from Restaurants WHERE Res_State = '"+req.params.location+"'";
+    if(req.params.location==="~"){
+        sql = "SELECT * from Restaurants";
     }
     else{
-        sql = "SELECT * from Restaurants";
+        sql = "SELECT * from Restaurants WHERE Res_State = '"+req.params.location+"' && Delivery_Type = '"+req.params.deliveryType+"'";
     }
     console.log(sql)
     con.query(sql, (err, result)=>{

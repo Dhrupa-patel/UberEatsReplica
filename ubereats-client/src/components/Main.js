@@ -12,7 +12,7 @@ import Favorites from "./Favorites/Favorites";
 import OwnerHome from "./Home/OwnerHome";
 import Orders from "./Orders/Orders";
 import Checkout from "./Orders/Checkout";
-
+import AddItem from "./Menu/AddItem";
 
 class Main extends Component{
     render(){
@@ -30,6 +30,7 @@ class Main extends Component{
                 <Route exact path="/ownerhome" component={OwnerHome} />
                 <Route exact path="/checkout" component={Checkout} />
                 <Route exact path="/orders" component={Orders} />
+                <Route exact path="/addDishes" component={AddItem} />
             </div>
         )
     }

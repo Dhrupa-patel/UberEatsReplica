@@ -17,10 +17,10 @@ class LandingPage extends Component{
         this.state={};
     }
 
-    addUser = (e)=>{
+    addUser = async(e)=>{
         console.log("usertype:", e.target.value);
         localStorage.setItem("userType", e.target.value);
-        this.setState({
+        await this.setState({
             selected:1
         })
     }

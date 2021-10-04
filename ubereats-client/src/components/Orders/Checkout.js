@@ -65,7 +65,7 @@ class Checkout extends Component{
             
         })
     }
-    emptyCart = ()=>{
+    emptyCart = async()=>{
         var data={
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
             "type":"Cust_ID"
@@ -75,7 +75,7 @@ class Checkout extends Component{
         }).catch(error =>{
             console.log(error);
         })
-        this.setState({
+        await this.setState({
             home:true
         })
     }

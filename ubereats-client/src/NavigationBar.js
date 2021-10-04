@@ -81,10 +81,11 @@ class NavigationBar extends Component{
         }
     }
 
-    logout = ()=>{
+    logout = async()=>{
         window.localStorage.clear();
+        window.sessionStorage.clear();
         this.props.userLogout();
-        this.setState({
+        await this.setState({
             logout:true
         });
     }
@@ -105,7 +106,7 @@ class NavigationBar extends Component{
                     <Grid sx={6}>
                         <Link to="/home"><Button style={{color: "black"}} type="button" color="inherit">Home</Button></Link>
                         <Link to="/profile"><Button style={{color: "black"}} type="button" color="inherit">Profile</Button></Link>
-                        <Link to="/addEditDishes"><Button style={{color: "black"}} type="button" color="inherit">Add/Edit Dishes</Button></Link>
+                        <Link to="/addDishes"><Button style={{color: "black"}} type="button" color="inherit">Add Dishes</Button></Link>
                         <Link to="/orders"><Button style={{color: "black"}} type="button" color="inherit">Orders</Button></Link>
                     </Grid>
                 )

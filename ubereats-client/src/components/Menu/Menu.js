@@ -36,8 +36,8 @@ class CustomerHome extends Component{
         }
     }
 
-    componentDidMount(){
-        axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("res_user_id")}`).then(response =>{
+    async componentDidMount(){
+        await axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("res_user_id")}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({
@@ -49,7 +49,7 @@ class CustomerHome extends Component{
                 console.log(error.response.data);
             }
         })
-        axios.get(`${backendServer}/cart/getCartResID/${sessionStorage.getItem("cust_user_id")}`).then(response=>{
+        await axios.get(`${backendServer}/cart/getCartResID/${sessionStorage.getItem("cust_user_id")}`).then(response=>{
             console.log("cart data", response.data);
             if(response.data){
                 this.setState({
@@ -64,8 +64,8 @@ class CustomerHome extends Component{
         console.log(this.state);
     }
 
-    addItem = (data)=>{
-        axios.post(`${backendServer}/cart/additem`,data).then(response =>{
+    addItem = async(data)=>{
+        await axios.post(`${backendServer}/cart/additem`,data).then(response =>{
             console.log("item added");
         }).catch(error =>{
             if(error.response && error.response.data){
@@ -109,7 +109,7 @@ class CustomerHome extends Component{
         }
 
     }
-    delete = (e,index)=>{
+    delete = async(e,index)=>{
         var id = {"dish_id":e.target.value[0]};
         axios.post(`${backendServer}/menu/delete`,id).then(response =>{
             console.log("deleted");
@@ -120,7 +120,7 @@ class CustomerHome extends Component{
         });
         let items = [...this.state.datas];
         items.splice(e.target.value[1],1);
-        this.setState({
+        await this.setState({
             datas: items
         })
     }

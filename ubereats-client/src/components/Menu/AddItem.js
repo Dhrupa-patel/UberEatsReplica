@@ -1,34 +1,20 @@
 import { Component } from "react";
-import { Button, Dropdown, DropdownButton, FormControl, InputGroup, Row } from "react-bootstrap";
-import Profile from "../Profile/Profile";
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
-import Box from '@mui/material/Box';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Grid from '@mui/material/Grid';
-import NavigationBar from "../../NavigationBar";
-import axios from "axios";
-import backendServer from "../../webConfig";
 import { Redirect } from "react-router-dom";
-import { withRouter } from "react-router";
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Container from '@mui/material/Container';
 import axios from "axios";
 import backendServer from "../../webConfig";
+import NavigationBar from "../../NavigationBar";
 
-class CustomerHome extends Component{
+class AddItem extends Component{
     constructor(){
         super();
         this.state={
@@ -42,7 +28,7 @@ class CustomerHome extends Component{
         })
     }
 
-    onSubmit = (e)=>{
+    onSubmit = async(e)=>{
         let data = {
             "Res_ID":sessionStorage.getItem("res_user_id"),
             "Dish_Name": this.state.dishName,
@@ -50,23 +36,32 @@ class CustomerHome extends Component{
             "Dish_Category": this.state.dishCategory,
             "Dish_Price": this.state.dishPrice,
             "Ingredients": this.state.ingredients,
-            "Restaurant_Name": sessionStorage.getItem("Restaurant_Name"),
+            "Restaurant_Name": sessionStorage.getItem("username"),
             "Location": sessionStorage.getItem("location")
         }
+        console.log(data);
         axios.post(`${backendServer}/menu/addItem`, data).then(response =>{
         }).catch(error =>{
             if(error.response && error.response.data){
                 console.log(error.response.data);
             }
         })
-        this.props.history.push("/home");
+        await this.setState({
+            submit:true
+        })
 
     }
 
     render(){
+        let redirectVar = null;
+        if(this.state.submit){
+            redirectVar = <Redirect to="/home"></Redirect>
+        }
         return(
-            <ThemeProvider theme={this.state.theme}>
+            <div>
                 {redirectVar}
+            <NavigationBar/>
+            <ThemeProvider theme={this.state.theme}>
                 <Container component="main" maxWidth="xs">
                     <CssBaseline />
                     <Box
@@ -77,13 +72,9 @@ class CustomerHome extends Component{
                         alignItems: 'center',
                     }}
                     >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
+                    <Typography component="h1" variant="h5" style={{padding:"2%"}}>
                         Add Item
-                    </Typography>
-                    <p>{message}</p>
+                    </Typography><br />
                     <Box component="form" onSubmit={this.onSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
@@ -147,6 +138,7 @@ class CustomerHome extends Component{
                         type="submit"
                         fullWidth
                         variant="contained"
+                        onClick={this.submit}
                         sx={{ mt: 3, mb: 2 }}
                         >
                         Add item
@@ -155,8 +147,9 @@ class CustomerHome extends Component{
                     </Box>
                 </Container>
             </ThemeProvider>
+            </div>
         );
     }
 
 }
-export default CustomerHome;
+export default AddItem;

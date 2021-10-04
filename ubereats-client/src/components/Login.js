@@ -28,7 +28,7 @@ class Login extends Component {
         })
     }
 
-    onSubmit = (e) => {
+    onSubmit = async(e) => {
         e.preventDefault();
         console.log("onsubmit login", this.state);
         const data = {
@@ -38,7 +38,7 @@ class Login extends Component {
         console.log("data",data);
         this.props.userLogin(data);
         console.log("onsubmit prop",this.props);
-        this.setState({
+        await this.setState({
             loggedIn:true
         });
     }

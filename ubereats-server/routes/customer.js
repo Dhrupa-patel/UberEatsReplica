@@ -50,7 +50,7 @@ router.get("/getFavorites/:customerID", (req,res)=>{
                     resids.push(result[i].Res_ID);
                 }
             }
-            let datas = await axios.get(`${url}/restaurants/getDetails/~/~`);
+            let datas = await axios.get(`${url}/restaurants/getDetails/~/~/~`);
             console.log(datas);
             let ans = [];
             for (idx in datas.data){

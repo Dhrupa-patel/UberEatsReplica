@@ -1,6 +1,6 @@
 import { Component } from "react";
-import { Button, Dropdown, DropdownButton, FormControl, InputGroup, Row } from "react-bootstrap";
 import Profile from "../Profile/Profile";
+import Button from '@mui/material/Button';
 import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -24,6 +24,7 @@ import backendServer from "../../webConfig";
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
+import { createTheme } from "@mui/material/styles";
 import {Route, withRouter } from "react-router";
 
 const Search = styled('div')(({ theme }) => ({
@@ -68,6 +69,18 @@ const Search = styled('div')(({ theme }) => ({
     },
   }));
 
+  const theme = createTheme({
+      palette:{
+          primary:{
+              main:'#004d40',
+          },
+
+          secondary:{
+              main:'#f5f5f5',
+          },
+      },
+  })
+
 class CustomerHome extends Component{
 
     constructor(){
@@ -75,11 +88,12 @@ class CustomerHome extends Component{
         this.state={
             datas:[],
             newData:[],
-            delivery_type:"Delivery"
+            delivery_type:"Delivery",
+            menu_category:"Veg"
         }
     }
     getResDetails = ()=>{
-        axios.get(`${backendServer}/restaurants/getDetails/${sessionStorage.getItem("location")}/${this.state.delivery_type}`).then(response =>{
+        axios.get(`${backendServer}/restaurants/getDetails/${sessionStorage.getItem("location")}/${this.state.delivery_type}/${this.state.menu_category}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({
@@ -131,6 +145,14 @@ class CustomerHome extends Component{
         this.getResDetails()
     }
 
+    updateMenuCategory = async(e)=>{
+        await this.setState({
+            menu_category:e.target.value
+        })
+        console.log(this.state)
+        this.getResDetails()
+    }
+
     addFavorite = (res_id)=>{
         console.log(res_id);
         let data = {"Cust_id":sessionStorage.getItem("cust_user_id"), "res_id":res_id};
@@ -154,7 +176,7 @@ class CustomerHome extends Component{
             console.log(data)
             return(
                 <Grid item xs={4}>
-                    <Card style = {{width:"100%", height:"100%"}}>
+                    <Card>
                     <CardHeader
                         avatar={
                         <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -166,16 +188,12 @@ class CustomerHome extends Component{
                     />
                     <CardMedia
                         component="img"
-                        height="10%"
-                        image="/static/images/cards/paella.jpg"
-                        alt="Paella dish"
+                        height="140"
+                        image={data.Res_ProfileImageLocation}
                     />
                     <CardContent>
                         <Typography variant="body2" color="text.secondary">
-                        {data.Description}<br/>
-                        Timings: {data.Timings}<br/>
-                        State: {data.Res_State}<br/>
-                        Phone Number: {data.Phone_Number}<br/>
+                        {data.Description}
                         </Typography>
                     </CardContent>
                     <CardActions disableSpacing>
@@ -203,19 +221,42 @@ class CustomerHome extends Component{
                             />
                         </Search>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={3}>
+                        {this.state.menu_category==="Veg" && 
+                            <div>
+                                <Button onClick={this.updateMenuCategory} theme={theme} value="Delivery" variant="contained">Veg</Button>
+                                <Button onClick={this.updateMenuCategory} value="Vegan" variant="contained">Vegan</Button>
+                                <Button onClick={this.updateMenuCategory} value="NonVeg" variant="contained">Non-Veg</Button>
+                            </div>
+                        }
+                        {this.state.menu_category==="Vegan" &&
+                                <div>
+                                    <Button onClick={this.updateMenuCategory} value="Veg" variant="contained">Veg</Button>
+                                    <Button onClick={this.updateMenuCategory} theme={theme}value="Vegan" variant="contained">Vegan</Button>
+                                    <Button onClick={this.updateMenuCategory} value="NonVeg" variant="contained">Non-Veg</Button>
+                                </div>
+                        }
+                        {this.state.menu_category==="NonVeg" &&
+                                <div>
+                                    <Button onClick={this.updateMenuCategory} value="Veg" variant="contained">Veg</Button>
+                                    <Button onClick={this.updateMenuCategory} value="Vegan" variant="contained">Vegan</Button>
+                                    <Button onClick={this.updateMenuCategory} theme={theme} value="NonVeg" variant="contained">Non-Veg</Button>
+                                </div>
+                        }
+                        
+                    </Grid>
+                    <Grid item xs={3}>
                         {this.state.delivery_type==="Delivery"?(
                             <div>
-                                <Button onClick={this.updateDelivertype} value="Delivery" variant="contained">Delivery</Button>
+                                <Button onClick={this.updateDelivertype} theme={theme} value="Delivery" variant="contained">Delivery</Button>
                                 <Button onClick={this.updateDelivertype} value="Pickup" variant="contained">Pickup</Button>
                             </div>
                         ):(
                             <div>
-                                <Button onClick={this.updateDelivertype} value="Delivery" variant="contained">Delivery</Button>
+                                <Button onClick={this.updateDelivertype} theme={theme} value="Delivery" variant="contained">Delivery</Button>
                                 <Button onClick={this.updateDelivertype} value="Pickup" variant="contained">Pickup</Button>
                             </div>
                         )}
-                        
                     </Grid>
                     <Grid item xs={12}></Grid>
                     {restaurants}

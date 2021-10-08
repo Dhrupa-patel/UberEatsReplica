@@ -27,7 +27,10 @@ class OwnerSignup extends Component{
     constructor(){
         super();
         this.state={
-            theme:createTheme()
+            theme:createTheme(),
+            deliverytype:"Delivery",
+            menucategory:"Veg",
+            country:"India"
         }
     }
     
@@ -47,9 +50,9 @@ class OwnerSignup extends Component{
         console.log(this.state.emails_ids);
     }
 
-    onChange = (e) =>{
+    onChange = async(e) =>{
         e.preventDefault();
-        this.setState({
+        await this.setState({
             [e.target.name]: e.target.value
         });
     }
@@ -72,6 +75,8 @@ class OwnerSignup extends Component{
                 city: this.state.city,
                 state: this.state.state,
                 country: this.state.country,
+                menucategory:this.state.menucategory,
+                delivery:this.state.deliverytype,
                 description: this.state.description
             }
             
@@ -198,14 +203,31 @@ class OwnerSignup extends Component{
                                 <InputLabel id="Delivery_Type">Delivery Type</InputLabel>
                                 <Select
                                 labelId="Delivery_Type"
-                                id="DeliveryType"
+                                id="deliverytype"
                                 defaultValue={"Delivery"}
-                                label="DeliveryType"
-                                name="DeliveryType"
+                                label="Delivery Type"
+                                name="deliverytype"
                                 onChange={this.onChange}
                                 >
                                 <MenuItem value={"Delivery"}>Delivery</MenuItem>
                                 <MenuItem value={"Pickup"}>Pickup</MenuItem>
+                                </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl fullWidth>
+                                <InputLabel id="Menu_Category">Menu Category</InputLabel>
+                                <Select
+                                labelId="Menu_Category"
+                                id="menucategory"
+                                defaultValue={"Veg"}
+                                label="Menu Category"
+                                name="menucategory"
+                                onChange={this.onChange}
+                                >
+                                <MenuItem value={"Veg"}>Veg</MenuItem>
+                                <MenuItem value={"Vegan"}>Vegan</MenuItem>
+                                <MenuItem value={"NonVeg"}>Non veg</MenuItem>
                                 </Select>
                                 </FormControl>
                             </Grid>

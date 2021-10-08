@@ -119,7 +119,7 @@ class Orders extends Component{
                     </StyledTableCell>
                     <StyledTableCell align="right"><Link to="/profile">{row.Cust_Name}</Link></StyledTableCell>
                     <StyledTableCell align="right">{row.Delivery_type}</StyledTableCell>
-                    {this.state.update & this.state.id===row.Order_ID ? ( 
+                    {this.state.update && this.state.id===row.Order_ID ? ( 
                         <FormControl>
                         <InputLabel id="update">Order Status</InputLabel>
                         <Select

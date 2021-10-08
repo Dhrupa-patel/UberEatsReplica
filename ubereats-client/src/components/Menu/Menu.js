@@ -32,7 +32,8 @@ class CustomerHome extends Component{
         this.state={
             datas:[],
             userType:localStorage.getItem("userType"),
-            cartRes:[]
+            cartRes:[],
+            edititem = false
         }
     }
 
@@ -109,6 +110,11 @@ class CustomerHome extends Component{
         }
 
     }
+
+    editItem = async(e)=>{
+
+    }
+
     delete = async(e,index)=>{
         var id = {"dish_id":e.target.value[0]};
         axios.post(`${backendServer}/menu/delete`,id).then(response =>{
@@ -129,48 +135,55 @@ class CustomerHome extends Component{
         let dishes = this.state.datas.map((data,index) => {
             console.log(data)
             return(
-                <Grid item xs={4}>
-                    <Card style = {{width:"100%", height:"100%"}}>
-                    <CardHeader
-                        title={data.Dish_Name}
-                    />
-                    <CardMedia
-                        component="img"
-                        height="10%"
-                        image="/static/images/cards/paella.jpg"
-                        alt="Paella dish"
-                    />
-                    <CardContent>
-                        <Typography variant="body2" color="text.secondary">
-                        {data.Dish_Category}<br/>
-                        Dish Description: {data.Dish_Description}<br/>
-                        Dish Price: {data.Dish_Price}<br/>
-                        Ingredients:{data.Ingredients}
-                        </Typography>
-                    </CardContent>
-                    <CardActions disableSpacing>
-                    <CardActions>
-                        {this.state.userType==="customer" ? ( 
-                            <Button 
-                            onClick={() => this.addToCart(data)}  
-                            value={[data]} 
-                            size="small">
-                                Add to Cart
-                            </Button>
-                        ):
-                        (
-                            <Button 
-                            onClick={this.delete} 
-                            value={[data.Dish_ID,index]} 
-                            size="small">
-                                Delete Item
-                            </Button>
-                        )}
+                    <Grid item xs={4}>
+                        <Card style = {{width:"100%", height:"100%"}}>
+                        <CardHeader
+                            title={data.Dish_Name}
+                        />
+                        <CardMedia
+                            component="img"
+                            height="10%"
+                            image="/static/images/cards/paella.jpg"
+                            alt={data.Dish_Name}
+                        />
+                        <CardContent>
+                            <Typography variant="body2" color="text.secondary">
+                            {data.Dish_Category}<br/>
+                            Dish Description: {data.Dish_Description}<br/>
+                            Dish Price: {data.Dish_Price}<br/>
+                            Ingredients:{data.Ingredients}
+                            </Typography>
+                        </CardContent>
+                        <CardActions disableSpacing>
+                        <CardActions>
+                            {this.state.userType==="customer" ? ( 
+                                <Button 
+                                onClick={() => this.addToCart(data)}  
+                                value={[data]} 
+                                size="small">
+                                    Add to Cart
+                                </Button>
+                            ):
+                            (   <div>
+                                    <Button 
+                                    onClick={this.delete} 
+                                    value={[data.Dish_ID,index]} 
+                                    size="small">
+                                        Delete Item
+                                    </Button>
+                                    <Button 
+                                    onClick={this.editItem} 
+                                    value={[data.Dish_ID,index]} 
+                                    size="small">
+                                        Edit Item
+                                    </Button>
+                                </div>
+                            )}
 
-                    </CardActions>
-                    </CardActions>
-                    </Card>
-                </Grid>
+                        </CardActions>
+                        </CardActions>
+                        </Card>
+                    </Grid>
             )
         });
 

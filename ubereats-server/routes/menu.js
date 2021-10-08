@@ -95,7 +95,7 @@ router.post("/additem", (req,res)=>{
     values = [req.body.Res_ID, req.body.Dish_Name, req.body.Dish_Description, req.body.Dish_Category, req.body.Restaurant_Name,
     req.body.Dish_Price, req.body.Ingredients, req.body.Location];
     console.log(sql);
-    con.query(sql, [values], (err, result)=>{
+    con.query(sql, [values] , (err, result)=>{
         if(err){
             console.log(err);
             res.statusCode = 500;

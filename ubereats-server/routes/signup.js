@@ -55,11 +55,12 @@ router.post("/owner", async(req, res)=>{
     console.log("owner Signup", req.body);
     const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
     let sql = "INSERT INTO Restaurants (Res_Name, Res_State, Res_City, Phone_Number, Timings,\
-        Res_Password, Country, Description, Res_Email) \
+        Res_Password, Country, Description, Res_Email,Delivery_Type,Menu_Category) \
         VALUES (?)";
     
     var values = [req.body.name, req.body.state, req.body.city,
-        "+916468307496","8:00-23:00",hashPassword, req.body.country,req.body.description,req.body.email];
+        "+916468307496","8:00-23:00",hashPassword, req.body.country,req.body.description,req.body.email,req.body.delivery,
+    req.body.menucategory];
 
     con.query(sql, [values], (err, result)=>{
         if(err){

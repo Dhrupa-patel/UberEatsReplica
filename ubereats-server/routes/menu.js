@@ -111,6 +111,28 @@ router.post("/additem", (req,res)=>{
         }
     });
 });
+router.post("/edititem", (req,res)=>{
+    console.log("edit item called",req.body);
+    let sql = "UPDATE Dishes SET Dish_Name=?, Dish_Description=?, Dish_Category=?, Dish_Price=?, Ingredients=? WHERE Dish_ID=?";
+    values = [req.body.dishname, req.body.description, req.body.category, req.body.price,
+    req.body.ingredients,Number(req.body.dishid)];
+    console.log(sql);
+    con.query(sql, values , (err, result)=>{
+        if(err){
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            console.log(result);
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+        }
+    });
+});
 
 
 module.exports = router;

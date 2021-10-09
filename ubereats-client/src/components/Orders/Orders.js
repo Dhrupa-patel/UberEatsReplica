@@ -81,18 +81,14 @@ class Orders extends Component{
         })
     }
 
-    update = (row)=>{
+    update = async(row)=>{
         console.log(row,this.state)
         var data = {
             "Order_ID":row.Order_ID,
             "Order_Status": this.state.Delivery_Status
         }
-        axios.post(`${backendServer}/orders/updateStatus`,data).then(response =>{
-            console.log("called from orders table", response.data)
-        }).catch(error =>{
-            console.log(error);
-        });
-        this.getOrders();
+        var res = await axios.post(`${backendServer}/orders/updateStatus`,data);
+        await this.getOrders();
         console.log(this.state);
     }
 

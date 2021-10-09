@@ -137,16 +137,16 @@ class Profile extends Component{
                         <Typography name={key}>{key}: {this.state.datas[0][key]}</Typography>
                     ):(
                         <TextField
-                                required
-                                name={key}
-                                label={key}
-                                style = {{width:"50%"}}
-                                id={key}
-                                // defaultValue={this.state.datas[0][key]}
-                                // value = {this.state.datas[0][key]}
-                                autoComplete={key}
-                                onChange={this.onChange}
-                                />
+                            required
+                            name={key}
+                            label={key}
+                            style = {{width:"50%"}}
+                            id={key}
+                            // defaultValue={this.state.datas[0][key]}
+                            // value = {this.state.datas[0][key]}
+                            autoComplete={key}
+                            onChange={this.onChange}
+                        />
                     )} 
                 </Grid>)
             }
@@ -169,7 +169,6 @@ class Profile extends Component{
                     className="btn-choose"
                     variant="outlined"
                     component="span" 
-                    onChange={this.singleFileUploadHandler}
                     >
                     Choose Image
                 </Button>

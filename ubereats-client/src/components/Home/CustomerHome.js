@@ -253,8 +253,8 @@ class CustomerHome extends Component{
                             </div>
                         ):(
                             <div>
-                                <Button onClick={this.updateDelivertype} theme={theme} value="Delivery" variant="contained">Delivery</Button>
-                                <Button onClick={this.updateDelivertype} value="Pickup" variant="contained">Pickup</Button>
+                                <Button onClick={this.updateDelivertype} value="Delivery" variant="contained">Delivery</Button>
+                                <Button onClick={this.updateDelivertype} theme={theme} value="Pickup" variant="contained">Pickup</Button>
                             </div>
                         )}
                     </Grid>

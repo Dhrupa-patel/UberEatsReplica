@@ -16,7 +16,7 @@ con.connect(function(err){
 })
 
 router.get("/getDetails/:location/:deliveryType/:menuCategory", (req,res)=>{
-    console.log("called here",req.params);
+    // console.log("called here",req.params);
     let sql = null;
     if(req.params.location==="~"){
         sql = "SELECT * from Restaurants";
@@ -24,7 +24,7 @@ router.get("/getDetails/:location/:deliveryType/:menuCategory", (req,res)=>{
     else{
         sql = "SELECT * from Restaurants WHERE Res_State = '"+req.params.location+"' && Delivery_Type = '"+req.params.deliveryType+"' && Menu_Category = '"+req.params.menuCategory+"'";
     }
-    console.log(sql)
+    // console.log(sql)
     con.query(sql, (err, result)=>{
         if(err){
             res.statusCode = 500;

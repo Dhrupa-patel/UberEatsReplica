@@ -28,7 +28,7 @@ router.post("/customer", async(req,res)=>{
     // console.log("sql",sql);
     con.query(sql, values, (err, result)=>{
         if(err){
-            console.log(err);
+            // console.log(err);
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
             res.end("Error in Data");
@@ -63,7 +63,7 @@ router.post("/owner", async(req, res)=>{
 
     con.query(sql, [values], (err, result)=>{
         if(err){
-            console.log(err);
+            // console.log(err);
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
             res.end("Database Error");

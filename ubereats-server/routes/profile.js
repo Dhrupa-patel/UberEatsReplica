@@ -12,7 +12,6 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
 
 router.get("/restaurantprofile/:user_id", (req,res)=>{
@@ -40,7 +39,7 @@ router.get("/restaurantprofile/:user_id", (req,res)=>{
 });
 
 router.post("/updatecustomerprofile", (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     let sql = "UPDATE Customers SET Cust_Email=?, Cust_DOB=?, Cust_City =?,"+
     "Cust_State=?, Cust_Country=?, Name=? WHERE Cust_ID =?";
     var values = [

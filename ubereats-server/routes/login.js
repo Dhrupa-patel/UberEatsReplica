@@ -79,7 +79,7 @@ router.get("/owner", (req, res)=>{
     console.log("owner get API called");
     con.query("SELECT DISTINCT(Res_Email) from Restaurants", (err, result)=>{
         if(err){
-            console.log(err)
+            // console.log(err)
             res.send([]);
         }
         else{
@@ -87,7 +87,7 @@ router.get("/owner", (req, res)=>{
             for(let i=0; i<result.length;i++){
                 emails["Emails"].push(result[i]["Res_Email"]);
             }
-            console.log(emails)
+            // console.log(emails)
             res.setHeader("Content-Type","text/plain");
             res.end(JSON.stringify(emails));
         }

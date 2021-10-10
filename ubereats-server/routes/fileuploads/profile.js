@@ -17,7 +17,6 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
 
 const s3 = new aws.S3({
@@ -74,22 +73,21 @@ const s3 = new aws.S3({
  * @access public
  */
  router.post( '/profile-img-upload/:id/:type', ( req, res ) => {
-     console.log(req.body, req.params);
+    //  console.log(req.body, req.params);
     profileImgUpload( req, res, ( error ) => {
-    console.log( 'requestfile', req.file);
+    // console.log( 'requestfile', req.file);
     // console.log( 'error', error );
         if( error ){
-            console.log( 'errors', error );
+            // console.log( 'errors', error );
             res.json( { error: error } );
         } else {
             // If File not found
             if( req.file === undefined ){
-                console.log( 'Error: No File Selected!' );
+                // console.log( 'Error: No File Selected!' );
                 res.json( 'Error: No File Selected' );
 
             } else {
             // If Success
-                console.log("here");
                 const imageName = req.file.key;
                 const imageLocation = req.file.location;// Save the file name into database into profile model
                 res.json( {
@@ -113,13 +111,13 @@ const s3 = new aws.S3({
                     var values = [imageName, imageLocation, Number(req.params.id)];
                     con.query(sql, values, function (error, results) {
                         if (error) {            
-                            console.log(error)              
+                            // console.log(error)              
                             res.writeHead(200, {              
                                 "Content-Type": "text/plain",            
                             });            
                             res.end(error.code);          
                         } else {
-                            console.log(results);
+                            // console.log(results);
                             res.end(JSON.stringify(results));
                         }
                     });

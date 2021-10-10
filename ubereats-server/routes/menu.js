@@ -17,10 +17,8 @@ con.connect(function(err){
 })
 
 router.get("/getDetails/:user_id", (req,res)=>{
-    console.log("menu res called",req.params);
     let sql = "SELECT * FROM Dishes WHERE Res_ID='"+req.params.user_id+"'";
     con.query(sql, (err, result)=>{
-        console.log(err);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -31,7 +29,7 @@ router.get("/getDetails/:user_id", (req,res)=>{
             if(result && result.length>0){
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
-                console.log(result);
+                // console.log(result);
                 res.end(JSON.stringify(result));
             }
         }
@@ -87,22 +85,22 @@ router.get("/getRestaurantIDs/:search", (req, res)=>{
 });
 
 router.post("/additem", (req,res)=>{
-    console.log("add item called",req.body);
+    // console.log("add item called",req.body);
     let sql = "INSERT INTO Dishes (Res_ID, Dish_Name, Dish_Description, Dish_Category, Restaurant_Name, Dish_Price, Ingredients, Location,"+
     "Dish_ProfileName, Dish_ProfileImageLocation) Values (?)";
     values = [req.body.Res_ID, req.body.Dish_Name, req.body.Dish_Description, req.body.Dish_Category, req.body.Restaurant_Name,
     req.body.Dish_Price, req.body.Ingredients, req.body.Location, req.body.imagename, req.body.imagelocation];
-    console.log(sql);
+    // console.log(sql);
     con.query(sql, [values] , (err, result)=>{
         if(err){
-            console.log(err);
+            // console.log(err);
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
             res.end("Database Error");
             return;
         }
         else{
-            console.log(result);
+            // console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end("success");
@@ -110,21 +108,21 @@ router.post("/additem", (req,res)=>{
     });
 });
 router.post("/edititem", (req,res)=>{
-    console.log("edit item called",req.body);
+    // console.log("edit item called",req.body);
     let sql = "UPDATE Dishes SET Dish_Name=?, Dish_Description=?, Dish_Category=?, Dish_Price=?, Ingredients=? WHERE Dish_ID=?";
     values = [req.body.dishname, req.body.description, req.body.category, req.body.price,
     req.body.ingredients,Number(req.body.dishid)];
-    console.log(sql);
+    // console.log(sql);
     con.query(sql, values , (err, result)=>{
         if(err){
-            console.log(err);
+            // console.log(err);
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
             res.end("Database Error");
             return;
         }
         else{
-            console.log(result);
+            // console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end("success");

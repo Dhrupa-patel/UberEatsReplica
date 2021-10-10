@@ -18,11 +18,11 @@ con.connect(function(err){
 })
 
 router.post("/addfavorites", (req,res)=>{
-    console.log("add to favorites", req.body)
+    // console.log("add to favorites", req.body)
     var sql = "INSERT INTO Favorites (Res_ID, Cust_ID) VALUES ("+req.body.res_id+","+req.body.Cust_id+")";
     con.query(sql, (err, result)=>{
         if(err){
-            console.log(err);
+            // console.log(err);
             res.send([]);
         }
         else{
@@ -34,15 +34,15 @@ router.post("/addfavorites", (req,res)=>{
 });
 
 router.get("/getFavorites/:customerID", (req,res)=>{
-    console.log("called favorites", req.params);
+    // console.log("called favorites", req.params);
     let sql = "SELECT Res_ID FROM Favorites WHERE Cust_ID ="+req.params.customerID;
     con.query(sql, async(err, result)=>{
         if(err){
-            console.log(err);
+            // console.log(err);
             res.send([]);
         }
         else{
-            console.log(result);
+            // console.log(result);
             var resids=[];
             for(i in result){
                 if(! resids.includes(result[i].Res_ID)){
@@ -50,10 +50,9 @@ router.get("/getFavorites/:customerID", (req,res)=>{
                 }
             }
             let datas = await axios.get(`${url}/restaurants/getDetails/~/~/~`);
-            console.log(datas);
+            // console.log(datas);
             let ans = [];
             for (idx in datas.data){
-                console.log(datas.data[idx].Res_ID)
                 if(resids.includes(datas.data[idx].Res_ID)){
                     await ans.push(datas.data[idx]);
                 }

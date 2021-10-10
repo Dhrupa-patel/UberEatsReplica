@@ -220,7 +220,7 @@ class CustomerHome extends Component{
             dishes = this.state.datas.map((data,index) => {
             console.log(data)
                 return(
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Card style = {{width:"100%", height:"100%"}}>
                             <CardHeader
                                 title={data.Dish_Name}

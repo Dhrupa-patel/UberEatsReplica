@@ -123,17 +123,19 @@ class CustomerHome extends Component{
     }
     search = async(e)=>{
         let search = e.target.value;
-        if(search==""){
+        if(search===""){
             await this.setState({
                 newData:this.state.datas
             })
         }
-        let resids = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}`);
-        resids = await this.getResids(resids.data);
-        let newData = await this.state.datas.filter(data => resids.includes(data.Res_ID));
-        await this.setState({
-            newData:newData
-        })
+        else{
+            let resids = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}`);
+            resids = await this.getResids(resids.data);
+            let newData = await this.state.datas.filter(data => resids.includes(data.Res_ID));
+            await this.setState({
+                newData:newData
+            })
+        }
         return;
     }
 

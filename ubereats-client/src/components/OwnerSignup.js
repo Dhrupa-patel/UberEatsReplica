@@ -68,6 +68,13 @@ class OwnerSignup extends Component{
             return;
         }
         else{
+            var phone;
+            if(this.state.phone){
+                phone = this.state.phone
+            }
+            else{
+                phone = "-"
+            }
             const data = {
                 name: this.state.name,
                 email: this.state.email,
@@ -77,7 +84,9 @@ class OwnerSignup extends Component{
                 country: this.state.country,
                 menucategory:this.state.menucategory,
                 delivery:this.state.deliverytype,
-                description: this.state.description
+                description: this.state.description,
+                phonenumber: phone,
+                
             }
             
             this.props.ownerSignup(data);
@@ -158,6 +167,18 @@ class OwnerSignup extends Component{
                                 autoComplete="new-password"
                                 onChange={this.onChange}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    autoComplete="phone"
+                                    name="phone"
+                                    required
+                                    fullWidth
+                                    id="phone"
+                                    label="Phone Number"
+                                    onChange={this.onChange}
+                                    autoFocus
+                                    />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField

@@ -13,11 +13,16 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
+import IconButton from '@mui/material/IconButton';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import { createTheme } from "@mui/material/styles";
 import axios from "axios";
 import backendServer from "../../webConfig";
 
@@ -40,6 +45,17 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
       border: 0,
     },
 }));
+const theme = createTheme({
+    palette:{
+        primary:{
+            main:'#004d40',
+        },
+
+        secondary:{
+            main:'#f5f5f5',
+        },
+    },
+})
 
 class Orders extends Component{
     constructor(){
@@ -54,7 +70,8 @@ class Orders extends Component{
         axios.get(`${backendServer}/orders/ResOrders/${sessionStorage.getItem("res_user_id")}`).then(response =>{
             console.log("called from orders table", response.data)
             this.setState({
-                rows:response.data
+                rows:response.data,
+                old_data:response.data
             })
         }).catch(error =>{
             console.log(error);
@@ -92,12 +109,49 @@ class Orders extends Component{
         console.log(this.state);
     }
 
+    handleClickOpen = async (e)=>{
+        await sessionStorage.setItem("order_id",Number(e.target.value))
+        this.props.history.push("/receipt");
+    }
+
+    handlefilter = async(e)=>{
+        var new_data = this.state.old_data;
+        new_data = await new_data.filter(row => row["Order_Status"]===e.target.value);
+        await this.setState({
+            rows:new_data
+        })
+    }
+
     render(){
         let orders = (
+        <div><br />
+        <Grid item xs={12}>
+            <div>
+                <FormControl>
+                    <InputLabel id="update">Filter By Order Status</InputLabel>
+                    <Select
+                    labelId="filter"
+                    id="filter"
+                    defaultValue={"Order Recieved"}
+                    label="Filter By Order Status"
+                    name="filter"
+                    onChange={this.handlefilter}
+                    >
+                    <MenuItem value={"Order Recieved"}>Order Recieved</MenuItem>
+                    <MenuItem value={"Preparing"}>Preparing</MenuItem>
+                    <MenuItem value={"On the Way"}>On the Way</MenuItem>
+                    <MenuItem value={"Delivered"}>Delivered</MenuItem>
+                    <MenuItem value={"Pickup Ready"}>Pickup Ready</MenuItem>
+                    <MenuItem value={"Picked Up"}>Picked Up</MenuItem>
+                    </Select>
+                </FormControl><br />
+                {/* <Button onClick={this.updateDelivertype} theme={theme} value="Pickup" variant="contained">Pickup</Button> */}
+            </div>
+        </Grid><br />
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
                 <TableRow>
-                <StyledTableCell>Dish Name</StyledTableCell>
+                <StyledTableCell>Order ID</StyledTableCell>
                 <StyledTableCell align="right">Customer Name</StyledTableCell>
                 <StyledTableCell align="right">Delivery Type</StyledTableCell>
                 <StyledTableCell align="right">Order Status</StyledTableCell>
@@ -111,7 +165,9 @@ class Orders extends Component{
                 {this.state.rows.map((row) => (
                 <StyledTableRow>
                     <StyledTableCell component="th" scope="row">
-                    {row.Dish_Name}
+                    <Button style={{color: "black"}} type="button" color="inherit" value={row.Order_ID} onClick={this.handleClickOpen}>
+                    {row.Order_ID}
+                    </Button>
                     </StyledTableCell>
                     <StyledTableCell align="right"><Link to="/profile">{row.Cust_Name}</Link></StyledTableCell>
                     <StyledTableCell align="right">{row.Delivery_type}</StyledTableCell>
@@ -176,7 +232,7 @@ class Orders extends Component{
                 </StyledTableRow> */}
             </TableBody>
         </Table>
-                    
+        </div>     
         )
 
         return(

@@ -60,4 +60,72 @@ router.get("/ResOrders/:res_id", (req,res)=>{
     })
 });
 
+router.get("/CustOrders/:cust_id", (req,res)=>{
+    console.log(req.params);
+    let sql = "SELECT * FROM Orders WHERE Cust_ID ="+req.params.cust_id+" GROUP BY Order_ID;"
+
+    con.query(sql, (err, result)=>{
+        if(err){
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            console.log(result);
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end(JSON.stringify(result));
+            return;
+        }
+    })
+});
+
+router.get("/getID", (req,res)=>{
+    console.log("getID");
+    let sql = "SELECT * FROM Orders"
+
+    con.query(sql, (err, result)=>{
+        if(err){
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            console.log(result.length);
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end(JSON.stringify(result.length));
+            return;
+        }
+    })
+});
+router.get("/getdetails/:order_id", (req,res)=>{
+    console.log("getdetails",req.params);
+    let sql = "SELECT * FROM Orders where Order_ID="+req.params.order_id+";"
+
+    con.query(sql, (err, result)=>{
+        if(err){
+            console.log(err);
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            var ans={}
+            ans["items"]=result;
+            ans["total"] = result[0]["Total_Price"];
+            console.log(result);
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end(JSON.stringify(ans));
+            return;
+        }
+    })
+});
+
 module.exports = router;

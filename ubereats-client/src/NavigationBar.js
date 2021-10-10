@@ -13,59 +13,24 @@ import { userLogout } from "./actions/loginAction"
 import Grid from '@mui/material/Grid';
 import { connect } from "react-redux";
 import { Redirect, useHistory } from "react-router";
+import Cart from "./components/Orders/Cart";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import {Route, withRouter } from "react-router";
 import { Modal } from "@mui/material";
 
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
-  }));
-  
-  const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }));
-  
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
-        },
-      },
-    },
-  }));
-
 class NavigationBar extends Component{
     constructor(props){
         super(props);
         this.state = {
             name:localStorage.getItem("name"),
+            open:false
         }
     }
 
@@ -89,7 +54,16 @@ class NavigationBar extends Component{
             logout:true
         });
     }
-    
+    handleClickOpen = async()=>{
+        await this.setState({
+            open:true
+        })
+    }
+    handleClose = async()=>{
+        await this.setState({
+            open:false
+        })
+    }
 
     render(){
         let navbar = null;
@@ -116,7 +90,25 @@ class NavigationBar extends Component{
                     <Grid>
                         <Link to="/home"><Button style={{color: "black"}} type="button" color="inherit">Home</Button></Link>
                         <Link to="/profile"><Button style={{color: "black"}} type="button" color="inherit">Profile</Button></Link>
-                        <Link to="/cart"><Button style={{color: "black"}} type="button" color="inherit">Cart</Button></Link>
+                        <Button style={{color: "black"}} type="button" color="inherit" onClick={this.handleClickOpen}>Cart</Button>
+                        <Dialog
+                            open={this.state.open}
+                            onClose={this.handleClose}
+                        >
+                            <DialogTitle id="alert-dialog-title">
+                            {"Place an Order?"}
+                            </DialogTitle>
+                            <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                <Cart/>
+                            </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                            <Button autoFocus>
+                                <Link to="/checkout">Checkout</Link>
+                            </Button>
+                            </DialogActions>
+                        </Dialog>
                         <Link to="/favorites"><Button style={{color: "black"}} type="button" color="inherit">Favorites</Button></Link>
                         <Link to="/checkout"><Button style={{color: "black"}} type="button" color="inherit">Orders</Button></Link>
                     </Grid>

@@ -22,6 +22,56 @@ class AddItem extends Component{
         }
     }
 
+    singleFileChangedHandler = async(e)=>{
+        console.log("calling");
+        await this.setState({
+            selectedFile: e.target.files[0]
+           });
+        console.log(this.state);
+        const form_data = new FormData();// If file selected
+        if ( this.state.selectedFile ) 
+        {
+            console.log("reaching here", this.state.selectedFile);
+            form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
+            var data
+            axios.post( `${backendServer}/images/profile-img-upload/1/menu`, form_data, {
+                headers: {
+                'accept': 'application/json',
+                'Accept-Language': 'en-US,en;q=0.8',
+                'Content-Type': `multipart/form-data; boundary=${form_data._boundary}`,
+                }
+            })
+            .then( ( response ) => {
+                if ( 200 === response.status ) {
+                    // If file size is larger than expected.
+                    if( response.data.error ) {
+                    if ( 'LIMIT_FILE_SIZE' === response.data.error.code ) {
+                    alert( 'Max size: 2MB');
+                    } else {
+                    console.log( response.data );// If not the given file type
+                    alert( response.data.error);
+                    }
+                    } else {
+                    // Success
+                    console.log("here",response.data,response.data.location);
+                    this.setState({
+                        fileName:response.data.location,
+                        imagename:response.data.image
+                    })
+                    alert( 'File Uploaded');
+                    }
+                }
+            }).catch( ( error ) => {
+            // If another error
+            alert( error );
+            });
+        } 
+        else {
+        // if file not selected throw error
+        alert( 'Please upload file');
+        }
+    }
+
     onChange = (e)=>{
         this.setState({
             [e.target.name]:e.target.value
@@ -29,6 +79,7 @@ class AddItem extends Component{
     }
 
     onSubmit = async(e)=>{
+        console.log("here")
         let data = {
             "Res_ID":sessionStorage.getItem("res_user_id"),
             "Dish_Name": this.state.dishName,
@@ -37,7 +88,9 @@ class AddItem extends Component{
             "Dish_Price": this.state.dishPrice,
             "Ingredients": this.state.ingredients,
             "Restaurant_Name": sessionStorage.getItem("username"),
-            "Location": sessionStorage.getItem("location")
+            "Location": sessionStorage.getItem("location"),
+            "imagename":this.state.imagename,
+            "imagelocation":this.state.fileName
         }
         console.log(data);
         axios.post(`${backendServer}/menu/addItem`, data).then(response =>{
@@ -75,6 +128,24 @@ class AddItem extends Component{
                     <Typography component="h1" variant="h5" style={{padding:"2%"}}>
                         Add Item
                     </Typography><br />
+                    <Avatar style={{height:"15%", width:"15%", align:"center", margin:"0% auto"}} alt="Dhrupa Patel" src={this.state.fileName} />
+                    <label htmlFor="btn-upload">
+                    <input
+                        id="btn-upload"
+                        name="btn-upload"
+                        style={{ display: 'none' }}
+                        type="file"
+                        accept="image/*"
+                        onChange = {this.singleFileChangedHandler}
+                    />
+                    <Button
+                        className="btn-choose"
+                        variant="outlined"
+                        component="span"
+                        >
+                        Choose Image
+                    </Button>
+                    </label>
                     <Box component="form" onSubmit={this.onSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>

@@ -12,6 +12,8 @@ import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import Box from '@mui/material/Box';
@@ -50,20 +52,17 @@ class CustomerHome extends Component{
         })
     }
 
-    async componentDidMount(){
-        this.getDishItems();
-        await axios.get(`${backendServer}/cart/getCartResID/${sessionStorage.getItem("cust_user_id")}`).then(response=>{
-            console.log("cart data", response.data);
-            if(response.data){
-                this.setState({
-                    cartRes:response.data
-                })
-            }
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
+    cartIds = async()=>{
+        var response = await axios.get(`${backendServer}/cart/getCartResID/${sessionStorage.getItem("cust_user_id")}`);
+        console.log("cartres",response.data);
+        await this.setState({
+            cartRes:response.data
         })
+    }
+
+    async componentDidMount(){
+        await this.getDishItems();
+        await this.cartIds();
         console.log(this.state);
     }
 
@@ -76,6 +75,9 @@ class CustomerHome extends Component{
             }
         });
         sessionStorage.setItem("cart_res_id",data.Res_ID);
+        await this.setState({
+            cartRes:[data.Res_ID]
+        })
     }
     clearAndAddItem = (item)=>{
         var Res_ID = {"Res_ID":sessionStorage.getItem("cart_res_id"), "type":"Res_ID"}
@@ -92,7 +94,7 @@ class CustomerHome extends Component{
     }
 
     addToCart = (item)=>{
-        console.log("here",item);
+        console.log("here",item,this.state.cartRes);
         var data = {
             "Dish_Name":item.Dish_Name,
             "Res_ID":item.Res_ID,
@@ -100,15 +102,15 @@ class CustomerHome extends Component{
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
             "Dish_ID":item.Dish_ID
         }
-        if(!this.state.cartRes.includes(item.Res_ID)){
+        if(this.state.cartRes.includes(item.Res_ID)){
+            console.log("additem data", data);
+            this.addItem(data)
+        }
+        else{
             var response = window.confirm("want to empty cart?");
             if(response){
                 this.clearAndAddItem(data);
             }
-        }
-        else{
-            console.log("additem data", data);
-            this.addItem(data)
         }
 
     }
@@ -120,8 +122,9 @@ class CustomerHome extends Component{
         })
     }
 
-    delete = async(e,index)=>{
-        var id = {"dish_id":e.target.value[0]};
+    delete = async(e)=>{
+        console.log("here",e)
+        var id = {"dish_id":Number(e[0])};
         axios.post(`${backendServer}/menu/delete`,id).then(response =>{
             console.log("deleted");
         }).catch(error =>{
@@ -130,7 +133,7 @@ class CustomerHome extends Component{
             }
         });
         let items = [...this.state.datas];
-        items.splice(e.target.value[1],1);
+        items.splice(Number(e[1]),1);
         await this.setState({
             datas: items
         })
@@ -184,6 +187,7 @@ class CustomerHome extends Component{
         alert( 'Please upload file');
         }
     }
+    
     onChange = async(e)=>{
         await this.setState({
             [e.target.name]: e.target.value
@@ -191,14 +195,14 @@ class CustomerHome extends Component{
     }
 
     onSubmit = async(e)=>{
-        console.log("on submit",this.state)
+        console.log("on submit",this.state,this.state.Dish_Name || this.state.dish.Dish_Name)
         var data = {
             "dishid":this.state.dish.Dish_ID,
-            "dishname":this.state.Dish_Name,
-            "description": this.state.Dish_Description,
-            "category": this.state.Dish_Category,
-            "price":this.state.Dish_Price,
-            "ingredients":this.state.Ingredients
+            "dishname":this.state.Dish_Name || this.state.dish.Dish_Name,
+            "description": this.state.Dish_Description || this.state.dish.Dish_Description,
+            "category": this.state.Dish_Category || this.state.dish.Dish_Category,
+            "price":this.state.Dish_Price || this.state.dish.Dish_Price,
+            "ingredients":this.state.Ingredients || this.state.dish.Ingredients
         }
         var res = await axios.post(`${backendServer}/menu/edititem`,data);
         await this.setState({
@@ -246,17 +250,19 @@ class CustomerHome extends Component{
                                     </Button>
                                 ):
                                 (   <div>
-                                        <Button 
+                                    <IconButton onClick={()=>this.delete([data.Dish_ID,index])} size="small"><DeleteForeverIcon /></IconButton>
+                                        {/* <Button 
                                         onClick={this.delete} 
                                         value={[data.Dish_ID,index]} 
                                         size="small">
                                             Delete Item
-                                        </Button>
-                                        <Button 
+                                        </Button> */}
+                                    <IconButton onClick={()=>this.editItem(data)} size="small"><EditIcon /></IconButton>
+                                        {/* <Button 
                                         onClick={()=>this.editItem(data)} 
                                         size="small">
                                             Edit Item
-                                        </Button>
+                                        </Button> */}
                                     </div>
                                 )}
 
@@ -277,7 +283,7 @@ class CustomerHome extends Component{
                             label={key}
                             style = {{width:"50%"}}
                             id={key}
-                            // value = {this.state.dish[key]}
+                            defaultValue = {this.state.dish[key]}
                             autoComplete={key}
                             onChange={this.onChange}
                         />

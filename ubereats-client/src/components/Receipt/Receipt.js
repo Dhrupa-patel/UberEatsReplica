@@ -18,53 +18,57 @@ import Grid from '@mui/material/Grid';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#2f4f4f",
-      color: theme.palette.common.white,
+    //   backgroundColor: "#008b8b",
+    //   color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
       fontSize: 14,
     },
 }));
-class Cart extends Component{
+
+class Receipt extends Component{
     constructor(){
         super()
         this.state={
             rows:[]
         }
     }
-    componentDidMount(){
-        axios.get(`${backendServer}/cart/getItems/${sessionStorage.getItem("cust_user_id")}`).then(response =>{
-            console.log("called cart", response.data)
-            this.setState({
-                rows:response.data
-            })
-        }).catch(error =>{
-            console.log(error);
-        });
+    async componentDidMount(){
+        var response = await axios.get(`${backendServer}/orders/getdetails/${sessionStorage.getItem("order_id")}`);
+        await this.setState({
+            rows:response.data["items"],
+            total:response.data["total"]
+        })
+        console.log(this.state)
     }
 
     render(){
         return(
             <div>
+                <NavigationBar />
                 <Grid item xs={12}>
                 <TableContainer component={Paper} sx={{ width: 550 }} style={{margin:"2% auto"}}>
                 <Table sx={{ width: 550 }} aria-label="simple table">
                     <TableHead>
                     <TableRow>
-                        <StyledTableCell>Items In Cart</StyledTableCell>
+                        <StyledTableCell>Dish Name</StyledTableCell>
+                        <StyledTableCell align="right">Dish Price</StyledTableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody>
                     {this.state.rows.map((row) => (
-                        <TableRow
-                        key={row.Dish_Name}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                        <TableCell component="th" scope="row">
-                            {row.Dish_Name}
-                        </TableCell>
-                        </TableRow>
+                            <TableRow>
+                                <StyledTableCell>{row.Dish_Name}
+                                </StyledTableCell>
+                                <StyledTableCell align="right">{row.Dish_Price}</StyledTableCell>
+                            </TableRow>
                     ))}
+                    <TableRow>
+                    <StyledTableCell>Total</StyledTableCell>
+                    <StyledTableCell  align="right">
+                            {this.state.total}
+                        </StyledTableCell>
+                    </TableRow>
                     </TableBody>
                 </Table>
                 </TableContainer>
@@ -73,4 +77,4 @@ class Cart extends Component{
         )
     }
 }
-export default Cart;
+export default Receipt;

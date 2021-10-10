@@ -15,6 +15,7 @@ import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
+import Button from '@mui/material/Button';
 
 class Favorites extends Component{
 
@@ -39,7 +40,10 @@ class Favorites extends Component{
         })
         console.log(this.state.favs);
     }
-
+    menu = (e)=>{
+        sessionStorage.setItem("res_user_id",e.target.value);
+        this.props.history.push("/ownerhome");
+    }
     render(){
         let restaurants = this.state.favs.map(data => {
             console.log(data)
@@ -57,9 +61,9 @@ class Favorites extends Component{
                     />
                     <CardMedia
                         component="img"
-                        height="10%"
-                        image="/static/images/cards/paella.jpg"
-                        alt="Paella dish"
+                        height="140"
+                        image={data.Res_ProfileImageLocation}
+                        alt={data.Res_Name}
                     />
                     <CardContent>
                         <Typography variant="body2" color="text.secondary">
@@ -70,9 +74,7 @@ class Favorites extends Component{
                         </Typography>
                     </CardContent>
                     <CardActions disableSpacing>
-                        <IconButton aria-label="add to favorites">
-                        <FavoriteIcon />
-                        </IconButton>
+                        <Button onClick={this.menu} value={data.Res_ID} variant="contained">Select</Button>
                     </CardActions>
                     </Card>
                 </Grid>

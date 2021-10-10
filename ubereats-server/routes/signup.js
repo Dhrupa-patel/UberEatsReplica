@@ -59,7 +59,7 @@ router.post("/owner", async(req, res)=>{
         VALUES (?)";
     
     var values = [req.body.name, req.body.state, req.body.city,
-        "+916468307496","8:00-23:00",hashPassword, req.body.country,req.body.description,req.body.email,req.body.delivery,
+        req.body.phonenumber,"8:00-23:00",hashPassword, req.body.country,req.body.description,req.body.email,req.body.delivery,
     req.body.menucategory];
 
     con.query(sql, [values], (err, result)=>{

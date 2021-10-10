@@ -95,7 +95,7 @@ const s3 = new aws.S3({
                 res.json( {
                 image: imageName,
                 location: imageLocation
-                } );
+                });
                 let sql = null;
                 if(req.params.type==="customer"){
                     sql =
@@ -105,23 +105,25 @@ const s3 = new aws.S3({
                     sql =
                     "UPDATE Restaurants SET Res_ProfileName =?, Res_ProfileImageLocation=? WHERE Res_ID =?";
                 }
-                else{
+                else if(req.params.type==="menu"){
                     sql = 
-                    "UPDATE Dishes SET Dish_ProfileName =?, Dish_ProfileImageLocation=? WHERE Dish_ID =?";
+                    "UPDATE Dishes SET Dish_ProfileName =? ,Dish_ProfileImageLocation=? WHERE Dish_ID=?";
                 }
-                var values = [imageName, imageLocation, Number(req.params.id)];
-                con.query(sql, values, function (error, results) {
-                    if (error) {            
-                        console.log(error)              
-                        res.writeHead(200, {              
-                            "Content-Type": "text/plain",            
-                        });            
-                        res.end(error.code);          
-                    } else {
-                        console.log(results);
-                        res.end(JSON.stringify(results));
-                    }
-                });
+                if (sql){
+                    var values = [imageName, imageLocation, Number(req.params.id)];
+                    con.query(sql, values, function (error, results) {
+                        if (error) {            
+                            console.log(error)              
+                            res.writeHead(200, {              
+                                "Content-Type": "text/plain",            
+                            });            
+                            res.end(error.code);          
+                        } else {
+                            console.log(results);
+                            res.end(JSON.stringify(results));
+                        }
+                    });
+                }
             }
         }
     });

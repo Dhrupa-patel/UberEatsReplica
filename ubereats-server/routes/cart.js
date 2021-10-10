@@ -13,7 +13,6 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
 
 router.post("/addItem", (req,res)=>{
@@ -165,7 +164,7 @@ router.post("/placeorder", (req,res)=>{
             console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
-            res.end("Deleted");
+            res.end("Placed the order");
             return;
         }
     })

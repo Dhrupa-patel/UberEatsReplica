@@ -15,9 +15,8 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
-const saltRounds = 10;
+
 router.get("/customer", (req, res)=>{
     console.log("customer get API called");
     con.query("SELECT DISTINCT(Cust_Email) from Customers", (err, result)=>{
@@ -36,11 +35,11 @@ router.get("/customer", (req, res)=>{
 });
 
 router.post("/customer", (req,res)=>{
-    console.log("Customer Login", req.body);
+    // console.log("Customer Login", req.body);
     let sql = "SELECT * FROM Customers WHERE Cust_Email='"+req.body.email+"'";
-    console.log(sql);
+    // console.log(sql);
     con.query(sql, async(err, result)=>{
-        console.log(err);
+        // console.log(err);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -48,7 +47,7 @@ router.post("/customer", (req,res)=>{
             return;
         }
         if(result && result.length>0){
-            console.log(result[0])
+            // console.log(result[0])
             const encryptedPassword = await bcrypt.compare(
                 req.body.password,
                 result[0].Cust_Password
@@ -96,7 +95,7 @@ router.get("/owner", (req, res)=>{
 });
 
 router.post("/owner", (req, res)=>{
-    console.log("owner Login", req.body);
+    // console.log("owner Login", req.body);
     let sql = "SELECT * FROM Restaurants WHERE Res_Email='"+req.body.email+"'";
     con.query(sql, async(err, result)=>{
         if(err){

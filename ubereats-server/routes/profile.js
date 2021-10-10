@@ -16,7 +16,7 @@ con.connect(function(err){
 })
 
 router.get("/restaurantprofile/:user_id", (req,res)=>{
-    console.log("profile res called",req.params);
+    // console.log("profile res called",req.params);
     let sql = "SELECT * FROM Restaurants WHERE Res_ID='"+req.params.user_id+"'";
     con.query(sql, (err, result)=>{
         if(err){
@@ -62,7 +62,7 @@ router.post("/updatecustomerprofile", (req,res)=>{
 })
 
 router.get("/customerprofile/:user_id", (req,res)=>{
-    console.log("profile res called",req.params);
+    // console.log("profile res called",req.params);
     let sql = "SELECT * FROM Customers WHERE Cust_ID='"+req.params.user_id+"'";
     con.query(sql, (err, result)=>{
         if(err){

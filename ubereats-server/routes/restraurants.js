@@ -13,7 +13,6 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
 
 router.get("/getDetails/:location/:deliveryType/:menuCategory", (req,res)=>{

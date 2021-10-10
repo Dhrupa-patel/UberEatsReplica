@@ -13,11 +13,10 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
 
 router.post("/updateStatus", (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     let sql = "UPDATE Orders SET Order_Status = '" + req.body.Order_Status+"' WHERE Order_ID = "+req.body.Order_ID;
     
     con.query(sql, (err, result)=>{
@@ -29,7 +28,7 @@ router.post("/updateStatus", (req,res)=>{
             return;
         }
         else{
-            console.log(result);
+            // console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end("Success");
@@ -39,7 +38,7 @@ router.post("/updateStatus", (req,res)=>{
 });
 
 router.get("/ResOrders/:res_id", (req,res)=>{
-    console.log(req.params);
+    // console.log(req.params);
     let sql = "SELECT * FROM Orders WHERE Res_ID ="+req.params.res_id+";"
 
     con.query(sql, (err, result)=>{
@@ -51,7 +50,7 @@ router.get("/ResOrders/:res_id", (req,res)=>{
             return;
         }
         else{
-            console.log(result);
+            // console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end(JSON.stringify(result));

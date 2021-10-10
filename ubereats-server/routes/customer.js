@@ -15,7 +15,6 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
 
 router.post("/addfavorites", (req,res)=>{

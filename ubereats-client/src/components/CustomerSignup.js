@@ -69,11 +69,12 @@ class CustomerSignup extends Component{
                 lastName: this.state.lastName,
                 email: this.state.email,
                 password: this.state.password,
-                // nickname: this.state.nickname,
+                nickname: this.state.nickname,
+                address: this.state.address,
                 city: this.state.city,
                 state: this.state.state,
                 country: this.state.country,
-                // dateofbirth: this.state.dateofbirth
+                dob: this.state.dob
             }
             
             this.props.customerSignup(data);
@@ -148,6 +149,17 @@ class CustomerSignup extends Component{
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    required
+                                    fullWidth
+                                    name="nickname"
+                                    label="Preferred Name"
+                                    id="nickname"
+                                    autoComplete="Nickname"
+                                    onChange={this.onChange}
+                                    />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
                                 required
                                 fullWidth
                                 id="email"
@@ -168,6 +180,17 @@ class CustomerSignup extends Component{
                                 autoComplete="new-password"
                                 onChange={this.onChange}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    name="address"
+                                    label="Address"
+                                    id="address"
+                                    autoComplete="Address..."
+                                    onChange={this.onChange}
+                                    />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
@@ -207,6 +230,17 @@ class CustomerSignup extends Component{
                                 <MenuItem value={"Australia"}>Australia</MenuItem>
                                 </Select>
                                 </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                required
+                                fullWidth
+                                name="dob"
+                                label="Date of Birth"
+                                id="dob"
+                                autoComplete="12/03/97"
+                                onChange={this.onChange}
+                                />
                             </Grid>
                         </Grid>
                         <Button

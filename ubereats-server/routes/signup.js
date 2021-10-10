@@ -14,19 +14,18 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
 const saltRounds = 10;
 router.post("/customer", async(req,res)=>{
 
-    console.log("Customer signup", req.body);
+    // console.log("Customer signup", req.body);
     const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
     var name = req.body.firstName+" "+req.body.lastName;
     let sql = "INSERT INTO Customers (Cust_Email, Cust_Password, Cust_DOB, Cust_City, Cust_State, Cust_Country,\
-         Name) VALUES (?,?,?,?,?,?,?)";
+         Name, Cust_Address, Cust_Nickname) VALUES (?,?,?,?,?,?,?,?,?)";
     
-    var values = [req.body.email,hashPassword,"1997-12-03",req.body.city,req.body.state,req.body.country,name];
-    console.log("sql",sql);
+    var values = [req.body.email,hashPassword,req.body.dob,req.body.city,req.body.state,req.body.country,name,req.body.address, req.body.nickname];
+    // console.log("sql",sql);
     con.query(sql, values, (err, result)=>{
         if(err){
             console.log(err);
@@ -35,7 +34,7 @@ router.post("/customer", async(req,res)=>{
             res.end("Error in Data");
             return;
         }
-        console.log(result);
+        // console.log(result);
         if(result){
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
@@ -45,14 +44,14 @@ router.post("/customer", async(req,res)=>{
         else{
             res.statusCode = 401;
             res.setHeader("Content-Type","text/plain");
-            res.end("NO_USER");
+            res.end("USER_ALREADY_EXITS");
             return;
         }
     });
 });
 
 router.post("/owner", async(req, res)=>{
-    console.log("owner Signup", req.body);
+    // console.log("owner Signup", req.body);
     const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
     let sql = "INSERT INTO Restaurants (Res_Name, Res_State, Res_City, Phone_Number, Timings,\
         Res_Password, Country, Description, Res_Email,Delivery_Type,Menu_Category) \
@@ -80,7 +79,7 @@ router.post("/owner", async(req, res)=>{
         else{
             res.statusCode = 401;
             res.setHeader("Content-Type","text/plain");
-            res.end("NO_USER");
+            res.end("USER_ALREADY_EXITS");
             return;
         }
     })

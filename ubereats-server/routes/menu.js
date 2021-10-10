@@ -14,7 +14,6 @@ const con = mysql.createConnection({
   
 con.connect(function(err){
     if (err) throw err;
-    console.log("connected");
 })
 
 router.get("/getDetails/:user_id", (req,res)=>{
@@ -40,9 +39,9 @@ router.get("/getDetails/:user_id", (req,res)=>{
 });
 
 router.post("/delete", (req,res)=>{
-    console.log("delete item called",req.body);
+    // console.log("delete item called",req.body);
     let sql = "DELETE FROM Dishes WHERE Dish_ID="+req.body.dish_id+"";
-    console.log(sql);
+    // console.log(sql);
     con.query(sql, (err, result)=>{
         if(err){
             console.log(err);
@@ -52,7 +51,7 @@ router.post("/delete", (req,res)=>{
             return;
         }
         else{
-            console.log(result);
+            // console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end("success");
@@ -61,12 +60,11 @@ router.post("/delete", (req,res)=>{
 });
 
 router.get("/getRestaurantIDs/:search", (req, res)=>{
-    console.log("called resIDS", req.params);
+    // console.log("called resIDS", req.params);
     let sql = "SELECT DISTINCT(Res_ID) FROM Dishes WHERE Dish_Name LIKE '"+req.params.search+"%' OR Location LIKE '"+req.params.search+"%' OR Restaurant_Name LIKE '"+req.params.search+"%'";
-    console.log(sql);
+    // console.log(sql);
     con.query(sql, (err, result)=>{
         if(err){
-            console.log(err);
             console.log(err);
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -82,7 +80,7 @@ router.get("/getRestaurantIDs/:search", (req, res)=>{
             else{
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
-                res.end("");
+                res.end("No_ENTRY_FOUND");
             }
         }
     });

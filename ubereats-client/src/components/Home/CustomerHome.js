@@ -92,19 +92,14 @@ class CustomerHome extends Component{
             menu_category:"Veg"
         }
     }
-    getResDetails = ()=>{
-        axios.get(`${backendServer}/restaurants/getDetails/${sessionStorage.getItem("location")}/${this.state.delivery_type}/${this.state.menu_category}`).then(response =>{
-            console.log("response data", response.data);
-            if(response.data){
-                this.setState({
-                    datas:response.data,
-                    newData:response.data
-                })
-            }
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
+    getResDetails = async ()=>{
+        var response = await axios.get(`${backendServer}/restaurants/getDetails/~/~/~`);
+        await this.setState({
+            datas:response.data
+        })
+        var response = await axios.get(`${backendServer}/restaurants/getDetails/${sessionStorage.getItem("location")}/${this.state.delivery_type}/${this.state.menu_category}`);
+        await this.setState({
+            newData:response.data
         })
     }
 
@@ -114,7 +109,6 @@ class CustomerHome extends Component{
     }
 
     getResids(ids){
-
         let resids = [];
         for(var i in ids){
             resids.push(ids[i]["Res_ID"]);

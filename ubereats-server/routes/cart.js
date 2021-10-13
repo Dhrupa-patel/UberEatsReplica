@@ -19,7 +19,6 @@ router.post("/addItem", (req,res)=>{
     // console.log(req.body);
     let sql = "INSERT INTO Cart (Dish_ID, Cust_ID, Res_ID, Dish_Name, Dish_price) VALUES (?,?,?,?,?)";
     let values = [req.body.Dish_ID, Number(req.body.Cust_ID), req.body.Res_ID, req.body.Dish_Name, req.body.Dish_Price];
-
     con.query(sql, values, (err, result)=>{
         if(err){
             // console.log(err);
@@ -138,7 +137,7 @@ router.get("/Order/:cust_id", (req,res)=>{
 
 router.post("/placeorder", (req,res)=>{
     // console.log(req.body);
-    let sql = "INSERT INTO Orders (Order_ID, Cust_ID, Cust_Name, Dish_Name, Delivery_type, Order_Status, Total_Price, Order_Mode, Res_ID, Order_Date, Order_Time)"+
+    let sql = "INSERT INTO Orders (Order_ID, Cust_ID, Cust_Name, Dish_Name, Delivery_type, Order_Status, Total_Price, Order_Mode, Res_ID, Order_Date, Order_Time, Dish_Price)"+
     "Values ";
     let dateObj = new Date()
     let date = dateObj.getFullYear()+"-"+dateObj.getMonth()+"-"+dateObj.getDate();
@@ -147,7 +146,7 @@ router.post("/placeorder", (req,res)=>{
     values = [];
     for(idx in req.body.items){
         sql = sql.concat("(?),");
-        values.push([req.body.Order_ID,req.body.items[idx]["Cust_ID"], req.body.Cust_Name, req.body.items[idx]["Dish_Name"],'New Order','Order Recieved',req.body.price,'Pickup', req.body.items[idx]["Res_ID"], date, time]);
+        values.push([req.body.Order_ID,req.body.items[idx]["Cust_ID"], req.body.Cust_Name, req.body.items[idx]["Dish_Name"],'New Order','Order Recieved',req.body.price,'Pickup', req.body.items[idx]["Res_ID"], date, time, req.body.items[idx]["Dish_Price"]]);
     }
     // console.log(values);
     sql = sql.substring(0,sql.length-1);

@@ -39,7 +39,7 @@ router.post("/updateStatus", (req,res)=>{
 
 router.get("/ResOrders/:res_id", (req,res)=>{
     // console.log(req.params);
-    let sql = "SELECT * FROM Orders WHERE Res_ID ="+req.params.res_id+";"
+    let sql = "SELECT * FROM Orders WHERE Res_ID ="+req.params.res_id+" GROUP BY Order_ID;"
 
     con.query(sql, (err, result)=>{
         if(err){
@@ -50,7 +50,7 @@ router.get("/ResOrders/:res_id", (req,res)=>{
             return;
         }
         else{
-            // console.log(result);
+            console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end(JSON.stringify(result));
@@ -65,14 +65,14 @@ router.get("/CustOrders/:cust_id", (req,res)=>{
 
     con.query(sql, (err, result)=>{
         if(err){
-            // console.log(err);
+            console.log(err);
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
             res.end("Database Error");
             return;
         }
         else{
-            // console.log(result);
+            console.log(result);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end(JSON.stringify(result));
@@ -118,7 +118,7 @@ router.get("/getdetails/:order_id", (req,res)=>{
             var ans={}
             ans["items"]=result;
             ans["total"] = result[0]["Total_Price"];
-            // console.log(result);
+            console.log(ans);
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             res.end(JSON.stringify(ans));

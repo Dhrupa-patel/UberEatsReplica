@@ -30,15 +30,16 @@ class LandingPage extends Component{
             redirectVar = <Redirect to="/login" />
         }
         return(
-            <Box sx={{ maxWidth: 1200 }}>
-                {redirectVar}
+            <Box>
+                {redirectVar}<br /><br />
+                <Typography variant="h4" color="#00695f">Uber Eats</Typography>
                 <Grid container spacing={0}
                     alignItems="center"
                     justify="center"
-                    style={{ minHeight: '100vh' }}>
-                    <Grid item xs={3}></Grid>
+                    style={{ minHeight: '80vh' }}>
+                    <Grid item xs={2}></Grid>
                     <Grid item xs={4}>
-                        <Card sx={{ maxWidth: 345 }}>
+                        <Card sx={{ maxWidth: 400 }} >
                             <CardMedia
                                 component="img"
                                 height="250"
@@ -61,7 +62,7 @@ class LandingPage extends Component{
                         </Card>
                     </Grid>
                     <Grid item xs={4}>
-                        <Card sx={{ maxWidth: 345 }} >
+                        <Card sx={{ maxWidth: 400 }} >
                             <CardMedia
                                 component="img"
                                 height="250"

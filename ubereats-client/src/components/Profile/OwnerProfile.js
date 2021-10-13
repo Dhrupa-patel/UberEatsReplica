@@ -28,21 +28,17 @@ class Profile extends Component{
             fileName:""
         };
     }
-    componentDidMount(){
-        axios.get(`${backendServer}/profile/restaurantprofile/${sessionStorage.getItem("res_user_id")}`).then(response =>{
-            console.log("response data",response.data);
-            if(response.data){
-                this.setState({
-                    datas:[response.data.profile],
-                    fileName:response.data.fileName
-                })
-            }
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
+    getRestaurantdetails = async()=>{
+        var response = await axios.get(`${backendServer}/profile/restaurantprofile/${sessionStorage.getItem("res_user_id")}`);
+        await this.setState({
+            datas:[response.data.profile],
+            fileName:response.data.fileName
         })
         console.log(this.state.datas);
+
+    }
+    componentDidMount(){
+        this.getRestaurantdetails();
     }
     update = async(e)=>{
         await this.setState({
@@ -59,29 +55,18 @@ class Profile extends Component{
     submit = async(e)=>{
         console.log(this.state);
         var userID = {
-            "email":this.state["Email_ID"],
-            "Timings":this.state["Timings"],
-            "city":this.state.City,
-            "state":this.state.State,
-            "country":this.state.Country,
-            "name":this.state.Name,
-            "Descripton":this.state.Description,
-            "Dishes":this.state.Dishes,
-            "DeliveryType":this.status.Delivery_Type,
+            "email":this.state["Email_ID"] || this.state.datas["Email_ID"],
+            "Timings":this.state["Timings"]|| this.state.datas["Timings"],
+            "city":this.state.City || this.state.datas.City,
+            "state":this.state.State || this.state.datas.State,
+            "country":this.state.Country ||this.state.datas.Country,
+            "name":this.state.Name || this.state.datas.Name,
+            "Descripton":this.state.Description || this.state.datas.Description,
+            "DeliveryType":this.status.Delivery_Type || this.state.datas.DeliveryType,
             "user_id":sessionStorage.getItem("res_user_id")}
         console.log("sending data ",userID);
-        axios.post(`${backendServer}/profile/setrestaurantprofile`,userID).then(response =>{
-            console.log(response.data);
-            this.setState({
-                datas:[response.data.profile],
-                fileName:response.data.fileName
-            })
-            
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
-        });
+        var response = await axios.post(`${backendServer}/profile/setrestaurantprofile`,userID);
+        await this.getRestaurantdetails();
         await this.setState({
             update:false
         })

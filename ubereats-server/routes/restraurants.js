@@ -22,7 +22,7 @@ router.get("/getDetails/:location/:deliveryType/:menuCategory", (req,res)=>{
         sql = "SELECT * from Restaurants";
     }
     else{
-        sql = "SELECT * from Restaurants WHERE Res_State = '"+req.params.location+"' && Delivery_Type = '"+req.params.deliveryType+"' && Menu_Category = '"+req.params.menuCategory+"'";
+        sql = "SELECT * from Restaurants WHERE Res_City = '"+req.params.location+"' && Delivery_Type = '"+req.params.deliveryType+"' && Menu_Category = '"+req.params.menuCategory+"'";
     }
     // console.log(sql)
     con.query(sql, (err, result)=>{

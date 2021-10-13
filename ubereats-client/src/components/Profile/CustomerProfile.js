@@ -26,21 +26,16 @@ class Profile extends Component{
             fileName:""
         }
     }
-    componentDidMount(){
-        axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("cust_user_id")}`).then(response =>{
-            console.log("response data",response.data);
-            if(response.data){
-                this.setState({
-                    datas:[response.data.profile],
-                    fileName:response.data.fileName
-                })
-                console.log(this.state);
-            }
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
+    getCustomerdetails = async()=>{
+        var response = await axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("cust_user_id")}`);
+        await this.setState({
+            datas:[response.data.profile],
+            fileName:response.data.fileName
         })
+        await console.log(this.state);
+    }
+    componentDidMount(){
+        this.getCustomerdetails();
     }
     update = async(e)=>{
         await this.setState({
@@ -55,27 +50,25 @@ class Profile extends Component{
         })
     }
     updateProfile = async(data)=>{
-        await axios.post(`${backendServer}/profile/updatecustomerprofile`, data).then(response =>{
-        }).catch( (error) => {
-            console.log(error);
-        });
+        var res = await axios.post(`${backendServer}/profile/updatecustomerprofile`, data);
+    }
+
+    onSubmit =async(e)=>{
+        console.log(this.state);
+        var userID = {
+            "email":this.state["Email ID"] || this.state.datas[0]["Email ID"],
+            "DOB":this.state["Date of Birth"] || this.state.datas[0]["Date of Birth"],
+            "city":this.state.City || this.state.datas[0].City,
+            "state":this.state.State || this.state.datas[0].State,
+            "country":this.state.Country || this.state.datas[0].Country,
+            "name":this.state.Name || this.state.datas[0].Name,
+            "user_id":sessionStorage.getItem("cust_user_id")}
+        console.log("sending data ",userID);
+        await this.updateProfile(userID);
         await this.setState({
             update:false
         })
-    }
-
-    onSubmit =(e)=>{
-        console.log(this.state);
-        var userID = {
-            "email":this.state["Email ID"],
-            "DOB":this.state["Date of Birth"],
-            "city":this.state.City,
-            "state":this.state.State,
-            "country":this.state.Country,
-            "name":this.state.Name,
-            "user_id":sessionStorage.getItem("cust_user_id")}
-        console.log("sending data ",userID);
-        this.updateProfile(userID);
+        await this.getCustomerdetails();
         console.log("updated");
     }
 
@@ -142,7 +135,7 @@ class Profile extends Component{
                             label={key}
                             style = {{width:"50%"}}
                             id={key}
-                            // defaultValue={this.state.datas[0][key]}
+                            defaultValue={this.state.datas[0][key]}
                             // value = {this.state.datas[0][key]}
                             autoComplete={key}
                             onChange={this.onChange}

@@ -54,7 +54,7 @@ router.post("/customer", (req,res)=>{
               );
             if(encryptedPassword){
                 req.session.userEmailId = req.body.email;
-                let userObj = {user_id:result[0].Cust_ID, name:result[0].Name, location:result[0].Cust_State, email:result[0].Cust_Email, password:req.body.password};
+                let userObj = {user_id:result[0].Cust_ID, name:result[0].Name, location:result[0].Cust_City, email:result[0].Cust_Email, password:req.body.password};
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
                 res.end(JSON.stringify(userObj));

@@ -225,9 +225,10 @@ class OwnerSignup extends Component{
                                 <Select
                                 labelId="Delivery_Type"
                                 id="deliverytype"
-                                defaultValue={"Delivery"}
+                                defaultValue={["Delivery"]}
                                 label="Delivery Type"
                                 name="deliverytype"
+                                multiple
                                 onChange={this.onChange}
                                 >
                                 <MenuItem value={"Delivery"}>Delivery</MenuItem>

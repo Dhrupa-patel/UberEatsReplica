@@ -124,7 +124,7 @@ class CustomerHome extends Component{
 
     delete = async(e)=>{
         console.log("here",e)
-        var id = {"dish_id":Number(e[0])};
+        var id = {"dishid":Number(e[0]),"Res_ID":sessionStorage.getItem("res_user_id")};
         axios.post(`${backendServer}/menu/delete`,id).then(response =>{
             console.log("deleted");
         }).catch(error =>{
@@ -195,14 +195,15 @@ class CustomerHome extends Component{
     }
 
     onSubmit = async(e)=>{
-        console.log("on submit",this.state,this.state.Dish_Name || this.state.dish.Dish_Name)
+        console.log("on submit",this.state,this.state.name || this.state.dish.name)
         var data = {
-            "dishid":this.state.dish.Dish_ID,
-            "dishname":this.state.Dish_Name || this.state.dish.Dish_Name,
-            "description": this.state.Dish_Description || this.state.dish.Dish_Description,
-            "category": this.state.Dish_Category || this.state.dish.Dish_Category,
-            "price":this.state.Dish_Price || this.state.dish.Dish_Price,
-            "ingredients":this.state.Ingredients || this.state.dish.Ingredients
+            "Res_ID":sessionStorage.getItem("res_user_id"),
+            "dishid":this.state.id || this.state.dish.id,
+            "dishname":this.state.name || this.state.dish.name,
+            "description": this.state.description || this.state.dish.description,
+            "category": this.state.category || this.state.dish.category,
+            "price":this.state.price || this.state.dish.price,
+            "ingredients":this.state.ingredients || this.state.dish.ingredients
         }
         var res = await axios.post(`${backendServer}/menu/edititem`,data);
         await this.setState({
@@ -215,7 +216,7 @@ class CustomerHome extends Component{
         let dishes = null;
         let profile = [];
         let ImageUploadButton = null;
-        let permit = ["Dish_Name","Dish_Description","Dish_Category","Dish_Price","Ingredients"]
+        let permit = ["name","description","category","price","ingredients"]
         if(!this.state.edititem){
             dishes = this.state.datas.map((data,index) => {
             console.log(data)
@@ -223,20 +224,20 @@ class CustomerHome extends Component{
                         <Grid item xs={3}>
                             <Card style = {{width:"100%", height:"100%"}}>
                             <CardHeader
-                                title={data.Dish_Name}
+                                title={data.name}
                             />
                             <CardMedia
                                 component="img"
                                 height="140"
-                                image={data.Dish_ProfileImageLocation}
-                                alt={data.Dish_Name}
+                                image={data.image}
+                                alt={data.name}
                             />
                             <CardContent>
                                 <Typography variant="body2" color="text.secondary">
-                                {data.Dish_Category}<br/>
-                                Dish Description: {data.Dish_Description}<br/>
-                                Dish Price: {data.Dish_Price}<br/>
-                                Ingredients:{data.Ingredients}
+                                {data.category}<br/>
+                                Dish Description: {data.description}<br/>
+                                Dish Price: {data.price}<br/>
+                                Ingredients:{data.ingredients}
                                 </Typography>
                             </CardContent>
                             <CardActions disableSpacing>
@@ -250,7 +251,7 @@ class CustomerHome extends Component{
                                     </Button>
                                 ):
                                 (   <div>
-                                    <IconButton onClick={()=>this.delete([data.Dish_ID,index])} size="small"><DeleteForeverIcon /></IconButton>
+                                    <IconButton onClick={()=>this.delete([data.id,index])} size="small"><DeleteForeverIcon /></IconButton>
                                         {/* <Button 
                                         onClick={this.delete} 
                                         value={[data.Dish_ID,index]} 

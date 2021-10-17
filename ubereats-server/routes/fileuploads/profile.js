@@ -5,6 +5,18 @@ const multer = require('multer');
 const path = require( 'path' );
 const mysql = require("mysql");
 const router = express.Router();
+const mongoose = require("mongoose");
+const Customer = require("../../model/Customer");
+const Owner = require("../../model/Owner");
+
+const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
+  
+mongoose.connect(uri);
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function(){
+    console.log("connected successfully");
+})
 
 const con = mysql.createConnection({
     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
@@ -94,33 +106,37 @@ const s3 = new aws.S3({
                 image: imageName,
                 location: imageLocation
                 });
-                let sql = null;
+                let result = null;
+                console.log("calles here",req.params.type);
+                let values = imageLocation;
                 if(req.params.type==="customer"){
-                    sql =
-                    "UPDATE Customers SET Cust_ProfileName =?, Cust_ProfileImageLocation=? WHERE Cust_ID =?";
+                    Customer.findOneAndUpdate({_id:req.params.id},{$set:{image:values}}).then(response=>{
+                        result = response
+                    });
                 }
                 else if(req.params.type==="owner"){
-                    sql =
-                    "UPDATE Restaurants SET Res_ProfileName =?, Res_ProfileImageLocation=? WHERE Res_ID =?";
+                   Owner.findOne({_id:req.params.id}).then(response =>{
+                       result = response
+                       values = result.images.concat(values);
+                        Owner.findOneAndUpdate({_id:req.params.id},{$set:{images:values}}).then(reponse=>{
+                            result = response
+                        });
+                   });
+                   
                 }
                 else if(req.params.type==="menu"){
-                    sql = 
-                    "UPDATE Dishes SET Dish_ProfileName =? ,Dish_ProfileImageLocation=? WHERE Dish_ID=?";
-                }
-                if (sql){
-                    var values = [imageName, imageLocation, Number(req.params.id)];
-                    con.query(sql, values, function (error, results) {
-                        if (error) {            
-                            // console.log(error)              
-                            res.writeHead(200, {              
-                                "Content-Type": "text/plain",            
-                            });            
-                            res.end(error.code);          
-                        } else {
-                            // console.log(results);
-                            res.end(JSON.stringify(results));
-                        }
+                    Owner.findOneAndUpdate({"dishes.id":req.params.id},{$set:{image:values}}).then(response => {
+                        result = response
                     });
+                }
+                if (result){
+                    res.end(JSON.stringify(results));
+                }
+                else if(result!=null){
+                    res.writeHead(200, {              
+                        "Content-Type": "text/plain",            
+                    });            
+                    res.end(error.code);
                 }
             }
         }

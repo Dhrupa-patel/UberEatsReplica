@@ -16,7 +16,7 @@ const Div = styled('div')(({ theme }) => ({
     padding: theme.spacing(1),
   }));
 
-class Profile extends Component{
+class CustomerProfile extends Component{
 
     constructor(){
         super()
@@ -62,6 +62,7 @@ class Profile extends Component{
             "state":this.state.State || this.state.datas[0].State,
             "country":this.state.Country || this.state.datas[0].Country,
             "name":this.state.Name || this.state.datas[0].Name,
+            "nickname":this.state.Nickname || this.state.datas[0].Nickname,
             "user_id":sessionStorage.getItem("cust_user_id")}
         console.log("sending data ",userID);
         await this.updateProfile(userID);
@@ -192,4 +193,4 @@ class Profile extends Component{
 
 }
 
-export default Profile;
+export default CustomerProfile;

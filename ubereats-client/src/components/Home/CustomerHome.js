@@ -123,11 +123,10 @@ class CustomerHome extends Component{
             })
         }
         else{
-            let resids = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}`);
-            resids = await this.getResids(resids.data);
-            let newData = await this.state.datas.filter(data => resids.includes(data.Res_ID));
+            let searchData = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}`);
+            console.log(searchData.data);
             await this.setState({
-                newData:newData
+                newData:searchData.data
             })
         }
         return;
@@ -176,25 +175,25 @@ class CustomerHome extends Component{
                     <CardHeader
                         avatar={
                         <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                            {data.Res_Name[0]}
+                            {data.name[0]}
                         </Avatar>
                         }
-                        title={data.Res_Name}
-                        subheader={data.Res_City}
+                        title={data.name}
+                        subheader={data.city}
                     />
                     <CardMedia
                         component="img"
                         height="140"
-                        image={data.Res_ProfileImageLocation}
+                        image={data.images[0]}
                     />
                     <CardContent>
                         <Typography variant="body2" color="text.secondary">
-                        {data.Description}
+                        {data.description}
                         </Typography>
                     </CardContent>
                     <CardActions disableSpacing>
-                        <IconButton onClick={() => this.addFavorite(data.Res_ID)} size="small"><FavoriteIcon /></IconButton>
-                        <Button onClick={this.menu} value={data.Res_ID} variant="contained">Select</Button>
+                        <IconButton onClick={() => this.addFavorite(data._id)} size="small"><FavoriteIcon /></IconButton>
+                        <Button onClick={this.menu} value={data._id} variant="contained">Select</Button>
                         {/* <Button onClick={this.addFavorite} value={data.Res_ID} aria-label="add to favorites"> */}
                     </CardActions>
                     </Card>

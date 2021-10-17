@@ -8,7 +8,7 @@ class Home extends Component{
         let homecomponent = null;
         let redirectvar = null;
         if(localStorage.getItem("userType")==="customer"){
-            homecomponent = <CustomerHome />
+            homecomponent = <CustomerHome/>
         }
         else if(localStorage.getItem("userType")==="owner"){
             console.log("hello");

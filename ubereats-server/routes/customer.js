@@ -1,8 +1,20 @@
 const express = require("express")
 const mysql = require("mysql");
+const mongoose = require("mongoose");
+const Customer = require("../model/Customer");
+const Owner = require("../model/Owner");
 const router = express.Router();
 const axios = require("axios");
 const url = "http://localhost:3002";
+
+const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
+  
+mongoose.connect(uri);
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function(){
+    console.log("connected successfully");
+})
 
 const con = mysql.createConnection({
     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
@@ -17,51 +29,52 @@ con.connect(function(err){
     if (err) throw err;
 })
 
-router.post("/addfavorites", (req,res)=>{
-    // console.log("add to favorites", req.body)
-    var sql = "INSERT INTO Favorites (Res_ID, Cust_ID) VALUES ("+req.body.res_id+","+req.body.Cust_id+")";
-    con.query(sql, (err, result)=>{
-        if(err){
-            // console.log(err);
-            res.send([]);
-        }
-        else{
-            res.statusCode=200;
-            res.setHeader("Content-Type","text/plain");
-            res.end("success");
-        }
-    })
+router.post("/addfavorites", async (req,res)=>{
+    console.log("add to favorites", req.body)
+    var result = await Customer.findOne({_id:req.body.Cust_id});
+    var fav;
+    if(result){
+        fav = result.favorites.concat(req.body.res_id)
+    }
+    else{
+        fav = [req.body.res_id]
+    }
+    console.log(result.favorites.concat(req.body.res_id))
+    var values = {
+        favorites:fav
+    }
+    var result = await Customer.findOneAndUpdate({_id:req.body.Cust_id},{$set:values});
+    // var sql = "INSERT INTO Favorites (Res_ID, Cust_ID) VALUES ("+req.body.res_id+","+req.body.Cust_id+")";
+    if(result){
+        res.statusCode=200;
+        res.setHeader("Content-Type","text/plain");
+        res.end("success");
+    }
+    else{
+        res.send([])
+    }
 });
 
-router.get("/getFavorites/:customerID", (req,res)=>{
-    // console.log("called favorites", req.params);
-    let sql = "SELECT Res_ID FROM Favorites WHERE Cust_ID ="+req.params.customerID;
-    con.query(sql, async(err, result)=>{
-        if(err){
+router.get("/getFavorites/:customerID", async (req,res)=>{
+    console.log("called favorites", req.params);
+    var result = await Customer.findOne({_id:req.params.customerID});
+    if(result){
+        var ans = [];
+        if(result.favorites.length>0){
+            for(var idx=0; idx<result.favorites.length; idx++){
+                var details = await Owner.findOne({_id:result.favorites[idx]})
+                ans.push(details);
+            }
+        }
+        // console.log(ans);
+        res.statusCode=200;
+        res.setHeader("Content-Type","text/plain");
+        res.end(JSON.stringify(ans));
+    }
+    else{
             // console.log(err);
             res.send([]);
-        }
-        else{
-            // console.log(result);
-            var resids=[];
-            for(i in result){
-                if(! resids.includes(result[i].Res_ID)){
-                    resids.push(result[i].Res_ID);
-                }
-            }
-            let datas = await axios.get(`${url}/restaurants/getDetails/~/~/~`);
-            // console.log(datas);
-            let ans = [];
-            for (idx in datas.data){
-                if(resids.includes(datas.data[idx].Res_ID)){
-                    await ans.push(datas.data[idx]);
-                }
-            }
-            res.statusCode=200;
-            res.setHeader("Content-Type","text/plain");
-            res.end(JSON.stringify(ans));
-        }
-    })
+    }
 })
 
 module.exports = router;

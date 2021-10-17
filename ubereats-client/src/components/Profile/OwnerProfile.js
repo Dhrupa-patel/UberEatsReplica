@@ -17,7 +17,7 @@ const Div = styled('div')(({ theme }) => ({
     padding: theme.spacing(1),
   }));
 
-class Profile extends Component{
+class OwnerProfile extends Component{
 
     constructor(){
         super();
@@ -34,10 +34,11 @@ class Profile extends Component{
             datas:[response.data.profile],
             fileName:response.data.fileName
         })
-        console.log(this.state.datas);
+        console.log("here",this.state.datas);
 
     }
     componentDidMount(){
+        console.log("called here")
         this.getRestaurantdetails();
     }
     update = async(e)=>{
@@ -56,16 +57,16 @@ class Profile extends Component{
         console.log(this.state);
         var userID = {
             "email":this.state["Email_ID"] || this.state.datas["Email_ID"],
-            "Timings":this.state["Timings"]|| this.state.datas["Timings"],
+            "timings":this.state["Timings"]|| this.state.datas["Timings"],
             "city":this.state.City || this.state.datas.City,
             "state":this.state.State || this.state.datas.State,
             "country":this.state.Country ||this.state.datas.Country,
             "name":this.state.Name || this.state.datas.Name,
-            "Descripton":this.state.Description || this.state.datas.Description,
-            "DeliveryType":this.status.Delivery_Type || this.state.datas.DeliveryType,
+            "descripton":this.state.Description || this.state.datas.Description,
+            "deliveryType":this.state.Delivery_Type || this.state.datas.DeliveryType,
             "user_id":sessionStorage.getItem("res_user_id")}
         console.log("sending data ",userID);
-        var response = await axios.post(`${backendServer}/profile/setrestaurantprofile`,userID);
+        var response = await axios.post(`${backendServer}/profile/updaterestaurantprofile`,userID);
         await this.getRestaurantdetails();
         await this.setState({
             update:false
@@ -134,7 +135,7 @@ class Profile extends Component{
                                 id={key}
                                 style = {{width:"50%"}}
                                 autoComplete={key}
-                                // defaultValue={this.state.datas[0][key]}
+                                defaultValue={this.state.datas[0][key]}
                                 onLoad = {this.change}
                                 onChange={this.onChange}
                                 />
@@ -191,4 +192,4 @@ class Profile extends Component{
 
 }
 
-export default Profile;
+export default OwnerProfile;

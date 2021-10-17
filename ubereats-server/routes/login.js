@@ -1,60 +1,47 @@
 const express = require("express")
-const mysql = require("mysql");
+const mongoose = require("mongoose");
+const Customer = require("../model/Customer");
+const Owner = require("../model/Owner");
 const router = express.Router();
 var bcrypt = require("bcrypt"); 
 // const con = require("../serverConfig");
-
-const con = mysql.createConnection({
-    host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
-    user:"admin",
-    password:"Siddhi*5501",
-    ssl: true,
-    port: 3306,
-    database:"UberEats",
-  })
+const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
-con.connect(function(err){
-    if (err) throw err;
+mongoose.connect(uri);
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function(){
+    console.log("connected successfully");
 })
 
-router.get("/customer", (req, res)=>{
+router.get("/customer", async (req, res)=>{
     console.log("customer get API called");
-    con.query("SELECT DISTINCT(Cust_Email) from Customers", (err, result)=>{
-        if(err){
-            res.send([]);
+    const result = await Customer.find(); 
+    if(result){
+        var emails = {"Emails":[]};
+        for(let i=0; i<result.length;i++){
+            emails["Emails"].push(result[i]["email"]);
         }
-        else{
-            var emails = {"Emails":[]};
-            for(let i=0; i<result.length;i++){
-                emails["Emails"].push(result[i]["Cust_Email"]);
-            }
-            res.setHeader("Content-Type","text/plain");
-            res.end(JSON.stringify(emails));
-        }
-    })
+        res.setHeader("Content-Type","text/plain");
+        res.end(JSON.stringify(emails));
+    }
+    else{
+        res.send([]);
+    }
 });
 
-router.post("/customer", (req,res)=>{
+router.post("/customer", async (req,res)=>{
     // console.log("Customer Login", req.body);
-    let sql = "SELECT * FROM Customers WHERE Cust_Email='"+req.body.email+"'";
-    // console.log(sql);
-    con.query(sql, async(err, result)=>{
-        // console.log(err);
-        if(err){
-            res.statusCode = 500;
-            res.setHeader("Content-Type","text/plain");
-            res.end("Database Error");
-            return;
-        }
-        if(result && result.length>0){
-            // console.log(result[0])
+    var result = await Customer.find({email:req.body.email});
+    if(result){
+        if(result.length>0){
             const encryptedPassword = await bcrypt.compare(
                 req.body.password,
-                result[0].Cust_Password
+                result[0].password
               );
             if(encryptedPassword){
                 req.session.userEmailId = req.body.email;
-                let userObj = {user_id:result[0].Cust_ID, name:result[0].Name, location:result[0].Cust_City, email:result[0].Cust_Email, password:req.body.password};
+                let userObj = {user_id:result[0]._id, name:result[0].name, location:result[0].city, email:result[0].email, password:req.body.password};
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
                 res.end(JSON.stringify(userObj));
@@ -73,46 +60,44 @@ router.post("/customer", (req,res)=>{
             res.end("NO_USER");
             return;
         }
-    });
+    }
+    else{
+        res.statusCode = 500;
+        res.setHeader("Content-Type","text/plain");
+        res.end("Database Error");
+        return;
+    }
 });
-router.get("/owner", (req, res)=>{
+router.get("/owner", async (req, res)=>{
     console.log("owner get API called");
-    con.query("SELECT DISTINCT(Res_Email) from Restaurants", (err, result)=>{
-        if(err){
-            // console.log(err)
-            res.send([]);
+    const result = await Owner.find(); 
+    if(result){
+        var emails = {"Emails":[]};
+        for(let i=0; i<result.length;i++){
+            emails["Emails"].push(result[i]["email"]);
         }
-        else{
-            var emails = {"Emails":[]};
-            for(let i=0; i<result.length;i++){
-                emails["Emails"].push(result[i]["Res_Email"]);
-            }
-            // console.log(emails)
-            res.setHeader("Content-Type","text/plain");
-            res.end(JSON.stringify(emails));
-        }
-    })
+        // console.log(emails)
+        res.setHeader("Content-Type","text/plain");
+        res.end(JSON.stringify(emails));
+    }
+    else{
+        // console.log(err)
+        res.send([]);
+    }
 });
 
-router.post("/owner", (req, res)=>{
+router.post("/owner", async (req, res)=>{
     // console.log("owner Login", req.body);
-    let sql = "SELECT * FROM Restaurants WHERE Res_Email='"+req.body.email+"'";
-    con.query(sql, async(err, result)=>{
-        if(err){
-            res.statusCode = 500;
-            res.setHeader("Content-Type","text/plain");
-            res.end("Database Error");
-            return;
-        }
-        //var result = JSON.stringify(result);
-        if(result && result.length>0){
+    var result = await Owner.find({email:req.body.email});
+    if(result){
+        if(result.length>0){
             const encryptedPassword = await bcrypt.compare(
                 req.body.password,
-                result[0].Res_Password
+                result[0].password
               );
             if(encryptedPassword){
                 req.session.userEmailId = req.body.email;
-                let userObj = {user_id:result[0].Res_ID ,name:result[0].Res_Name, location:result[0].Res_State, email:result[0].Res_Email, password:result[0].Res_Password};
+                let userObj = {user_id:result[0]._id ,name:result[0].name, location:result[0].state, email:result[0].email, password:result[0].password};
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
                 res.end(JSON.stringify(userObj));
@@ -131,7 +116,13 @@ router.post("/owner", (req, res)=>{
             res.end("NO_USER");
             return;
         }
-    })
+    }
+    else{
+        res.statusCode = 500;
+        res.setHeader("Content-Type","text/plain");
+        res.end("Database Error");
+        return;
+    }
 });
 
 module.exports = router;

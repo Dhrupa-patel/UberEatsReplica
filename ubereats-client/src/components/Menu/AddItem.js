@@ -33,8 +33,7 @@ class AddItem extends Component{
         {
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
-            var data
-            axios.post( `${backendServer}/images/profile-img-upload/1/menu`, form_data, {
+            axios.post( `${backendServer}/images/profile-img-upload/1/xyz`, form_data, {
                 headers: {
                 'accept': 'application/json',
                 'Accept-Language': 'en-US,en;q=0.8',
@@ -92,17 +91,11 @@ class AddItem extends Component{
             "imagename":this.state.imagename,
             "imagelocation":this.state.fileName
         }
-        console.log(data);
-        axios.post(`${backendServer}/menu/addItem`, data).then(response =>{
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
-        })
+        console.log(data,this.state);
+        var res = await axios.post(`${backendServer}/menu/addItem`, data);
         await this.setState({
-            submit:true
+            submit: true
         })
-
     }
 
     render(){
@@ -146,7 +139,7 @@ class AddItem extends Component{
                         Choose Image
                     </Button>
                     </label>
-                    <Box component="form" onSubmit={this.onSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
@@ -206,10 +199,9 @@ class AddItem extends Component{
                             </Grid>
                         </Grid>
                         <Button
-                        type="submit"
                         fullWidth
                         variant="contained"
-                        onClick={this.submit}
+                        onClick={this.onSubmit}
                         sx={{ mt: 3, mb: 2 }}
                         >
                         Add item

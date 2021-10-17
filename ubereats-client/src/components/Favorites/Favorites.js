@@ -53,28 +53,28 @@ class Favorites extends Component{
                     <CardHeader
                         avatar={
                         <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                            {data.Res_Name[0]}
+                            {data.name[0]}
                         </Avatar>
                         }
-                        title={data.Res_Name}
-                        subheader={data.Res_City}
+                        title={data.name}
+                        subheader={data.city}
                     />
                     <CardMedia
                         component="img"
                         height="140"
-                        image={data.Res_ProfileImageLocation}
-                        alt={data.Res_Name}
+                        image={data.images[0]}
+                        alt={data.name}
                     />
                     <CardContent>
                         <Typography variant="body2" color="text.secondary">
-                        {data.Description}<br/>
-                        Timings: {data.Timings}<br/>
-                        State: {data.Res_State}<br/>
-                        Phone Number: {data.Phone_Number}<br/>
+                        {data.description}<br/>
+                        Timings: {data.timings}<br/>
+                        State: {data.state}<br/>
+                        Phone Number: {data.phoneNumber}<br/>
                         </Typography>
                     </CardContent>
                     <CardActions disableSpacing>
-                        <Button onClick={this.menu} value={data.Res_ID} variant="contained">Select</Button>
+                        <Button onClick={this.menu} value={data._id} variant="contained">Select</Button>
                     </CardActions>
                     </Card>
                 </Grid>

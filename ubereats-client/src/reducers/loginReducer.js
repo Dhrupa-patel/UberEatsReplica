@@ -15,6 +15,12 @@ export default function(state = initialState, action){
         case USER_LOGOUT:
             return {};
         
+        // case PROFILE:
+        //     return {
+        //         ...state,
+        //         profile: action.payload
+        //     }
+        
         default:
             return state;
     }

@@ -1,6 +1,19 @@
 const express = require("express")
 const mysql = require("mysql");
+const mongoose = require("mongoose");
+const Customer = require("../model/Customer");
+const Owner = require("../model/Owner");
 const router = express.Router();
+
+const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
+  
+mongoose.connect(uri);
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function(){
+    console.log("connected successfully");
+})
+
 
 const con = mysql.createConnection({
     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
@@ -15,28 +28,30 @@ con.connect(function(err){
     if (err) throw err;
 })
 
-router.get("/getDetails/:location/:deliveryType/:menuCategory", (req,res)=>{
-    // console.log("called here",req.params);
-    let sql = null;
+router.get("/getDetails/:location/:deliveryType/:menuCategory", async (req,res)=>{
+    console.log("called here",req.params);
+    let result = null;
     if(req.params.location==="~"){
-        sql = "SELECT * from Restaurants";
+        result = await Owner.find({});
     }
     else{
-        sql = "SELECT * from Restaurants WHERE Res_City = '"+req.params.location+"' && Delivery_Type = '"+req.params.deliveryType+"' && Menu_Category = '"+req.params.menuCategory+"'";
+        result = await Owner.find({ $or: [
+        {deliveryType:[req.params.deliveryType]},
+        {menuCategory: req.params.menuCategory},
+        {city: req.params.location}
+        ]})
     }
-    // console.log(sql)
-    con.query(sql, (err, result)=>{
-        if(err){
-            res.statusCode = 500;
-            res.setHeader("Content-Type","text/plain");
-            res.end([]);
-        }
-        else{
-            res.statusCode = 200;
-            res.setHeader("Content-Type","text/plain");
-            res.end(JSON.stringify(result));
-        }
-    })
+    console.log(result)
+    if(result){
+        res.statusCode = 200;
+        res.setHeader("Content-Type","text/plain");
+        res.end(JSON.stringify(result));
+    }
+    else{
+        res.statusCode = 500;
+        res.setHeader("Content-Type","text/plain");
+        res.end([]);
+    }
 });
 
 module.exports = router;

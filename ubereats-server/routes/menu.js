@@ -36,7 +36,8 @@ router.get("/getDetails/:user_id", async (req,res)=>{
             res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
             // console.log(result);
-            res.end(JSON.stringify(result.dishes));
+            var ans = {"dishes":result.dishes,"res":result._id}
+            res.end(JSON.stringify(ans));
             return;
         }
     }

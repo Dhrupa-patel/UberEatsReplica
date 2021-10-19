@@ -62,7 +62,9 @@ class Checkout extends Component{
         var response = await axios.get(`${backendServer}/cart/Order/${sessionStorage.getItem("cust_user_id")}`);
         await this.setState({
             rows:response.data["items"],
-            total:response.data["total"]
+            total:response.data["total"],
+            cartResId:response.data["cartResId"],
+
         })
         if("cart_res_id" in sessionStorage){
             var response = await axios.get(`${backendServer}/profile/restaurantprofile/${sessionStorage.getItem("cart_res_id")}`);
@@ -85,7 +87,6 @@ class Checkout extends Component{
     emptyCart = async()=>{
         var data={
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
-            "type":"Cust_ID"
         }
         axios.post(`${backendServer}/cart/removeitems`,data).then(response =>{
             console.log("cart got empty!");
@@ -98,7 +99,7 @@ class Checkout extends Component{
     }
     handlefilter = async(e)=>{
         var new_data = this.state.old_data;
-        new_data = await new_data.filter(row => row["Order_Status"]===e.target.value);
+        new_data = await new_data.filter(row => row["orderStatus"]===e.target.value);
         await this.setState({
             pastorders:new_data
         })
@@ -109,7 +110,9 @@ class Checkout extends Component{
             "items":this.state.rows,
             "Order_ID":this.state.Order_ID,
             "Cust_Name":sessionStorage.getItem("username"),
-            "price":this.state.total
+            "price":this.state.total,
+            "Res_ID": this.state.cartResId,
+            "Cust_ID": sessionStorage.getItem("cust_user_id")
         }
         axios.post(`${backendServer}/cart/placeorder`,data).then(response =>{
             console.log("added to orders");
@@ -151,9 +154,9 @@ class Checkout extends Component{
                                 {this.state.rows.map((row) => (
                                 <StyledTableRow>
                                     <StyledTableCell component="th" scope="row">
-                                    {row.Dish_Name}
+                                    {row.dishName}
                                     </StyledTableCell>
-                                    <StyledTableCell align="right">{row.Dish_Price}</StyledTableCell>
+                                    <StyledTableCell align="right">{row.dishPrice}</StyledTableCell>
                                 </StyledTableRow>
                                 ))}
                                 <StyledTableRow>
@@ -213,12 +216,12 @@ class Checkout extends Component{
                                 {this.state.pastorders.map((row) => (
                                 <StyledTableRow>
                                     <StyledTableCell component="th" scope="row">
-                                    <Button style={{color: "black"}} type="button" color="inherit" value={row.Order_ID} onClick={this.handleClickOpen}>
-                                    {row.Order_ID}
+                                    <Button style={{color: "black"}} type="button" color="inherit" value={row._id} onClick={this.handleClickOpen}>
+                                    {row._id}
                                     </Button>
                                     </StyledTableCell>
-                                    <StyledTableCell align="right">{row.Order_Status}</StyledTableCell>
-                                    <StyledTableCell align="right">{row.Total_Price}</StyledTableCell>
+                                    <StyledTableCell align="right">{row.orderStatus}</StyledTableCell>
+                                    <StyledTableCell align="right">{row.totalPrice}</StyledTableCell>
                                 </StyledTableRow>
                                 ))}
                             </TableBody>

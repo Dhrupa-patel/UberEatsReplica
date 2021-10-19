@@ -58,9 +58,9 @@ class Receipt extends Component{
                     <TableBody>
                     {this.state.rows.map((row) => (
                             <TableRow>
-                                <StyledTableCell>{row.Dish_Name}
+                                <StyledTableCell>{row.dishName}
                                 </StyledTableCell>
-                                <StyledTableCell align="right">{row.Dish_Price}</StyledTableCell>
+                                <StyledTableCell align="right">{row.dishPrice}</StyledTableCell>
                             </TableRow>
                     ))}
                     <TableRow>

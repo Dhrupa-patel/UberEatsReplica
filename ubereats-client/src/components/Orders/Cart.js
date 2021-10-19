@@ -57,11 +57,11 @@ class Cart extends Component{
                     <TableBody>
                     {this.state.rows.map((row) => (
                         <TableRow
-                        key={row.Dish_Name}
+                        key={row.dishNname}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                         <TableCell component="th" scope="row">
-                            {row.Dish_Name}
+                            {row.dishName}
                         </TableCell>
                         </TableRow>
                     ))}

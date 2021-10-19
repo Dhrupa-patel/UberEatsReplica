@@ -6,74 +6,65 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
 
-    email:{
+    custId:{
         type: String,
-        required: true,
-        min: 10,
-        max:255,
+        required: true
     },
 
-    password:{
+    resID:{
         type: String,
         required: true,
-        min: 6,
-        max: 300,
     },
 
-    name:{
+    order:{
+        type: Array,
+        required: true,
+    },
+
+    totalPrice:{
+        type: Number,
+        required: true,
+    },
+
+    time:{
+        type: String,
+        required: true,
+    },
+
+    date:{
+        type: String,
+        required: true,
+    },
+
+    customerName:{
         type: String,
         required: true,
         min: 6,
         max: 255,
     },
 
-    dateOfBirth:{
-        type:String,
-        required: true,
-    },
-
-    city:{
+    restaurantName:{
         type: String,
         required: true,
+        min: 6,
+        max: 255,
     },
 
-    state:{
-        type: String,
-        required: true,
-    },
-
-    country:{
-        type: String,
-        required: true,
-    },
-
-    address:{
-        type: Array,
-        required: true,
-    },
-
-    nickname:{
+    deliveryType:{
         type: String,
         required: true,
         min:5,
     },
 
-    image:{
-        type: String
+    orderStatus:{
+        type: String,
+        required: true
     },
 
-    favorites:{
-        type:Array,
-    },
-
-    cart:{
-        type:Array,
-    },
-
-    cartResId:{
-        type:String,
-        default:null,
+    orderMode:{
+        type: String,
+        required: true
     }
 });
 
-module.exports = mongoose.model("Customers", userSchema);
+module.exports = mongoose.model("Orders", userSchema);

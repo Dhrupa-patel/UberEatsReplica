@@ -42,7 +42,8 @@ class CustomerHome extends Component{
             console.log("response data", response.data);
             if(response.data){
                 this.setState({
-                    datas:response.data
+                    datas:response.data.dishes,
+                    resid:response.data.res
                 })
             }
         }).catch(error =>{
@@ -67,22 +68,16 @@ class CustomerHome extends Component{
     }
 
     addItem = async(data)=>{
-        await axios.post(`${backendServer}/cart/additem`,data).then(response =>{
-            console.log("item added");
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
-        });
-        sessionStorage.setItem("cart_res_id",data.Res_ID);
+        var response = await axios.post(`${backendServer}/cart/additem`,data);
+        await sessionStorage.setItem("cart_res_id",data.Res_ID);
         await this.setState({
-            cartRes:[data.Res_ID]
+            cartRes: data.Res_ID,
         })
     }
     clearAndAddItem = (item)=>{
-        var Res_ID = {"Res_ID":sessionStorage.getItem("cart_res_id"), "type":"Res_ID"}
-        console.log("resid", Res_ID);
-        axios.post(`${backendServer}/cart/removeitems`,Res_ID).then(response =>{
+        var Cust_ID = {"Cust_ID":sessionStorage.getItem("cust_user_id")}
+        console.log("resid", Cust_ID);
+        axios.post(`${backendServer}/cart/removeitems`,Cust_ID).then(response =>{
             console.log("items deleted");
             console.log("confirm", item);
             this.addItem(item);
@@ -94,15 +89,15 @@ class CustomerHome extends Component{
     }
 
     addToCart = (item)=>{
-        console.log("here",item,this.state.cartRes);
+        console.log("here",item,this.state.cartRes,this.state.resid);
         var data = {
-            "Dish_Name":item.Dish_Name,
-            "Res_ID":item.Res_ID,
-            "Dish_Price":item.Dish_Price,
+            "Dish_Name":item.name,
+            "Res_ID":this.state.resid,
+            "Dish_Price":item.price,
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
-            "Dish_ID":item.Dish_ID
+            "Dish_ID":item.id
         }
-        if(this.state.cartRes.includes(item.Res_ID)){
+        if(this.state.cartRes===this.state.resid || this.state.cartRes===null){
             console.log("additem data", data);
             this.addItem(data)
         }

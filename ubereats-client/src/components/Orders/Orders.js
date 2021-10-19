@@ -87,22 +87,22 @@ class Orders extends Component{
 
     onChange = (e)=>{
         this.setState({
-            Delivery_Status:e.target.value
+            orderStatus:e.target.value
         })
     }
 
     enableEdit = async(row)=>{
         await this.setState({
             update:true,
-            id:row.Order_ID
+            id:row._id
         })
     }
 
     update = async(row)=>{
         console.log(row,this.state)
         var data = {
-            "Order_ID":row.Order_ID,
-            "Order_Status": this.state.Delivery_Status
+            "Order_ID":row._id,
+            "Order_Status": this.state.orderStatus
         }
         var res = await axios.post(`${backendServer}/orders/updateStatus`,data);
         await this.getOrders();
@@ -116,7 +116,7 @@ class Orders extends Component{
 
     handlefilter = async(e)=>{
         var new_data = this.state.old_data;
-        new_data = await new_data.filter(row => row["Order_Status"]===e.target.value);
+        new_data = await new_data.filter(row => row["orderStatus"]===e.target.value);
         await this.setState({
             rows:new_data
         })
@@ -165,13 +165,13 @@ class Orders extends Component{
                 {this.state.rows.map((row) => (
                 <StyledTableRow>
                     <StyledTableCell component="th" scope="row">
-                    <Button style={{color: "black"}} type="button" color="inherit" value={row.Order_ID} onClick={this.handleClickOpen}>
-                    {row.Order_ID}
+                    <Button style={{color: "black"}} type="button" color="inherit" value={row._id} onClick={this.handleClickOpen}>
+                    {row._id}
                     </Button>
                     </StyledTableCell>
-                    <StyledTableCell align="right"><Link to="/profile">{row.Cust_Name}</Link></StyledTableCell>
-                    <StyledTableCell align="right">{row.Delivery_type}</StyledTableCell>
-                    {this.state.update && this.state.id===row.Order_ID ? ( 
+                    <StyledTableCell align="right"><Link to="/profile">{row.customerName}</Link></StyledTableCell>
+                    <StyledTableCell align="right">{row.deliveryType}</StyledTableCell>
+                    {this.state.update && this.state.id===row._id ? ( 
                         <FormControl>
                         <InputLabel id="update">Order Status</InputLabel>
                         <Select
@@ -200,12 +200,12 @@ class Orders extends Component{
                         // autoFocus
                         // />
                     ):(
-                        <StyledTableCell align="right">{row.Order_Status}</StyledTableCell>
+                        <StyledTableCell align="right">{row.orderStatus}</StyledTableCell>
                     )}
                     <StyledTableCell align="right">{row.Order_Mode}</StyledTableCell>
-                    <StyledTableCell align="right">{row.Order_Date}</StyledTableCell>
-                    <StyledTableCell align="right">{row.Order_Time}</StyledTableCell>
-                    {this.state.update & this.state.id===row.Order_ID? ( 
+                    <StyledTableCell align="right">{row.date}</StyledTableCell>
+                    <StyledTableCell align="right">{row.time}</StyledTableCell>
+                    {this.state.update & this.state.id===row._id? ( 
                         <Button 
                             onClick={() => this.update(row)}  
                             value={[row]} 

@@ -130,6 +130,7 @@ const s3 = new aws.S3({
                     });
                 }
                 if (result){
+                    console.log(result);
                     res.end(JSON.stringify(results));
                 }
                 else if(result!=null){

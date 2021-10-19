@@ -4,6 +4,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
+const Order = require("../model/Orders");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -28,116 +29,97 @@ con.connect(function(err){
     if (err) throw err;
 })
 
-router.post("/updateStatus", (req,res)=>{
-    // console.log(req.body);
-    let sql = "UPDATE Orders SET Order_Status = '" + req.body.Order_Status+"' WHERE Order_ID = "+req.body.Order_ID;
-    
-    con.query(sql, (err, result)=>{
-        if(err){
-            // console.log(err);
-            res.statusCode = 500;
-            res.setHeader("Content-Type","text/plain");
-            res.end("Database Error");
-            return;
-        }
-        else{
-            // console.log(result);
-            res.statusCode = 200;
-            res.setHeader("Content-Type","text/plain");
-            res.end("Success");
-            return;
-        }
-    })
+router.post("/updateStatus", async (req,res)=>{
+    console.log("update status",req.body);
+    var result = await Order.findOneAndUpdate({_id:req.body.Order_ID},{$set:{orderStatus:req.body.Order_Status}});
+    if(result){
+        res.statusCode = 200;
+        res.setHeader("Content-Type","text/plain");
+        res.end("Success");
+        return;
+    }
+    else{
+        res.statusCode = 500;
+        res.setHeader("Content-Type","text/plain");
+        res.end("Database Error");
+        return;
+    }
 });
 
-router.get("/ResOrders/:res_id", (req,res)=>{
+router.get("/ResOrders/:res_id", async(req,res)=>{
+    console.log("res", req.params);
+    var result = await Order.find({"order.resID":req.params.res_id});
+    if(result){
+        console.log(result);
+        res.statusCode = 200;
+        res.setHeader("Content-Type","text/plain");
+        res.end(JSON.stringify(result));
+        return;
+    }
+    else{
+        res.statusCode = 500;
+        res.setHeader("Content-Type","text/plain");
+        res.end("Database Error");
+        return;
+    }
+});
+
+router.get("/CustOrders/:cust_id", async (req,res)=>{
     // console.log(req.params);
-    let sql = "SELECT * FROM Orders WHERE Res_ID ="+req.params.res_id+" GROUP BY Order_ID;"
-
-    con.query(sql, (err, result)=>{
-        if(err){
-            // console.log(err);
-            res.statusCode = 500;
-            res.setHeader("Content-Type","text/plain");
-            res.end("Database Error");
-            return;
-        }
-        else{
-            console.log(result);
-            res.statusCode = 200;
-            res.setHeader("Content-Type","text/plain");
-            res.end(JSON.stringify(result));
-            return;
-        }
-    })
+    var result = await Order.find({custId:req.params.cust_id});
+    console.log(result);
+    if(result){
+        console.log(result);
+        res.statusCode = 200;
+        res.setHeader("Content-Type","text/plain");
+        res.end(JSON.stringify(result));
+        return;
+    }
+    else{
+        res.statusCode = 500;
+        res.setHeader("Content-Type","text/plain");
+        res.end("Database Error");
+        return;
+    }
 });
 
-router.get("/CustOrders/:cust_id", (req,res)=>{
-    // console.log(req.params);
-    let sql = "SELECT * FROM Orders WHERE Cust_ID ="+req.params.cust_id+" GROUP BY Order_ID;"
-
-    con.query(sql, (err, result)=>{
-        if(err){
-            console.log(err);
-            res.statusCode = 500;
-            res.setHeader("Content-Type","text/plain");
-            res.end("Database Error");
-            return;
-        }
-        else{
-            console.log(result);
-            res.statusCode = 200;
-            res.setHeader("Content-Type","text/plain");
-            res.end(JSON.stringify(result));
-            return;
-        }
-    })
-});
-
-router.get("/getID", (req,res)=>{
+router.get("/getID", async (req,res)=>{
     console.log("getID");
-    let sql = "SELECT * FROM Orders"
-
-    con.query(sql, (err, result)=>{
-        if(err){
-            // console.log(err);
-            res.statusCode = 500;
-            res.setHeader("Content-Type","text/plain");
-            res.end("Database Error");
-            return;
-        }
-        else{
-            // console.log(result.length);
-            res.statusCode = 200;
-            res.setHeader("Content-Type","text/plain");
-            res.end(JSON.stringify(result.length));
-            return;
-        }
-    })
+    var result = await Order.find();
+    console.log(result.length);
+    if(result){
+        res.statusCode = 200;
+        res.setHeader("Content-Type","text/plain");
+        res.end(JSON.stringify(result.length));
+        return;
+    }
+    else{
+        res.statusCode = 500;
+        res.setHeader("Content-Type","text/plain");
+        res.end("Database Error");
+        return;
+    }
 });
-router.get("/getdetails/:order_id", (req,res)=>{
+router.get("/getdetails/:order_id", async(req,res)=>{
     console.log("getdetails",req.params);
-    let sql = "SELECT * FROM Orders where Order_ID="+req.params.order_id+";"
-
-    con.query(sql, (err, result)=>{
-        if(err){
-            // console.log(err);
-            res.statusCode = 500;
-            res.setHeader("Content-Type","text/plain");
-            res.end("Database Error");
-            return;
-        }
-        else{
-            var ans={}
-            ans["items"]=result;
-            ans["total"] = result[0]["Total_Price"];
-            console.log(ans);
-            res.statusCode = 200;
-            res.setHeader("Content-Type","text/plain");
-            res.end(JSON.stringify(ans));
-            return;
-        }
-    })
+    var result = await Order.find({_id:req.params.order_id});
+    console.log("get details", result[0]);
+    if(result){
+        var ans={}
+        ans["items"]=result[0].order;
+        ans["total"] = result[0].totalPrice;
+        console.log(ans);
+        res.statusCode = 200;
+        res.setHeader("Content-Type","text/plain");
+        res.end(JSON.stringify(ans));
+        return;
+    }
+    else{
+        res.statusCode = 500;
+        res.setHeader("Content-Type","text/plain");
+        res.end("Database Error");
+        return;
+    }
 });
 
 module.exports = router;

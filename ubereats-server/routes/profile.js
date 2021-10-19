@@ -22,9 +22,9 @@ const con = mysql.createConnection({
     database:"UberEats",
   })
   
-con.connect(function(err){
-    if (err) throw err;
-})
+// con.connect(function(err){
+//     if (err) throw err;
+// })
 
 router.get("/restaurantprofile/:user_id", async (req,res)=>{
     // console.log("profile res called",req.params);
@@ -36,6 +36,7 @@ router.get("/restaurantprofile/:user_id", async (req,res)=>{
         let userObj = {"profile":{"Name":result.name, "Email_ID":result.email, "Description":result.description,
         "Country":result.country, "State":result.state, "City":result.city,
         "Timings":result.timings,"Delivery_Type":result.deliveryType},"fileName":result.images[0]};
+        console.log(userObj);
         res.end(JSON.stringify(userObj));
 
     }
@@ -58,7 +59,7 @@ router.post("/updaterestaurantprofile", async (req,res)=>{
         city: req.body.city,
         timings: req.body.timings,
         deliveryType: req.body.deliveryType,
-        images: [req.body.images]
+        images: req.body.images
     };
     var result = await Owner.findOneAndUpdate({_id:req.body.user_id}, {$set:values}, {upsert: true});
     // console.log(result);

@@ -152,7 +152,8 @@ router.post("/edititem", async (req,res)=>{
         description: req.body.description, 
         category: req.body.category, 
         price: req.body.price,
-        ingredients: req.body.ingredients
+        ingredients: req.body.ingredients,
+        image: req.body.image
     };
 
     if(result){

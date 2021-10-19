@@ -35,7 +35,6 @@ class OwnerProfile extends Component{
             fileName:response.data.fileName
         })
         console.log("here",this.state.datas);
-
     }
     componentDidMount(){
         console.log("called here")

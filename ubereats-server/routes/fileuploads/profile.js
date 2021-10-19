@@ -8,6 +8,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Customer = require("../../model/Customer");
 const Owner = require("../../model/Owner");
+const { update } = require('../../model/Customer');
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -84,9 +85,9 @@ const s3 = new aws.S3({
  * @desc Upload post image
  * @access public
  */
- router.post( '/profile-img-upload/:id/:type', ( req, res ) => {
+ router.post( '/profile-img-upload/:id/:type', async( req, res ) => {
     //  console.log(req.body, req.params);
-    profileImgUpload( req, res, ( error ) => {
+    await profileImgUpload( req, res, async ( error ) => {
     // console.log( 'requestfile', req.file);
     // console.log( 'error', error );
         if( error ){
@@ -110,28 +111,36 @@ const s3 = new aws.S3({
                 console.log("calles here",req.params.type);
                 let values = imageLocation;
                 if(req.params.type==="customer"){
-                    Customer.findOneAndUpdate({_id:req.params.id},{$set:{image:values}}).then(response=>{
-                        result = response
-                    });
+                    result = await Customer.findOneAndUpdate({_id:req.params.id},{$set:{image:values}},{new:true});
                 }
                 else if(req.params.type==="owner"){
-                   Owner.findOne({_id:req.params.id}).then(response =>{
-                       result = response
-                       values = result.images.concat(values);
-                        Owner.findOneAndUpdate({_id:req.params.id},{$set:{images:values}}).then(reponse=>{
-                            result = response
-                        });
-                   });
-                   
+                    var ans = await Owner.findOne({_id:req.params.id});
+                    values = ans.images.concat(values);
+                    result = await Owner.findOneAndUpdate({_id:req.params.id},{$set:{images:values}},{new:true});
                 }
                 else if(req.params.type==="menu"){
-                    Owner.findOneAndUpdate({"dishes.id":req.params.id},{$set:{image:values}}).then(response => {
-                        result = response
-                    });
+                    console.log(req.params.id);
+                    var ids = req.params.id.split("+");
+                    async function update(){
+                        var row = await Owner.findOne({_id:ids[1]});
+                        for(var idx=0; idx<row.dishes.length; idx++){
+                            if(row.dishes[idx].id===Number(ids[0])){
+                                row.dishes[idx].image = values;
+                                break;
+                            }
+                        }
+                            // item = row.dishes.filter(val => val.id===(Number(ids[0])));
+                            // item[0]["image"] = values;
+                        console.log(row.dishes);
+                        var ans = await Owner.findOneAndUpdate({_id:ids[1]},{$set:{"dishes":row.dishes}},{new:true});
+                        return ans
+                    }
+                    result = await update();
+                    console.log("called here", result);
                 }
                 if (result){
                     console.log(result);
-                    res.end(JSON.stringify(results));
+                    res.end(JSON.stringify(result));
                 }
                 else if(result!=null){
                     res.writeHead(200, {              

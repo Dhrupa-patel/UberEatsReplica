@@ -145,8 +145,8 @@ class CustomerHome extends Component{
         {
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
-            var data
-            axios.post( `${backendServer}/images/profile-img-upload/${this.state.dish.Dish_ID}/menu`, form_data, {
+            var id = String(this.state.dish.id)+"+"+String(sessionStorage.getItem("res_user_id"));
+            axios.post( `${backendServer}/images/profile-img-upload/`+id+`/menu`, form_data, {
                 headers: {
                 'accept': 'application/json',
                 'Accept-Language': 'en-US,en;q=0.8',
@@ -167,7 +167,7 @@ class CustomerHome extends Component{
                     // Success
                     console.log(response.data.location);
                     this.setState({
-                        fileName:response.data.location
+                        image:response.data.location
                     })
                     alert( 'File Uploaded');
                     }
@@ -198,7 +198,8 @@ class CustomerHome extends Component{
             "description": this.state.description || this.state.dish.description,
             "category": this.state.category || this.state.dish.category,
             "price":this.state.price || this.state.dish.price,
-            "ingredients":this.state.ingredients || this.state.dish.ingredients
+            "ingredients":this.state.ingredients || this.state.dish.ingredients,
+            "image": this.state.image||this.state.dish.image
         }
         var res = await axios.post(`${backendServer}/menu/edititem`,data);
         await this.setState({
@@ -291,7 +292,7 @@ class CustomerHome extends Component{
             <Grid item xs={12}>
                 <Button type="button" onClick={this.onSubmit}>Submit</Button>
                 <Box>
-                <Avatar style={{height:"15%", width:"15%", align:"center", margin:"0% auto"}} alt="Dhrupa Patel" src={this.state.fileName} />
+                <Avatar style={{height:"15%", width:"15%", align:"center", margin:"0% auto"}} alt="Dhrupa Patel" src={this.state.image} />
                 </Box>
                 <label htmlFor="btn-upload">
                 <input

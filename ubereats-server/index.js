@@ -9,7 +9,9 @@ const customer = require("./routes/customer");
 const images = require("./routes/fileuploads/profile");
 const cart = require("./routes/cart");
 const orders = require("./routes/orders");
+const passport = require("passport");
 
+app.use(passport.initialize());
 app.use("/login", login);
 app.use("/signup", signup);  
 app.use("/restaurants", restaurant);

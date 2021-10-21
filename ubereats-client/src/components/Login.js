@@ -23,9 +23,9 @@ class Login extends Component {
     }
 
     onChange = (e) => {
-        this.setState({
-            [e.target.name]: e.target.value
-        })
+      this.setState({
+          [e.target.name]: e.target.value
+      })
     }
 
     onSubmit = async(e) => {
@@ -44,19 +44,19 @@ class Login extends Component {
     }
     
     render(){
-        console.log("login props", this.props);
+        console.log("login props", this.props.user);
         let redirectVar = null;
         let message="";
         let user="/customersignup";
-        if(this.props.user && this.props.user.user_id){
+        if(this.props.user && this.props.user._id){
             console.log("props called", this.props.user);
             sessionStorage.setItem("username",this.props.user.name);
             sessionStorage.setItem("email_id",this.props.user.email);
             if(localStorage.getItem("userType")==="owner"){
-              sessionStorage.setItem("res_user_id",this.props.user.user_id);
+              sessionStorage.setItem("res_user_id",this.props.user._id);
             }
             else{
-              sessionStorage.setItem("cust_user_id",this.props.user.user_id);
+              sessionStorage.setItem("cust_user_id",this.props.user._id);
             }
             sessionStorage.setItem("location", this.props.user.location);
             redirectVar = <Redirect to="/home"/>

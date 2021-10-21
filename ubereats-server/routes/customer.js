@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const router = express.Router();
+const { checkAuth } = require("../Utils/passport");
 const axios = require("axios");
 const url = "http://localhost:3002";
 
@@ -29,7 +30,7 @@ con.connect(function(err){
     if (err) throw err;
 })
 
-router.post("/addfavorites", async (req,res)=>{
+router.post("/addfavorites", checkAuth, async (req,res)=>{
     console.log("add to favorites", req.body)
     var result = await Customer.findOne({_id:req.body.Cust_id});
     var fav;
@@ -55,7 +56,7 @@ router.post("/addfavorites", async (req,res)=>{
     }
 });
 
-router.get("/getFavorites/:customerID", async (req,res)=>{
+router.get("/getFavorites/:customerID", checkAuth, async (req,res)=>{
     console.log("called favorites", req.params);
     var result = await Customer.findOne({_id:req.params.customerID});
     if(result){

@@ -26,6 +26,7 @@ class Favorites extends Component{
         }
     }
     async componentDidMount(){
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         await axios.get(`${backendServer}/customer/getFavorites/${sessionStorage.getItem("cust_user_id")}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){

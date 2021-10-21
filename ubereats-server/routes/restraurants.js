@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const router = express.Router();
+const { checkAuth } = require("../Utils/passport");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -28,7 +29,7 @@ con.connect(function(err){
     if (err) throw err;
 })
 
-router.get("/getDetails/:location/:deliveryType/:menuCategory", async (req,res)=>{
+router.get("/getDetails/:location/:deliveryType/:menuCategory", checkAuth, async (req,res)=>{
     console.log("called here",req.params);
     let result = null;
     if(req.params.location==="~"){

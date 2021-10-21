@@ -151,7 +151,8 @@ class CustomerHome extends Component{
     addFavorite = (res_id)=>{
         console.log(res_id);
         let data = {"Cust_id":sessionStorage.getItem("cust_user_id"), "res_id":res_id};
-        console.log("called addfav", data);
+        console.log("called addfav", data, localStorage.getItem("token"));
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         axios.post(`${backendServer}/customer/addfavorites`,data).then(response =>{
             console.log("Added to favorites");
         }).catch(error =>{

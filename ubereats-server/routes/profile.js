@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const router = express.Router();
+const { checkAuth } = require("../Utils/passport");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -26,7 +27,7 @@ const con = mysql.createConnection({
 //     if (err) throw err;
 // })
 
-router.get("/restaurantprofile/:user_id", async (req,res)=>{
+router.get("/restaurantprofile/:user_id", checkAuth, async (req,res)=>{
     // console.log("profile res called",req.params);
     var result = await Owner.findOne({_id:req.params.user_id});
     // console.log(result);
@@ -48,7 +49,7 @@ router.get("/restaurantprofile/:user_id", async (req,res)=>{
     }
 });
 
-router.post("/updaterestaurantprofile", async (req,res)=>{
+router.post("/updaterestaurantprofile", checkAuth, async (req,res)=>{
     // console.log("update res called",req.body);
     var values = {
         email: req.body.email,
@@ -77,7 +78,7 @@ router.post("/updaterestaurantprofile", async (req,res)=>{
     }
 });
 
-router.post("/updatecustomerprofile", async (req,res)=>{
+router.post("/updatecustomerprofile", checkAuth, async (req,res)=>{
     console.log(req.body);
     var values = {
         email: req.body.email, 
@@ -105,7 +106,7 @@ router.post("/updatecustomerprofile", async (req,res)=>{
     }
 });
 
-router.get("/customerprofile/:user_id", async (req,res)=>{
+router.get("/customerprofile/:user_id", checkAuth, async (req,res)=>{
     console.log("profile customer called",req.params);
     let sql = "SELECT * FROM Customers WHERE Cust_ID='"+req.params.user_id+"'";
     var result = await Customer.findOne({_id:req.params.user_id});

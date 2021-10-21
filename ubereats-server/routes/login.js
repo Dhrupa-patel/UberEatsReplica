@@ -4,6 +4,9 @@ const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const router = express.Router();
 var bcrypt = require("bcrypt"); 
+const jwt = require("jsonwebtoken");
+const { auth } = require("../Utils/passport");
+const secret = "CMPE273";
 // const con = require("../serverConfig");
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -13,6 +16,7 @@ db.on("error", console.error.bind(console, "connection error: "));
 db.once("open", function(){
     console.log("connected successfully");
 })
+auth();
 
 router.get("/customer", async (req, res)=>{
     console.log("customer get API called");
@@ -31,7 +35,7 @@ router.get("/customer", async (req, res)=>{
 });
 
 router.post("/customer", async (req,res)=>{
-    // console.log("Customer Login", req.body);
+    console.log("Customer Login", req.body);
     var result = await Customer.find({email:req.body.email});
     if(result){
         if(result.length>0){
@@ -40,11 +44,20 @@ router.post("/customer", async (req,res)=>{
                 result[0].password
               );
             if(encryptedPassword){
+                const payload = {
+                    _id:result[0]._id,
+                    name:result[0].name,
+                    email:result[0].email,
+                    location: result[0].city,
+                    type:"customer"
+                };
+                const token = await jwt.sign(payload, secret, {
+                    expiresIn: 1000000,
+                });
                 req.session.userEmailId = req.body.email;
                 let userObj = {user_id:result[0]._id, name:result[0].name, location:result[0].city, email:result[0].email, password:req.body.password};
                 res.statusCode = 200;
-                res.setHeader("Content-Type","text/plain");
-                res.end(JSON.stringify(userObj));
+                res.status(200).json({token:"jwt "+token});
                 return;
             }
             else{
@@ -96,11 +109,22 @@ router.post("/owner", async (req, res)=>{
                 result[0].password
               );
             if(encryptedPassword){
+                const payload = {
+                    _id:result[0]._id,
+                    name:result[0].name,
+                    email:result[0].email,
+                    location: result[0].city,
+                    type:"owner"
+                };
+                const token = await jwt.sign(payload, secret, {
+                    expiresIn: 1000000,
+                });
                 req.session.userEmailId = req.body.email;
                 let userObj = {user_id:result[0]._id ,name:result[0].name, location:result[0].state, email:result[0].email, password:result[0].password};
                 res.statusCode = 200;
                 res.setHeader("Content-Type","text/plain");
                 res.end(JSON.stringify(userObj));
+                res.status(200).json({token:"jwt "+token});
                 return;
             }
             else{

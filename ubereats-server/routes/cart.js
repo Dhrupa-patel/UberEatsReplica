@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const Orders = require("../model/Orders");
+const { checkAuth } = require("../Utils/passport");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -28,7 +29,7 @@ con.connect(function(err){
     if (err) throw err;
 })
 
-router.post("/addItem", async (req,res)=>{
+router.post("/addItem", checkAuth, async (req,res)=>{
     console.log("add item",req.body);
     var values = {
         dishId: req.body.Dish_ID,
@@ -62,7 +63,7 @@ router.post("/addItem", async (req,res)=>{
     }
 });
 
-router.post("/removeitems", async (req,res)=>{
+router.post("/removeitems", checkAuth, async (req,res)=>{
     console.log(req.body);
     var result = await Customer.findOneAndUpdate({_id:req.body.Cust_ID},{$unset: {cart:[]}});
     if(result){
@@ -79,7 +80,7 @@ router.post("/removeitems", async (req,res)=>{
     }
 });
 
-router.get("/getItems/:cust_id", async(req,res)=>{
+router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
     console.log("get items",req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
     if(result){
@@ -96,7 +97,7 @@ router.get("/getItems/:cust_id", async(req,res)=>{
     }
 });
 
-router.get("/getCartResID/:cust_id", async (req,res)=>{
+router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
     console.log(req.params,"called in get cart res");
     var result = await Customer.findOne({_id:req.params.cust_id});
     console.log("Res ID",result);
@@ -113,7 +114,7 @@ router.get("/getCartResID/:cust_id", async (req,res)=>{
         return;
     }
 });
-router.get("/Order/:cust_id", async (req,res)=>{
+router.get("/Order/:cust_id", checkAuth, async (req,res)=>{
     console.log(req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
     if(result){
@@ -138,7 +139,7 @@ router.get("/Order/:cust_id", async (req,res)=>{
     }
 });
 
-router.post("/placeorder", async (req,res)=>{
+router.post("/placeorder", checkAuth, async (req,res)=>{
     console.log(req.body);
     let dateObj = new Date()
     let date = dateObj.getFullYear()+"-"+dateObj.getMonth()+"-"+dateObj.getDate();

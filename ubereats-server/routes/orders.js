@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const Order = require("../model/Orders");
+const { checkAuth } = require("../Utils/passport");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -29,7 +30,7 @@ con.connect(function(err){
     if (err) throw err;
 })
 
-router.post("/updateStatus", async (req,res)=>{
+router.post("/updateStatus", checkAuth, async (req,res)=>{
     console.log("update status",req.body);
     var result = await Order.findOneAndUpdate({_id:req.body.Order_ID},{$set:{orderStatus:req.body.Order_Status}});
     if(result){
@@ -46,7 +47,7 @@ router.post("/updateStatus", async (req,res)=>{
     }
 });
 
-router.get("/ResOrders/:res_id", async(req,res)=>{
+router.get("/ResOrders/:res_id", checkAuth, async(req,res)=>{
     console.log("res", req.params);
     var result = await Order.find({"order.resID":req.params.res_id});
     if(result){
@@ -64,7 +65,7 @@ router.get("/ResOrders/:res_id", async(req,res)=>{
     }
 });
 
-router.get("/CustOrders/:cust_id", async (req,res)=>{
+router.get("/CustOrders/:cust_id", checkAuth, async (req,res)=>{
     // console.log(req.params);
     var result = await Order.find({custId:req.params.cust_id});
     console.log(result);
@@ -83,7 +84,7 @@ router.get("/CustOrders/:cust_id", async (req,res)=>{
     }
 });
 
-router.get("/getID", async (req,res)=>{
+router.get("/getID", checkAuth, async (req,res)=>{
     console.log("getID");
     var result = await Order.find();
     console.log(result.length);
@@ -100,7 +101,7 @@ router.get("/getID", async (req,res)=>{
         return;
     }
 });
-router.get("/getdetails/:order_id", async(req,res)=>{
+router.get("/getdetails/:order_id", checkAuth, async(req,res)=>{
     console.log("getdetails",req.params);
     var result = await Order.find({_id:req.params.order_id});
     console.log("get details", result[0]);

@@ -5,6 +5,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
+const { checkAuth } = require("../Utils/passport");
 
 const con = mysql.createConnection({
     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
@@ -28,7 +29,7 @@ db.once("open", function(){
     console.log("connected successfully");
 })
 
-router.get("/getDetails/:user_id", async (req,res)=>{
+router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
     var result = await Owner.findOne({_id:req.params.user_id})
     console.log("get details",result);
     if(result){
@@ -50,7 +51,7 @@ router.get("/getDetails/:user_id", async (req,res)=>{
     }
 });
 
-router.post("/delete", async (req,res)=>{
+router.post("/delete", checkAuth, async (req,res)=>{
     console.log("delete item called",req.body);
     var result = await Owner.findOne({_id:req.body.Res_ID})
     var index = null;
@@ -80,7 +81,7 @@ router.post("/delete", async (req,res)=>{
     }
 });
 
-router.get("/getRestaurantIDs/:search", async (req, res)=>{
+router.get("/getRestaurantIDs/:search", checkAuth, async (req, res)=>{
     console.log("called resIDS", req.params);
     var result = await Owner.find( {$or:[
         {name: {$regex: "^"+req.params.search+"+", $options: "i"}},
@@ -108,7 +109,7 @@ router.get("/getRestaurantIDs/:search", async (req, res)=>{
     }
 });
 
-router.post("/addItem", async (req,res)=>{
+router.post("/addItem", checkAuth, async (req,res)=>{
     console.log("add item called",req.body);
     var result = await Owner.findOne({_id:req.body.Res_ID});
     var dish;
@@ -143,7 +144,7 @@ router.post("/addItem", async (req,res)=>{
     }
 });
 
-router.post("/edititem", async (req,res)=>{
+router.post("/edititem", checkAuth, async (req,res)=>{
     console.log("edit item called",req.body);
     var result = await Owner.findOne({_id:req.body.Res_ID})
     values = {

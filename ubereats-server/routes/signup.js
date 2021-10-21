@@ -4,6 +4,7 @@ const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const { checkAuth } = require("../Utils/passport");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -15,7 +16,7 @@ db.once("open", async function(){
 })
 
 const saltRounds = 10;
-router.post("/customer", async(req,res)=>{
+router.post("/customer", checkAuth, async(req,res)=>{
     try{
         // console.log("Customer signup", req.body);
         const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
@@ -50,7 +51,7 @@ router.post("/customer", async(req,res)=>{
     }
 });
 
-router.post("/owner", async(req, res)=>{
+router.post("/owner", checkAuth, async(req, res)=>{
     // console.log("owner Signup", req.body);
     try{
         const hashPassword = await bcrypt.hash(req.body.password, saltRounds);

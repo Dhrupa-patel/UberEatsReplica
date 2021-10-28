@@ -8,14 +8,14 @@ const jwt = require("jsonwebtoken");
 const { auth } = require("../Utils/passport");
 const secret = "CMPE273";
 // const con = require("../serverConfig");
-const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
-mongoose.connect(uri);
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error: "));
-db.once("open", function(){
-    console.log("connected successfully");
-})
+// mongoose.connect(uri);
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "connection error: "));
+// db.once("open", function(){
+//     console.log("connected successfully");
+// })
 auth();
 
 router.get("/customer", async (req, res)=>{
@@ -36,7 +36,9 @@ router.get("/customer", async (req, res)=>{
 
 router.post("/customer", async (req,res)=>{
     console.log("Customer Login", req.body);
+
     var result = await Customer.find({email:req.body.email});
+    console.log("result", result);
     if(result){
         if(result.length>0){
             const encryptedPassword = await bcrypt.compare(
@@ -84,6 +86,7 @@ router.post("/customer", async (req,res)=>{
 router.get("/owner", async (req, res)=>{
     console.log("owner get API called");
     const result = await Owner.find(); 
+    console.log("result", result);
     if(result){
         var emails = {"Emails":[]};
         for(let i=0; i<result.length;i++){
@@ -100,8 +103,9 @@ router.get("/owner", async (req, res)=>{
 });
 
 router.post("/owner", async (req, res)=>{
-    // console.log("owner Login", req.body);
+    console.log("owner Login", req.body);
     var result = await Owner.find({email:req.body.email});
+    console.log("result", result);
     if(result){
         if(result.length>0){
             const encryptedPassword = await bcrypt.compare(
@@ -122,8 +126,6 @@ router.post("/owner", async (req, res)=>{
                 req.session.userEmailId = req.body.email;
                 let userObj = {user_id:result[0]._id ,name:result[0].name, location:result[0].state, email:result[0].email, password:result[0].password};
                 res.statusCode = 200;
-                res.setHeader("Content-Type","text/plain");
-                res.end(JSON.stringify(userObj));
                 res.status(200).json({token:"jwt "+token});
                 return;
             }

@@ -5,20 +5,21 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
+var kafka = require("../kafka/client");
 const { checkAuth } = require("../Utils/passport");
 
-const con = mysql.createConnection({
-    host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
-    user:"admin",
-    password:"Siddhi*5501",
-    ssl: true,
-    port: 3306,
-    database:"UberEats",
-  })
+// const con = mysql.createConnection({
+//     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
+//     user:"admin",
+//     password:"Siddhi*5501",
+//     ssl: true,
+//     port: 3306,
+//     database:"UberEats",
+//   })
   
-con.connect(function(err){
-    if (err) throw err;
-})
+// con.connect(function(err){
+//     if (err) throw err;
+// })
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -30,6 +31,10 @@ db.once("open", function(){
 })
 
 router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
+    kafka.make_request("test", req.body, function(err, results){
+        console.log("in result");
+        console.log(results);
+    });
     var result = await Owner.findOne({_id:req.params.user_id})
     console.log("get details",result);
     if(result){
@@ -111,37 +116,52 @@ router.get("/getRestaurantIDs/:search", checkAuth, async (req, res)=>{
 
 router.post("/addItem", checkAuth, async (req,res)=>{
     console.log("add item called",req.body);
-    var result = await Owner.findOne({_id:req.body.Res_ID});
-    var dish;
-    dish = result.dishes.concat({
-        "id":result.dish_id+1,
-        "name": req.body.Dish_Name,
-        "price": req.body.Dish_Price,
-        "description": req.body.Dish_Description,
-        "ingredients": req.body.Ingredients,
-        "image":req.body.imagelocation,
-        "category": req.body.Dish_Category
+    kafka.make_request("add_item", req.body, function(err, results){
+        console.log("in result");
+        console.log("res ", results);
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+        }
     });
-    console.log(dish);
-    var values = {
-        _id: req.body.Res_ID, 
-        dishes:dish,
-        dish_id: result.dish_id+1
-    }
+    // var result = await Owner.findOne({_id:req.body.Res_ID});
+    // var dish;
+    // dish = result.dishes.concat({
+    //     "id":result.dish_id+1,
+    //     "name": req.body.Dish_Name,
+    //     "price": req.body.Dish_Price,
+    //     "description": req.body.Dish_Description,
+    //     "ingredients": req.body.Ingredients,
+    //     "image":req.body.imagelocation,
+    //     "category": req.body.Dish_Category
+    // });
+    // console.log(dish);
+    // var values = {
+    //     _id: req.body.Res_ID, 
+    //     dishes:dish,
+    //     dish_id: result.dish_id+1
+    // }
     
-    var result = await Owner.findOneAndUpdate({_id:req.body.Res_ID}, {$set:values}, {upsert:true})
-    console.log(result);
-    if(result){
-        res.statusCode = 200;
-        res.setHeader("Content-Type","text/plain");
-        res.end("success");
-    }
-    else{
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+    // var result = await Owner.findOneAndUpdate({_id:req.body.Res_ID}, {$set:values}, {upsert:true})
+    // console.log(result);
+    // if(result){
+    //     res.statusCode = 200;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("success");
+    // }
+    // else{
+    //     res.statusCode = 500;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("Database Error");
+    //     return;
+    // }
 });
 
 router.post("/edititem", checkAuth, async (req,res)=>{

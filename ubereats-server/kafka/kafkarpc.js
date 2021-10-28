@@ -24,7 +24,7 @@ KafkaRPC.prototype.makeRequest = function (topic_name, content, callback) {
     function (corr_id) {
       //if this ever gets called we didn't get a response in a
       //timely fashion
-      console.log("timeout");
+      console.log("timeout", content);
       callback(new Error("timeout " + corr_id));
       //delete the entry from hash
       delete self.requests[corr_id];
@@ -79,7 +79,7 @@ KafkaRPC.prototype.setupResponseQueue = function (producer, topic_name, next) {
   //subscribe to messages
   var consumer = self.connection.getConsumer("response_topic");
   consumer.on("message", function (message) {
-    console.log("msg received");
+    console.log("msg received", message);
     var data = JSON.parse(message.value);
     //get the correlationId
     var correlationId = data.correlationId;

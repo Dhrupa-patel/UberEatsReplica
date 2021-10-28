@@ -19,18 +19,18 @@ db.once("open", function(){
     console.log("connected successfully");
 })
 
-const con = mysql.createConnection({
-    host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
-    user:"admin",
-    password:"Siddhi*5501",
-    ssl: true,
-    port: 3306,
-    database:"UberEats",
-  })
+// const con = mysql.createConnection({
+//     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
+//     user:"admin",
+//     password:"Siddhi*5501",
+//     ssl: true,
+//     port: 3306,
+//     database:"UberEats",
+//   })
   
-con.connect(function(err){
-    if (err) throw err;
-})
+// con.connect(function(err){
+//     if (err) throw err;
+// })
 
 const s3 = new aws.S3({
     accessKeyId: 'AKIASRTSBCEJVE6F26UK',

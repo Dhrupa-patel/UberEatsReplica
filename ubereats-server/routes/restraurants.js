@@ -16,18 +16,18 @@ db.once("open", function(){
 })
 
 
-const con = mysql.createConnection({
-    host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
-    user:"admin",
-    password:"Siddhi*5501",
-    ssl: true,
-    port: 3306,
-    database:"UberEats",
-  })
+// const con = mysql.createConnection({
+//     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
+//     user:"admin",
+//     password:"Siddhi*5501",
+//     ssl: true,
+//     port: 3306,
+//     database:"UberEats",
+//   })
   
-con.connect(function(err){
-    if (err) throw err;
-})
+// con.connect(function(err){
+//     if (err) throw err;
+// })
 
 router.get("/getDetails/:location/:deliveryType/:menuCategory", checkAuth, async (req,res)=>{
     console.log("called here",req.params);

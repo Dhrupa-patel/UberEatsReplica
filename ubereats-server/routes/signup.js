@@ -16,7 +16,7 @@ db.once("open", async function(){
 })
 
 const saltRounds = 10;
-router.post("/customer", checkAuth, async(req,res)=>{
+router.post("/customer", async(req,res)=>{
     try{
         // console.log("Customer signup", req.body);
         const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
@@ -51,7 +51,7 @@ router.post("/customer", checkAuth, async(req,res)=>{
     }
 });
 
-router.post("/owner", checkAuth, async(req, res)=>{
+router.post("/owner", async(req, res)=>{
     // console.log("owner Signup", req.body);
     try{
         const hashPassword = await bcrypt.hash(req.body.password, saltRounds);

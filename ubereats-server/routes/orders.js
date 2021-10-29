@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const Order = require("../model/Orders");
+var kafka = require("../kafka/client");
 const { checkAuth } = require("../Utils/passport");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
@@ -32,19 +33,34 @@ db.once("open", function(){
 
 router.post("/updateStatus", checkAuth, async (req,res)=>{
     console.log("update status",req.body);
-    var result = await Order.findOneAndUpdate({_id:req.body.Order_ID},{$set:{orderStatus:req.body.Order_Status}});
-    if(result){
-        res.statusCode = 200;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Success");
-        return;
-    }
-    else{
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+    kafka.make_request("update_status", req.body, function(err, results){
+        console.log("in result");
+        console.log("res ", results);
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+        }
+    });
+    // var result = await Order.findOneAndUpdate({_id:req.body.Order_ID},{$set:{orderStatus:req.body.Order_Status}});
+    // if(result){
+    //     res.statusCode = 200;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("Success");
+    //     return;
+    // }
+    // else{
+    //     res.statusCode = 500;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("Database Error");
+    //     return;
+    // }
 });
 
 router.get("/ResOrders/:res_id", checkAuth, async(req,res)=>{

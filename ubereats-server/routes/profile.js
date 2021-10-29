@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const router = express.Router();
+var kafka = require("../kafka/client");
 const { checkAuth } = require("../Utils/passport");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";

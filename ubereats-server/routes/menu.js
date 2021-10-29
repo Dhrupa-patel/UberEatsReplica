@@ -31,10 +31,6 @@ db.once("open", function(){
 })
 
 router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
-    kafka.make_request("test", req.body, function(err, results){
-        console.log("in result");
-        console.log(results);
-    });
     var result = await Owner.findOne({_id:req.params.user_id})
     console.log("get details",result);
     if(result){
@@ -58,32 +54,47 @@ router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
 
 router.post("/delete", checkAuth, async (req,res)=>{
     console.log("delete item called",req.body);
-    var result = await Owner.findOne({_id:req.body.Res_ID})
-    var index = null;
-    if(result){
-        for(var idx=0; idx<result.dishes.length; idx++){
-            if (result.dishes[idx].id===req.body.dishid){
-                index = idx;
-                break;
-            }
+    kafka.make_request("delete_item", req.body, function(err, results){
+        console.log("in result");
+        console.log("res ", results);
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
         }
-        if(index!==null){
-            result.dishes.splice(idx,1);
+        else{
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
         }
-    }
-    var result = await Owner.findOneAndUpdate({_id:req.body.Res_ID},{$set:{dishes:result.dishes}}, {upsert: true});
-    if(result){
-        res.statusCode = 200;
-        res.setHeader("Content-Type","text/plain");
-        res.end("success");
-    }
-    else{
-        console.log(err);
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+    });
+    // var result = await Owner.findOne({_id:req.body.Res_ID})
+    // var index = null;
+    // if(result){
+    //     for(var idx=0; idx<result.dishes.length; idx++){
+    //         if (result.dishes[idx].id===req.body.dishid){
+    //             index = idx;
+    //             break;
+    //         }
+    //     }
+    //     if(index!==null){
+    //         result.dishes.splice(idx,1);
+    //     }
+    // }
+    // var result = await Owner.findOneAndUpdate({_id:req.body.Res_ID},{$set:{dishes:result.dishes}}, {upsert: true});
+    // if(result){
+    //     res.statusCode = 200;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("success");
+    // }
+    // else{
+    //     console.log(err);
+    //     res.statusCode = 500;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("Database Error");
+    //     return;
+    // }
 });
 
 router.get("/getRestaurantIDs/:search", checkAuth, async (req, res)=>{
@@ -166,40 +177,55 @@ router.post("/addItem", checkAuth, async (req,res)=>{
 
 router.post("/edititem", checkAuth, async (req,res)=>{
     console.log("edit item called",req.body);
-    var result = await Owner.findOne({_id:req.body.Res_ID})
-    values = {
-        id: req.body.dishid,
-        name: req.body.dishname, 
-        description: req.body.description, 
-        category: req.body.category, 
-        price: req.body.price,
-        ingredients: req.body.ingredients,
-        image: req.body.image
-    };
-
-    if(result){
-        for(var idx=0; idx<result.dishes.length; idx++){
-            if (result.dishes[idx]["id"]===req.body.dishid){
-                result.dishes[idx] = values;
-                break;
-            }
+    kafka.make_request("edit_item", req.body, function(err, results){
+        console.log("in edit item result");
+        console.log("res ", results);
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
         }
-    }
-    else{
-        result = {dishes:values}
-    }
-    var result = await Owner.findOneAndUpdate({_id:req.body.Res_ID},{$set:{dishes:result.dishes}},{upsert: true});
-    if(result){
-        res.statusCode = 200;
-        res.setHeader("Content-Type","text/plain");
-        res.end("success");
-    }
-    else{
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+        else{
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+        }
+    });
+    // var result = await Owner.findOne({_id:req.body.Res_ID})
+    // values = {
+    //     id: req.body.dishid,
+    //     name: req.body.dishname, 
+    //     description: req.body.description, 
+    //     category: req.body.category, 
+    //     price: req.body.price,
+    //     ingredients: req.body.ingredients,
+    //     image: req.body.image
+    // };
+
+    // if(result){
+    //     for(var idx=0; idx<result.dishes.length; idx++){
+    //         if (result.dishes[idx]["id"]===req.body.dishid){
+    //             result.dishes[idx] = values;
+    //             break;
+    //         }
+    //     }
+    // }
+    // else{
+    //     result = {dishes:values}
+    // }
+    // var result = await Owner.findOneAndUpdate({_id:req.body.Res_ID},{$set:{dishes:result.dishes}},{upsert: true});
+    // if(result){
+    //     res.statusCode = 200;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("success");
+    // }
+    // else{
+    //     res.statusCode = 500;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("Database Error");
+    //     return;
+    // }
     // console.log(sql);
 
 });

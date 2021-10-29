@@ -31,54 +31,44 @@ db.once("open", function(){
 
 router.post("/addItem", checkAuth, async (req,res)=>{
     console.log("add item",req.body);
-    var values = {
-        dishId: req.body.Dish_ID,
-        resID: req.body.Res_ID,
-        dishName: req.body.Dish_Name,
-        quantity: 1,
-        dishPrice: req.body.Dish_Price
-    }
-    var result = await Customer.findOne({_id:req.body.Cust_ID});
-    if(result){
-        result.cart = result.cart.concat(values);
-        var result = await Customer.findOneAndUpdate({_id:req.body.Cust_ID},{$set: {cart:result.cart,cartResId:req.body.Res_ID}},{upsert: true});
-        if(result){
-            res.statusCode = 200;
+    kafka.make_request("add_item_cart", req.body, function(err, results){
+        console.log("in result");
+        console.log("res ", results);
+        if(err){
+            res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
-            res.end("Success");
+            res.end("Database Error");
             return;
         }
         else{
-            res.statusCode = 500;
+            res.statusCode = 200;
             res.setHeader("Content-Type","text/plain");
-            res.end("Database Errornnnnnnnn");
-            return;
+            res.end("success");
         }
-    }
-    else{
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+    });
+    
 });
 
 router.post("/removeitems", checkAuth, async (req,res)=>{
     console.log(req.body);
-    var result = await Customer.findOneAndUpdate({_id:req.body.Cust_ID},{$unset: {cart:[]}});
-    if(result){
-        res.statusCode = 200;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Deleted");
-        return;
-    }
-    else{
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+    kafka.make_request("delete_item_cart", req.body, function(err, results){
+        console.log("in result");
+        console.log("res ", results);
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Deleted");
+        }
+    });
+    
 });
+
 
 router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
     console.log("get items",req.params);
@@ -97,6 +87,7 @@ router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
     }
 });
 
+
 router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
     console.log(req.params,"called in get cart res");
     var result = await Customer.findOne({_id:req.params.cust_id});
@@ -114,6 +105,8 @@ router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
         return;
     }
 });
+
+
 router.get("/Order/:cust_id", checkAuth, async (req,res)=>{
     console.log(req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
@@ -139,37 +132,53 @@ router.get("/Order/:cust_id", checkAuth, async (req,res)=>{
     }
 });
 
+
 router.post("/placeorder", checkAuth, async (req,res)=>{
     console.log(req.body);
-    let dateObj = new Date()
-    let date = dateObj.getFullYear()+"-"+dateObj.getMonth()+"-"+dateObj.getDate();
-    let time = dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds();
-    var values= {
-        totalPrice: req.body.price,
-        order:req.body.items,
-        _id:req.body.Order_ID,
-        customerName: req.body.Cust_Name,
-        deliveryType: "New Order",
-        orderStatus: "Order Recieved",
-        orderMode: req.body.orderMode,
-        time: time,
-        date: date,
-        resId:req.body.Res_ID,
-        custId:req.body.Cust_ID
-    }
-    var result = await Orders.findOneAndUpdate({_id:req.body.Order_ID},{$set:values},{upsert: true});
-    if(result){
-        res.statusCode = 200;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Placed the order");
-        return;
-    }
-    else{
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+    kafka.make_request("place_order", req.body, function(err, results){
+        console.log("in result");
+        console.log("res ", results);
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+        }
+    });
+    // let dateObj = new Date()
+    // let date = dateObj.getFullYear()+"-"+dateObj.getMonth()+"-"+dateObj.getDate();
+    // let time = dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds();
+    // var values= {
+    //     totalPrice: req.body.price,
+    //     order:req.body.items,
+    //     _id:req.body.Order_ID,
+    //     customerName: req.body.Cust_Name,
+    //     deliveryType: "New Order",
+    //     orderStatus: "Order Recieved",
+    //     orderMode: req.body.orderMode,
+    //     time: time,
+    //     date: date,
+    //     resId:req.body.Res_ID,
+    //     custId:req.body.Cust_ID
+    // }
+    // var result = await Orders.findOneAndUpdate({_id:req.body.Order_ID},{$set:values},{upsert: true});
+    // if(result){
+    //     res.statusCode = 200;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("Placed the order");
+    //     return;
+    // }
+    // else{
+    //     res.statusCode = 500;
+    //     res.setHeader("Content-Type","text/plain");
+    //     res.end("Database Error");
+    //     return;
+    // }
 });
 
 module.exports = router;

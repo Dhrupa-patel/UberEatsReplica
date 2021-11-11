@@ -16,7 +16,7 @@ const Div = styled('div')(({ theme }) => ({
     padding: theme.spacing(1),
   }));
 
-class orderCustProfile extends Component{
+class OrderCustProfile extends Component{
 
     constructor(){
         super()
@@ -60,4 +60,4 @@ class orderCustProfile extends Component{
 
 }
 
-export default orderCustProfile;
+export default OrderCustProfile;

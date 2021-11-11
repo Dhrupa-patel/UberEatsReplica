@@ -64,7 +64,12 @@ const userSchema = new mongoose.Schema({
     orderMode:{
         type: String,
         required: true
-    }
+    },
+
+    special_instruct:{
+        type: String,
+        default: 'No instructions provided'
+    }    
 });
 
 module.exports = mongoose.model("Orders", userSchema);

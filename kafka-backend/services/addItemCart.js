@@ -6,7 +6,7 @@ async function handle_request(msg, callback){
         dishId: msg.Dish_ID,
         resID: msg.Res_ID,
         dishName: msg.Dish_Name,
-        quantity: 1,
+        quantity: msg.Quantity,
         dishPrice: msg.Dish_Price
     }
     var result = await mongo.Customers.findOne({_id:msg.Cust_ID});

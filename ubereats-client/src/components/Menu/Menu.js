@@ -67,6 +67,13 @@ class CustomerHome extends Component{
         console.log(this.state);
     }
 
+    onQuantityChange = async(idx)=>{
+        console.log("idx",idx);
+        this.setState({
+           ["quantity"+String(idx)]:idx
+        })
+    }
+
     addItem = async(data)=>{
         var response = await axios.post(`${backendServer}/cart/additem`,data);
         await sessionStorage.setItem("cart_res_id",data.Res_ID);
@@ -88,12 +95,13 @@ class CustomerHome extends Component{
         });
     }
 
-    addToCart = (item)=>{
-        console.log("here",item,this.state.cartRes,this.state.resid);
+    addToCart = (item,idx)=>{
+        console.log("here",item,this.state.cartRes,this.state);
         var data = {
             "Dish_Name":item.name,
             "Res_ID":this.state.resid,
             "Dish_Price":item.price,
+            "Quantity": this.state.quantity||"1",
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
             "Dish_ID":item.id
         }
@@ -238,13 +246,24 @@ class CustomerHome extends Component{
                             </CardContent>
                             <CardActions disableSpacing>
                             <CardActions>
-                                {this.state.userType==="customer" ? ( 
-                                    <Button 
-                                    onClick={() => this.addToCart(data)}  
-                                    value={[data]} 
-                                    size="small">
-                                        Add to Cart
-                                    </Button>
+                                {this.state.userType==="customer" ? (
+                                    <div>
+                                        <TextField
+                                        required
+                                        name="quantity"
+                                        label="Quantity"
+                                        id="quantity"
+                                        defaultValue="1"
+                                        autoComplete="Quantity"
+                                        onChange={this.onChange}
+                                        />
+                                        <Button 
+                                        onClick={() => this.addToCart(data,index)}  
+                                        value={[data]} 
+                                        size="small">
+                                            Add to Cart
+                                        </Button>
+                                    </div>
                                 ):
                                 (   <div>
                                     <IconButton onClick={()=>this.delete([data.id,index])} size="small"><DeleteForeverIcon /></IconButton>
@@ -254,7 +273,7 @@ class CustomerHome extends Component{
                                         size="small">
                                             Delete Item
                                         </Button> */}
-                                    <IconButton onClick={()=>this.editItem(data)} size="small"><EditIcon /></IconButton>
+                                    <IconButton onClick={()=> this.editItem(data)} size="small"><EditIcon /></IconButton>
                                         {/* <Button 
                                         onClick={()=>this.editItem(data)} 
                                         size="small">

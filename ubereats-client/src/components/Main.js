@@ -14,6 +14,7 @@ import Orders from "./Orders/Orders";
 import Checkout from "./Orders/Checkout";
 import AddItem from "./Menu/AddItem";
 import Receipt from "./Receipt/Receipt";
+import orderCustProfile from "./Profile/orderCustProfile";
 
 class Main extends Component{
     render(){
@@ -30,6 +31,7 @@ class Main extends Component{
                 <Route exact path="/ownerhome" component={OwnerHome} />
                 <Route exact path="/checkout" component={Checkout} />
                 <Route exact path="/orders" component={Orders} />
+                <Route exact path="/orderCustProfile" component={orderCustProfile} />
                 <Route exact path="/addDishes" component={AddItem} />
                 <Route exact path="/receipt" component={Receipt} />
             </div>

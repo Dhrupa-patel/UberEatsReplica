@@ -156,6 +156,11 @@ module.exports.Orders = mongoose.model("Order", {
     orderMode:{
         type: String,
         required: true
+    },
+
+    special_instruct:{
+        type: String,
+        default: 'No instructions provided'
     }
 });
 

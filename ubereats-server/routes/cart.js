@@ -6,6 +6,7 @@ const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
 const Orders = require("../model/Orders");
 const { checkAuth } = require("../Utils/passport");
+var kafka = require("../kafka/client");
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
@@ -29,7 +30,7 @@ db.once("open", function(){
 //     if (err) throw err;
 // })
 
-router.post("/addItem", checkAuth, async (req,res)=>{
+router.post("/addItem",  async (req,res)=>{
     console.log("add item",req.body);
     kafka.make_request("add_item_cart", req.body, function(err, results){
         console.log("in result");
@@ -49,7 +50,7 @@ router.post("/addItem", checkAuth, async (req,res)=>{
     
 });
 
-router.post("/removeitems", checkAuth, async (req,res)=>{
+router.post("/removeitems", async (req,res)=>{
     console.log(req.body);
     kafka.make_request("delete_item_cart", req.body, function(err, results){
         console.log("in result");
@@ -70,7 +71,7 @@ router.post("/removeitems", checkAuth, async (req,res)=>{
 });
 
 
-router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
+router.get("/getItems/:cust_id", async(req,res)=>{
     console.log("get items",req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
     if(result){
@@ -88,7 +89,7 @@ router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
 });
 
 
-router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
+router.get("/getCartResID/:cust_id", async (req,res)=>{
     console.log(req.params,"called in get cart res");
     var result = await Customer.findOne({_id:req.params.cust_id});
     console.log("Res ID",result);
@@ -107,7 +108,7 @@ router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
 });
 
 
-router.get("/Order/:cust_id", checkAuth, async (req,res)=>{
+router.get("/Order/:cust_id",  async (req,res)=>{
     console.log(req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
     if(result){
@@ -133,12 +134,12 @@ router.get("/Order/:cust_id", checkAuth, async (req,res)=>{
 });
 
 
-router.post("/placeorder", checkAuth, async (req,res)=>{
+router.post("/placeorder", async (req,res)=>{
     console.log(req.body);
     kafka.make_request("place_order", req.body, function(err, results){
         console.log("in result");
         console.log("res ", results);
-        if(err){
+        if(results==="Database Error"){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
             res.end("Database Error");
@@ -179,6 +180,58 @@ router.post("/placeorder", checkAuth, async (req,res)=>{
     //     res.end("Database Error");
     //     return;
     // }
+});
+
+router.post("/removeItem", async (req,res)=>{
+    console.log(req.body);
+    var result = await Customer.findOne({_id:req.body.Cust_ID});
+    if(result){
+        for(var idx = 0; idx<result["cart"].length; idx++){
+            if(result["cart"][idx]["dishId"]===req.body.dishid){
+                result["cart"].splice(idx,1);
+                break;
+            }
+        }
+
+        var ans = await Customer.findOneAndUpdate({_id:req.body.Cust_ID},{$set:{cart:result["cart"]}})
+        if(ans){
+            console.log(ans)
+            res.statusCode = 200
+            res.setHeader("Content-Type","text/plain");
+            res.end("removed");
+        }
+        else{
+            res.statusCode = 500
+            res.setHeader("Content-Type","text/plain");
+            res.end("Error");
+        }
+    }
+});
+
+router.post("/updateQuantity", async (req,res)=>{
+    console.log("update quantity", req.body);
+    var result = await Customer.findOne({_id:req.body.Cust_ID})
+    if(result){
+        for(var idx = 0; idx<result["cart"].length; idx++){
+            if(result["cart"][idx]["dishId"]===req.body.id){
+                result["cart"][idx]["quantity"] = req.body.quantity;
+                break;
+            }
+        }
+
+        var ans = await Customer.findOneAndUpdate({_id:req.body.Cust_ID},{$set:{cart:result["cart"]}},{new:true})
+        if(ans){
+            console.log(ans)
+            res.statusCode = 200
+            res.setHeader("Content-Type","text/plain");
+            res.end(JSON.stringify(ans["cart"]));
+        }
+        else{
+            res.statusCode = 500
+            res.setHeader("Content-Type","text/plain");
+            res.end("Error");
+        }
+    }
 });
 
 module.exports = router;

@@ -19,16 +19,9 @@ import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import { Redirect } from "react-router-dom";
+import TextField from '@mui/material/TextField';
 import axios from "axios";
 import backendServer from "../../webConfig";
-import Grid from '@mui/material/Grid';
-import Receipt from "../Receipt/Receipt";
-import { Link } from "react-router-dom";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -54,8 +47,24 @@ class Checkout extends Component{
             Order_ID:1,
             pastorders:[],
             open:false,
-            items:[]
+            items:[],
+            addresses:[]
         }
+    }
+        
+    customerOrders = async()=>{
+        var response = await axios.get(`${backendServer}/orders/CustOrders/${sessionStorage.getItem("cust_user_id")}`);
+        await this.setState({
+            pastorders: response.data,
+            old_data:response.data
+        })
+    }
+
+    getAddresses = async()=>{
+        var response = await axios.get(`${backendServer}/customer/getAddresses/${sessionStorage.getItem("cust_user_id")}`);
+        await this.setState({
+            addresses:response.data
+        })
     }
 
     async componentDidMount(){
@@ -63,8 +72,7 @@ class Checkout extends Component{
         await this.setState({
             rows:response.data["items"],
             total:response.data["total"],
-            cartResId:response.data["cartResId"],
-
+            cartResId:response.data["cartResId"]
         })
         if("cart_res_id" in sessionStorage){
             var response = await axios.get(`${backendServer}/profile/restaurantprofile/${sessionStorage.getItem("cart_res_id")}`);
@@ -76,14 +84,23 @@ class Checkout extends Component{
         await this.setState({
             Order_ID:Number(response.data)+1,
         })
-        var response = await axios.get(`${backendServer}/orders/CustOrders/${sessionStorage.getItem("cust_user_id")}`);
-        await this.setState({
-            pastorders: response.data,
-            old_data:response.data
-        })
+        await this.customerOrders();
+        await this.getAddresses();
         console.log("here",this.state);
-
     }
+
+    handleCancelOrder = async(e)=>{
+        var data = {"id":e.target.value}
+        var response = await axios.post(`${backendServer}/orders/cancelOrder`,data);
+        await this.customerOrders();
+    }
+
+    onChange = async(e)=>{
+        this.setState({
+            [e.target.name]: e.target.value
+        })
+    }
+
     emptyCart = async()=>{
         var data={
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
@@ -112,7 +129,9 @@ class Checkout extends Component{
             "Cust_Name":sessionStorage.getItem("username"),
             "price":this.state.total,
             "Res_ID": this.state.cartResId,
-            "Cust_ID": sessionStorage.getItem("cust_user_id")
+            "Cust_ID": sessionStorage.getItem("cust_user_id"),
+            "Special_Instruction":this.state.special_ins,
+            "Address": this.state.address
         }
         axios.post(`${backendServer}/cart/placeorder`,data).then(response =>{
             console.log("added to orders");
@@ -167,6 +186,55 @@ class Checkout extends Component{
                                         {this.state.total}
                                     </StyledTableCell>
                                 </StyledTableRow>
+                                <StyledTableRow>
+                                    <StyledTableCell component="th" scope="row">
+                                        Special Instructions
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                    <TextField
+                                        required
+                                        name="special_ins"
+                                        label="Special Instructions"
+                                        id="special_ins"
+                                        autoComplete="Special Instructions"
+                                        onChange={this.onChange}
+                                        />
+                                    </StyledTableCell>
+                                </StyledTableRow>
+                                <StyledTableRow>
+                                    <StyledTableCell component="th" scope="row">
+                                        Select Address
+                                    </StyledTableCell>
+                                    
+                                    <StyledTableCell align="right">
+                                    {this.state.addresses.length>0 && 
+                                        <FormControl style={{minWidth:240}}>
+                                            <InputLabel id="addresses">Addresses</InputLabel>
+                                            <Select
+                                            labelId="Addresses"
+                                            id="addresses"
+                                            defaultValue={"Veg"}
+                                            label="Address"
+                                            name="address"
+                                            onChange={this.onChange}
+                                            >
+                                                {this.state.addresses.map((address) => (
+                                                    <MenuItem value={address}>{address}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>} &nbsp;
+                                        <TextField
+                                            required
+                                            name="address"
+                                            label="Address"
+                                            id="address"
+                                            autoComplete="Address"
+                                            onChange={this.onChange}
+                                        />
+                                    </StyledTableCell>
+                                    <StyledTableCell align="right">
+                                    </StyledTableCell>
+                                </StyledTableRow>
                             </TableBody>
                             </Table>
                         </TableContainer>
@@ -200,6 +268,7 @@ class Checkout extends Component{
                     <MenuItem value={"Delivered"}>Delivered</MenuItem>
                     <MenuItem value={"Pickup Ready"}>Pickup Ready</MenuItem>
                     <MenuItem value={"Picked Up"}>Picked Up</MenuItem>
+                    <MenuItem value={"Cancelled Order"}>Cancelled Order</MenuItem>
                     </Select>
                 </FormControl><br />
                     <CardContent>
@@ -208,6 +277,7 @@ class Checkout extends Component{
                             <TableHead>
                                 <TableRow>
                                 <StyledTableCell>Receipt No.</StyledTableCell>
+                                <StyledTableCell>Action</StyledTableCell>
                                 <StyledTableCell align="right">Order Status</StyledTableCell>
                                 <StyledTableCell align="right">Total Price</StyledTableCell>
                                 </TableRow>
@@ -219,6 +289,15 @@ class Checkout extends Component{
                                     <Button style={{color: "black"}} type="button" color="inherit" value={row._id} onClick={this.handleClickOpen}>
                                     {row._id}
                                     </Button>
+                                    </StyledTableCell>
+                                    <StyledTableCell component="th" scope="row">
+                                        {row.orderStatus==="Order Recieved" ? (
+                                            <Button style={{color: "black"}} type="button" color="inherit" value={row._id} onClick={this.handleCancelOrder}>
+                                                Cancel Order 
+                                            </Button>
+                                        ):(
+                                            <p>No Action Required</p>
+                                        )}
                                     </StyledTableCell>
                                     <StyledTableCell align="right">{row.orderStatus}</StyledTableCell>
                                     <StyledTableCell align="right">{row.totalPrice}</StyledTableCell>

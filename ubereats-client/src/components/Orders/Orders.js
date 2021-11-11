@@ -2,8 +2,8 @@ import { Component } from "react";
 import NavigationBar from "../../NavigationBar";
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import { Link } from "react-router-dom";
+import TableBody from '@mui/material/TableBody'
+import {withRouter } from "react-router";
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
@@ -85,10 +85,15 @@ class Orders extends Component{
         this.getOrders();
     }
 
-    onChange = (e)=>{
-        this.setState({
+    onChange = async (e)=>{
+        await this.setState({
             orderStatus:e.target.value
         })
+    }
+
+    profile = async(id)=>{
+        sessionStorage.setItem("profile_id",id);
+        this.props.history.push("/orderCustProfile");
     }
 
     enableEdit = async(row)=>{
@@ -143,6 +148,7 @@ class Orders extends Component{
                     <MenuItem value={"Delivered"}>Delivered</MenuItem>
                     <MenuItem value={"Pickup Ready"}>Pickup Ready</MenuItem>
                     <MenuItem value={"Picked Up"}>Picked Up</MenuItem>
+                    <MenuItem value={"Cancelled Order"}>Cancelled Order</MenuItem>
                     </Select>
                 </FormControl><br />
                 {/* <Button onClick={this.updateDelivertype} theme={theme} value="Pickup" variant="contained">Pickup</Button> */}
@@ -169,7 +175,9 @@ class Orders extends Component{
                     {row._id}
                     </Button>
                     </StyledTableCell>
-                    <StyledTableCell align="right"><Link to="/profile">{row.customerName}</Link></StyledTableCell>
+                    <StyledTableCell align="right">
+                        <Button onClick={()=> this.profile(row.custId)}>{row.customerName}</Button>
+                    </StyledTableCell>
                     <StyledTableCell align="right">{row.deliveryType}</StyledTableCell>
                     {this.state.update && this.state.id===row._id ? ( 
                         <FormControl>
@@ -256,4 +264,4 @@ class Orders extends Component{
     }
 }
 
-export default Orders;
+export default withRouter(Orders);

@@ -30,7 +30,7 @@ db.once("open", function(){
     console.log("connected successfully");
 })
 
-router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
+router.get("/getDetails/:user_id", async (req,res)=>{
     var result = await Owner.findOne({_id:req.params.user_id})
     console.log("get details",result);
     if(result){
@@ -52,7 +52,7 @@ router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
     }
 });
 
-router.post("/delete", checkAuth, async (req,res)=>{
+router.post("/delete", async (req,res)=>{
     console.log("delete item called",req.body);
     kafka.make_request("delete_item", req.body, function(err, results){
         console.log("in result");
@@ -97,7 +97,7 @@ router.post("/delete", checkAuth, async (req,res)=>{
     // }
 });
 
-router.get("/getRestaurantIDs/:search", checkAuth, async (req, res)=>{
+router.get("/getRestaurantIDs/:search", async (req, res)=>{
     console.log("called resIDS", req.params);
     var result = await Owner.find( {$or:[
         {name: {$regex: "^"+req.params.search+"+", $options: "i"}},
@@ -125,7 +125,7 @@ router.get("/getRestaurantIDs/:search", checkAuth, async (req, res)=>{
     }
 });
 
-router.post("/addItem", checkAuth, async (req,res)=>{
+router.post("/addItem", async (req,res)=>{
     console.log("add item called",req.body);
     kafka.make_request("add_item", req.body, function(err, results){
         console.log("in result");
@@ -175,7 +175,7 @@ router.post("/addItem", checkAuth, async (req,res)=>{
     // }
 });
 
-router.post("/edititem", checkAuth, async (req,res)=>{
+router.post("/edititem", async (req,res)=>{
     console.log("edit item called",req.body);
     kafka.make_request("edit_item", req.body, function(err, results){
         console.log("in edit item result");

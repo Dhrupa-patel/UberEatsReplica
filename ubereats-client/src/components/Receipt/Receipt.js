@@ -37,7 +37,8 @@ class Receipt extends Component{
         var response = await axios.get(`${backendServer}/orders/getdetails/${sessionStorage.getItem("order_id")}`);
         await this.setState({
             rows:response.data["items"],
-            total:response.data["total"]
+            total:response.data["total"],
+            special_instructions: response.data["special_instructions"]
         })
         console.log(this.state)
     }
@@ -52,6 +53,7 @@ class Receipt extends Component{
                     <TableHead>
                     <TableRow>
                         <StyledTableCell>Dish Name</StyledTableCell>
+                        <StyledTableCell align="right">Quantity</StyledTableCell>
                         <StyledTableCell align="right">Dish Price</StyledTableCell>
                     </TableRow>
                     </TableHead>
@@ -60,13 +62,22 @@ class Receipt extends Component{
                             <TableRow>
                                 <StyledTableCell>{row.dishName}
                                 </StyledTableCell>
+                                <StyledTableCell align="right">{row.quantity}</StyledTableCell>
                                 <StyledTableCell align="right">{row.dishPrice}</StyledTableCell>
                             </TableRow>
                     ))}
                     <TableRow>
                     <StyledTableCell>Total</StyledTableCell>
+                    <StyledTableCell></StyledTableCell>
                     <StyledTableCell  align="right">
                             {this.state.total}
+                        </StyledTableCell>
+                    </TableRow>
+                    <TableRow>
+                    <StyledTableCell>Special Instructions</StyledTableCell>
+                    <StyledTableCell></StyledTableCell>
+                    <StyledTableCell  align="right">
+                            {this.state.special_instructions}
                         </StyledTableCell>
                     </TableRow>
                     </TableBody>
@@ -77,4 +88,6 @@ class Receipt extends Component{
         )
     }
 }
+
+
 export default Receipt;

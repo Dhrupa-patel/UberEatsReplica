@@ -5,6 +5,7 @@ async function handle_request(msg, callback){
     let dateObj = new Date()
     let date = dateObj.getFullYear()+"-"+dateObj.getMonth()+"-"+dateObj.getDate();
     let time = dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds();
+    console.log("place order",msg.Special_Instruction)
     var values= {
         totalPrice: msg.price,
         order:msg.items,
@@ -16,10 +17,14 @@ async function handle_request(msg, callback){
         time: time,
         date: date,
         resId:msg.Res_ID,
-        custId:msg.Cust_ID
+        custId:msg.Cust_ID,
+        special_instruct: msg.Special_Instruction,
+        address: msg.Address
     }
+    var result = await mongo.Customers.findOneAndUpdate({_id:msg.Cust_ID},{$addToSet: { address: msg.Address}});
+    console.log("values", values);
     var result = await mongo.Orders.findOneAndUpdate({_id:msg.Order_ID},{$set:values},{upsert: true});
-    console.log("delete_item", result);
+    console.log("place order", result);
     if(result){
         callback(null, "success");
     }

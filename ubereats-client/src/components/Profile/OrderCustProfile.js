@@ -26,6 +26,7 @@ class OrderCustProfile extends Component{
         }
     }
     getCustomerdetails = async()=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("profile_id")}`);
         await this.setState({
             datas:[response.data.profile],

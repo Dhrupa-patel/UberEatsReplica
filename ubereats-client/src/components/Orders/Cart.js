@@ -37,6 +37,7 @@ class Cart extends Component{
         }
     }
     componentDidMount(){
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         axios.get(`${backendServer}/cart/getItems/${sessionStorage.getItem("cust_user_id")}`).then(response =>{
             console.log("called cart", response.data)
             this.setState({
@@ -64,6 +65,7 @@ class Cart extends Component{
             "id":Number(e[0]), 
             "Cust_ID":sessionStorage.getItem("cust_user_id"), 
             "quantity": this.state.quantity || e[1]}
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var result = await axios.post(`${backendServer}/cart/updateQuantity`,id);
         await this.setState({
             rows:result.data,
@@ -75,6 +77,7 @@ class Cart extends Component{
     remove = async(e)=>{
         console.log("here",e)
         var id = {"dishid":Number(e[0]), "Cust_ID":sessionStorage.getItem("cust_user_id")};
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var result = await axios.post(`${backendServer}/cart/removeItem`,id);
         let items = [...this.state.rows];
         items.splice(Number(e[1]),1);

@@ -53,6 +53,7 @@ class Checkout extends Component{
     }
         
     customerOrders = async()=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/orders/CustOrders/${sessionStorage.getItem("cust_user_id")}`);
         await this.setState({
             pastorders: response.data,
@@ -61,6 +62,7 @@ class Checkout extends Component{
     }
 
     getAddresses = async()=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/customer/getAddresses/${sessionStorage.getItem("cust_user_id")}`);
         await this.setState({
             addresses:response.data
@@ -68,6 +70,7 @@ class Checkout extends Component{
     }
 
     async componentDidMount(){
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/cart/Order/${sessionStorage.getItem("cust_user_id")}`);
         await this.setState({
             rows:response.data["items"],
@@ -91,6 +94,7 @@ class Checkout extends Component{
 
     handleCancelOrder = async(e)=>{
         var data = {"id":e.target.value}
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.post(`${backendServer}/orders/cancelOrder`,data);
         await this.customerOrders();
     }
@@ -105,6 +109,7 @@ class Checkout extends Component{
         var data={
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
         }
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         axios.post(`${backendServer}/cart/removeitems`,data).then(response =>{
             console.log("cart got empty!");
         }).catch(error =>{
@@ -133,6 +138,7 @@ class Checkout extends Component{
             "Special_Instruction":this.state.special_ins,
             "Address": this.state.address
         }
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         axios.post(`${backendServer}/cart/placeorder`,data).then(response =>{
             console.log("added to orders");
         }).catch(error =>{

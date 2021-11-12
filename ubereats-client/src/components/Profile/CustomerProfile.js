@@ -27,6 +27,7 @@ class CustomerProfile extends Component{
         }
     }
     getCustomerdetails = async()=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("cust_user_id")}`);
         await this.setState({
             datas:[response.data.profile],
@@ -50,6 +51,7 @@ class CustomerProfile extends Component{
         })
     }
     updateProfile = async(data)=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var res = await axios.post(`${backendServer}/profile/updatecustomerprofile`, data);
     }
 
@@ -84,7 +86,7 @@ class CustomerProfile extends Component{
         {
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
-            var data
+            axios.defaults.headers.common.authorization = localStorage.getItem("token");
             axios.post( `${backendServer}/images/profile-img-upload/${sessionStorage.getItem("cust_user_id")}/customer`, form_data, {
                 headers: {
                 'accept': 'application/json',

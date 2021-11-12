@@ -93,6 +93,7 @@ class CustomerHome extends Component{
         }
     }
     getResDetails = async ()=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/restaurants/getDetails/~/~/~`);
         await this.setState({
             datas:response.data
@@ -123,6 +124,7 @@ class CustomerHome extends Component{
             })
         }
         else{
+            axios.defaults.headers.common.authorization = localStorage.getItem("token");
             let searchData = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}`);
             console.log(searchData.data);
             await this.setState({

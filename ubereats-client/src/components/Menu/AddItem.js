@@ -33,6 +33,7 @@ class AddItem extends Component{
         {
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
+            axios.defaults.headers.common.authorization = localStorage.getItem("token");
             axios.post( `${backendServer}/images/profile-img-upload/1/xyz`, form_data, {
                 headers: {
                 'accept': 'application/json',
@@ -92,6 +93,7 @@ class AddItem extends Component{
             "imagelocation":this.state.fileName
         }
         console.log(data,this.state);
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var res = await axios.post(`${backendServer}/menu/addItem`, data);
         await this.setState({
             submit: true

@@ -34,6 +34,7 @@ class Receipt extends Component{
         }
     }
     async componentDidMount(){
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/orders/getdetails/${sessionStorage.getItem("order_id")}`);
         await this.setState({
             rows:response.data["items"],

@@ -29,7 +29,7 @@ db.once("open", function(){
 //     if (err) throw err;
 // })
 
-router.get("/getDetails/:location/:deliveryType/:menuCategory", async (req,res)=>{
+router.get("/getDetails/:location/:deliveryType/:menuCategory", checkAuth, async (req,res)=>{
     console.log("called here",req.params);
     let result = null;
     if(req.params.location==="~"){

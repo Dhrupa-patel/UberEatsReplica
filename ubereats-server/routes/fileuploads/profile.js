@@ -8,6 +8,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Customer = require("../../model/Customer");
 const Owner = require("../../model/Owner");
+const { checkAuth } = require("../../Utils/passport");
 const { update } = require('../../model/Customer');
 
 const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
@@ -85,7 +86,7 @@ const s3 = new aws.S3({
  * @desc Upload post image
  * @access public
  */
- router.post( '/profile-img-upload/:id/:type', async( req, res ) => {
+ router.post( '/profile-img-upload/:id/:type', checkAuth, async( req, res ) => {
     //  console.log(req.body, req.params);
     await profileImgUpload( req, res, async ( error ) => {
     // console.log( 'requestfile', req.file);

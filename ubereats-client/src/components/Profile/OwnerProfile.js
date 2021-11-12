@@ -29,6 +29,7 @@ class OwnerProfile extends Component{
         };
     }
     getRestaurantdetails = async()=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/profile/restaurantprofile/${sessionStorage.getItem("res_user_id")}`);
         await this.setState({
             datas:[response.data.profile],
@@ -65,6 +66,7 @@ class OwnerProfile extends Component{
             "deliveryType":this.state.Delivery_Type || this.state.datas.DeliveryType,
             "user_id":sessionStorage.getItem("res_user_id")}
         console.log("sending data ",userID);
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.post(`${backendServer}/profile/updaterestaurantprofile`,userID);
         await this.getRestaurantdetails();
         await this.setState({
@@ -82,6 +84,7 @@ class OwnerProfile extends Component{
         {
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
+            axios.defaults.headers.common.authorization = localStorage.getItem("token");
             axios.post( `${backendServer}/images/profile-img-upload/${sessionStorage.getItem("res_user_id")}/owner`, form_data, {
                 headers: {
                 'accept': 'application/json',

@@ -67,6 +67,7 @@ class Orders extends Component{
     }
 
     getOrders = async()=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         axios.get(`${backendServer}/orders/ResOrders/${sessionStorage.getItem("res_user_id")}`).then(response =>{
             console.log("called from orders table", response.data)
             this.setState({
@@ -109,6 +110,7 @@ class Orders extends Component{
             "Order_ID":row._id,
             "Order_Status": this.state.orderStatus
         }
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var res = await axios.post(`${backendServer}/orders/updateStatus`,data);
         await this.getOrders();
         console.log(this.state);

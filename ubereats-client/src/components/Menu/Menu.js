@@ -38,6 +38,7 @@ class CustomerHome extends Component{
     }
 
     async getDishItems(){
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         await axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("res_user_id")}`).then(response =>{
             console.log("response data", response.data);
             if(response.data){
@@ -54,6 +55,7 @@ class CustomerHome extends Component{
     }
 
     cartIds = async()=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/cart/getCartResID/${sessionStorage.getItem("cust_user_id")}`);
         console.log("cartres",response.data);
         await this.setState({
@@ -75,6 +77,7 @@ class CustomerHome extends Component{
     }
 
     addItem = async(data)=>{
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.post(`${backendServer}/cart/additem`,data);
         await sessionStorage.setItem("cart_res_id",data.Res_ID);
         await this.setState({
@@ -84,6 +87,7 @@ class CustomerHome extends Component{
     clearAndAddItem = (item)=>{
         var Cust_ID = {"Cust_ID":sessionStorage.getItem("cust_user_id")}
         console.log("resid", Cust_ID);
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         axios.post(`${backendServer}/cart/removeitems`,Cust_ID).then(response =>{
             console.log("items deleted");
             console.log("confirm", item);
@@ -121,6 +125,7 @@ class CustomerHome extends Component{
     editItem = async(data)=>{
         await this.setState({
             dish:data,
+            image:data.image,
             edititem:true
         })
     }
@@ -128,6 +133,7 @@ class CustomerHome extends Component{
     delete = async(e)=>{
         console.log("here",e)
         var id = {"dishid":Number(e[0]),"Res_ID":sessionStorage.getItem("res_user_id")};
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         axios.post(`${backendServer}/menu/delete`,id).then(response =>{
             console.log("deleted");
         }).catch(error =>{
@@ -154,6 +160,7 @@ class CustomerHome extends Component{
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
             var id = String(this.state.dish.id)+"+"+String(sessionStorage.getItem("res_user_id"));
+            axios.defaults.headers.common.authorization = localStorage.getItem("token");
             axios.post( `${backendServer}/images/profile-img-upload/`+id+`/menu`, form_data, {
                 headers: {
                 'accept': 'application/json',
@@ -209,6 +216,7 @@ class CustomerHome extends Component{
             "ingredients":this.state.ingredients || this.state.dish.ingredients,
             "image": this.state.image||this.state.dish.image
         }
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var res = await axios.post(`${backendServer}/menu/edititem`,data);
         await this.setState({
             edititem:false
@@ -311,7 +319,7 @@ class CustomerHome extends Component{
             <Grid item xs={12}>
                 <Button type="button" onClick={this.onSubmit}>Submit</Button>
                 <Box>
-                <Avatar style={{height:"15%", width:"15%", align:"center", margin:"0% auto"}} alt="Dhrupa Patel" src={this.state.image} />
+                <Avatar style={{height:"15%", width:"15%", align:"center", margin:"0% auto"}} alt="" src={this.state.image} />
                 </Box>
                 <label htmlFor="btn-upload">
                 <input

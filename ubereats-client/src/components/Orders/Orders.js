@@ -19,6 +19,9 @@ import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
+import TablePagination from '@mui/material/TablePagination';
+import { updateStatus } from "../../actions/orderActions";
+import { connect } from "react-redux";
 import IconButton from '@mui/material/IconButton';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
@@ -62,7 +65,9 @@ class Orders extends Component{
         super()
         this.state={
             rows:[],
-            update:false
+            update:false,
+            rowsPerPage:5,
+            page:0
         }
     }
 
@@ -104,14 +109,29 @@ class Orders extends Component{
         })
     }
 
+    handleChangePage = async(e,newPage)=>{
+        await this.setState({
+            page:newPage
+        })
+    }
+
+    handleChangeRowsPerPage = async(e)=>{
+        await this.setState({
+            rowsPerPage: e.target.value
+        })
+    }
+
+
     update = async(row)=>{
         console.log(row,this.state)
         var data = {
             "Order_ID":row._id,
             "Order_Status": this.state.orderStatus
         }
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        var res = await axios.post(`${backendServer}/orders/updateStatus`,data);
+
+        this.props.updateStatus(data);
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // var res = await axios.post(`${backendServer}/orders/updateStatus`,data);
         await this.getOrders();
         console.log(this.state);
     }
@@ -156,6 +176,7 @@ class Orders extends Component{
                 {/* <Button onClick={this.updateDelivertype} theme={theme} value="Pickup" variant="contained">Pickup</Button> */}
             </div>
         </Grid><br />
+        <TableContainer>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
                 <TableRow>
@@ -170,10 +191,10 @@ class Orders extends Component{
                 </TableRow>
             </TableHead>
             <TableBody>
-                {this.state.rows.map((row) => (
+                {this.state.rows.slice(this.state.page*this.state.rowsPerPage,this.state.page*this.state.rowsPerPage+this.state.rowsPerPage).map((row) => (
                 <StyledTableRow>
                     <StyledTableCell component="th" scope="row">
-                    <Button style={{color: "black"}} type="button" color="inherit" value={row._id} onClick={this.handleClickOpen}>
+                    <Button style={{color: "blue"}} type="button" color="inherit" value={row._id} onClick={this.handleClickOpen}>
                     {row._id}
                     </Button>
                     </StyledTableCell>
@@ -210,7 +231,7 @@ class Orders extends Component{
                         // autoFocus
                         // />
                     ):(
-                        <StyledTableCell align="right">{row.orderStatus}</StyledTableCell>
+                        <StyledTableCell style={{color: "green"}} align="right">{row.orderStatus}</StyledTableCell>
                     )}
                     <StyledTableCell align="right">{row.Order_Mode}</StyledTableCell>
                     <StyledTableCell align="right">{row.date}</StyledTableCell>
@@ -231,17 +252,21 @@ class Orders extends Component{
                         </Button>
                     )}
                 </StyledTableRow>
+
                 ))}
-                {/* <StyledTableRow>
-                    <StyledTableCell component="th" scope="row">
-                        TOTAL
-                    </StyledTableCell>
-                    <StyledTableCell align="right">
-                        {this.state.total}
-                    </StyledTableCell>
-                </StyledTableRow> */}
             </TableBody>
+
         </Table>
+        <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={this.state.rows.length}
+                rowsPerPage={this.state.rowsPerPage}
+                page={this.state.page}
+                onPageChange={this.handleChangePage}
+                onRowsPerPageChange={this.handleChangeRowsPerPage}
+            />
+        </TableContainer>
         </div>     
         )
 
@@ -266,4 +291,4 @@ class Orders extends Component{
     }
 }
 
-export default withRouter(Orders);
+export default connect(null, { updateStatus } )(withRouter(Orders));

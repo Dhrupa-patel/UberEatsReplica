@@ -13,12 +13,16 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import { connect } from "react-redux";
 import Paper from '@mui/material/Paper';
+import { deleteCart } from "../../actions/cartActions";
+import { placeOrder } from "../../actions/orderActions";
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import { Redirect } from "react-router-dom";
+import TablePagination from '@mui/material/TablePagination';
 import TextField from '@mui/material/TextField';
 import axios from "axios";
 import backendServer from "../../webConfig";
@@ -48,7 +52,9 @@ class Checkout extends Component{
             pastorders:[],
             open:false,
             items:[],
-            addresses:[]
+            addresses:[],
+            page:0,
+            row:5
         }
     }
         
@@ -105,16 +111,29 @@ class Checkout extends Component{
         })
     }
 
+    handleChangePage = async(e,newPage)=>{
+        await this.setState({
+            page:newPage
+        })
+    }
+
+    handleChangeRowsPerPage = async(e)=>{
+        await this.setState({
+            row: e.target.value
+        })
+    }
+
     emptyCart = async()=>{
         var data={
             "Cust_ID":sessionStorage.getItem("cust_user_id"),
         }
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        axios.post(`${backendServer}/cart/removeitems`,data).then(response =>{
-            console.log("cart got empty!");
-        }).catch(error =>{
-            console.log(error);
-        })
+        this.props.deleteCart(data);
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // axios.post(`${backendServer}/cart/removeitems`,data).then(response =>{
+        //     console.log("cart got empty!");
+        // }).catch(error =>{
+        //     console.log(error);
+        // })
         await this.setState({
             home:true
         })
@@ -138,12 +157,14 @@ class Checkout extends Component{
             "Special_Instruction":this.state.special_ins,
             "Address": this.state.address
         }
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        axios.post(`${backendServer}/cart/placeorder`,data).then(response =>{
-            console.log("added to orders");
-        }).catch(error =>{
-            console.log(error);
-        })
+
+        this.props.placeOrder(data);
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // axios.post(`${backendServer}/cart/placeorder`,data).then(response =>{
+        //     console.log("added to orders");
+        // }).catch(error =>{
+        //     console.log(error);
+        // })
         this.emptyCart()
     }
 
@@ -289,28 +310,37 @@ class Checkout extends Component{
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {this.state.pastorders.map((row) => (
+                                {this.state.pastorders.slice(this.state.page*this.state.row,this.state.page*this.state.row+this.state.row).map((row) => (
                                 <StyledTableRow>
                                     <StyledTableCell component="th" scope="row">
-                                    <Button style={{color: "black"}} type="button" color="inherit" value={row._id} onClick={this.handleClickOpen}>
+                                    <Button style={{color: "blue"}} type="button" color="inherit" value={row._id} onClick={this.handleClickOpen}>
                                     {row._id}
                                     </Button>
                                     </StyledTableCell>
                                     <StyledTableCell component="th" scope="row">
                                         {row.orderStatus==="Order Recieved" ? (
-                                            <Button style={{color: "black"}} type="button" color="inherit" value={row._id} onClick={this.handleCancelOrder}>
+                                            <Button style={{color: "red"}} type="button" color="inherit" value={row._id} onClick={this.handleCancelOrder}>
                                                 Cancel Order 
                                             </Button>
                                         ):(
                                             <p>No Action Required</p>
                                         )}
                                     </StyledTableCell>
-                                    <StyledTableCell align="right">{row.orderStatus}</StyledTableCell>
+                                    <StyledTableCell style={{color: "green"}} align="right">{row.orderStatus}</StyledTableCell>
                                     <StyledTableCell align="right">{row.totalPrice}</StyledTableCell>
                                 </StyledTableRow>
                                 ))}
                             </TableBody>
                             </Table>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25]}
+                                component="div"
+                                count={this.state.pastorders.length}
+                                rowsPerPage={this.state.row}
+                                page={this.state.page}
+                                onPageChange={this.handleChangePage}
+                                onRowsPerPageChange={this.handleChangeRowsPerPage}
+                            />
                         </TableContainer>
                     </CardContent>
                 </Card>
@@ -329,4 +359,4 @@ class Checkout extends Component{
         )
     }
 }
-export default withRouter(Checkout);
+export default connect(null, {deleteCart, placeOrder} )(withRouter(Checkout));

@@ -21,14 +21,14 @@ const { checkAuth } = require("../Utils/passport");
 //     if (err) throw err;
 // })
 
-const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
-mongoose.connect(uri);
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error: "));
-db.once("open", function(){
-    console.log("connected successfully");
-})
+// mongoose.connect(uri);
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "connection error: "));
+// db.once("open", function(){
+//     console.log("connected successfully");
+// })
 
 router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
     var result = await Owner.findOne({_id:req.params.user_id})

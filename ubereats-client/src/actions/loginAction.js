@@ -7,7 +7,6 @@ import jwt_decode from "jwt-decode";
 export const userLogin = (loginData) => dispatch =>{
     axios.defaults.withCredentials = true;
     let link = backendServer+"/login/"+localStorage.getItem("userType");
-    console.log("link",link, loginData);
     axios.post(link, loginData)
     .then(response => {
         const tokenArray = response.data.token.split(" ");

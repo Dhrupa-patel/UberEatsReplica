@@ -1,31 +1,28 @@
 import { Component } from "react";
 import Button from '@mui/material/Button';
-import Profile from "../Profile/Profile";
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
-import Paper from '@mui/material/Paper';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
+import { addCart, deleteCart } from "../../actions/cartActions";
+import { deleteItem } from "../../actions/menuActions";
+import { connect } from "react-redux";
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import Box from '@mui/material/Box';
 import { withRouter } from "react-router";
 import Grid from '@mui/material/Grid';
 import NavigationBar from "../../NavigationBar";
 import axios from "axios";
 import backendServer from "../../webConfig";
-import { Redirect } from "react-router-dom";
-import { touchRippleClasses } from "@mui/material";
 
-class CustomerHome extends Component{
+class Menu extends Component{
 
     constructor(props){
         super(props);
@@ -38,29 +35,33 @@ class CustomerHome extends Component{
     }
 
     async getDishItems(){
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        await axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("res_user_id")}`).then(response =>{
-            console.log("response data", response.data);
-            if(response.data){
-                this.setState({
-                    datas:response.data.dishes,
-                    resid:response.data.res
-                })
-            }
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
-        })
+        if("res_user_id"in sessionStorage){
+            axios.defaults.headers.common.authorization = localStorage.getItem("token");
+            await axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("res_user_id")}`).then(response =>{
+                console.log("response data", response.data);
+                if(response.data){
+                    this.setState({
+                        datas:response.data.dishes,
+                        resid:response.data.res
+                    })
+                }
+            }).catch(error =>{
+                if(error.response && error.response.data){
+                    console.log(error.response.data);
+                }
+            })
+        }
     }
 
     cartIds = async()=>{
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        var response = await axios.get(`${backendServer}/cart/getCartResID/${sessionStorage.getItem("cust_user_id")}`);
-        console.log("cartres",response.data);
-        await this.setState({
-            cartRes:response.data
-        })
+        if("cust_user_id" in sessionStorage){
+            axios.defaults.headers.common.authorization = localStorage.getItem("token");
+            var response = await axios.get(`${backendServer}/cart/getCartResID/${sessionStorage.getItem("cust_user_id")}`);
+            console.log("cartres",response.data);
+            await this.setState({
+                cartRes:response.data
+            })
+        }
     }
 
     async componentDidMount(){
@@ -77,26 +78,29 @@ class CustomerHome extends Component{
     }
 
     addItem = async(data)=>{
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        var response = await axios.post(`${backendServer}/cart/additem`,data);
+        this.props.addCart(data);
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // var response = await axios.post(`${backendServer}/cart/additem`,data);
         await sessionStorage.setItem("cart_res_id",data.Res_ID);
         await this.setState({
             cartRes: data.Res_ID,
         })
     }
-    clearAndAddItem = (item)=>{
+    clearAndAddItem = async(item)=>{
         var Cust_ID = {"Cust_ID":sessionStorage.getItem("cust_user_id")}
         console.log("resid", Cust_ID);
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        axios.post(`${backendServer}/cart/removeitems`,Cust_ID).then(response =>{
-            console.log("items deleted");
-            console.log("confirm", item);
-            this.addItem(item);
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
-        });
+        await this.props.deleteCart(Cust_ID);
+        await this.addItem(item);
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // axios.post(`${backendServer}/cart/removeitems`,Cust_ID).then(response =>{
+        //     console.log("items deleted");
+        //     console.log("confirm", item);
+        //     this.addItem(item);
+        // }).catch(error =>{
+        //     if(error.response && error.response.data){
+        //         console.log(error.response.data);
+        //     }
+        // });
     }
 
     addToCart = (item,idx)=>{
@@ -133,14 +137,15 @@ class CustomerHome extends Component{
     delete = async(e)=>{
         console.log("here",e)
         var id = {"dishid":Number(e[0]),"Res_ID":sessionStorage.getItem("res_user_id")};
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        axios.post(`${backendServer}/menu/delete`,id).then(response =>{
-            console.log("deleted");
-        }).catch(error =>{
-            if(error.response && error.response.data){
-                console.log(error.response.data);
-            }
-        });
+        this.props.deleteItem(id);
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // axios.post(`${backendServer}/menu/delete`,id).then(response =>{
+        //     console.log("deleted");
+        // }).catch(error =>{
+        //     if(error.response && error.response.data){
+        //         console.log(error.response.data);
+        //     }
+        // });
         let items = [...this.state.datas];
         items.splice(Number(e[1]),1);
         await this.setState({
@@ -356,4 +361,4 @@ class CustomerHome extends Component{
     }
 
 }
-export default withRouter(CustomerHome);
+export default connect(null, {addCart, deleteCart, deleteItem} )(withRouter(Menu));

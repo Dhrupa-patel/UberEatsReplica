@@ -6,14 +6,14 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 const { checkAuth } = require("../Utils/passport");
 
-const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority";
   
-mongoose.connect(uri);
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error: "));
-db.once("open", async function(){
-    console.log("connected successfully");
-})
+// mongoose.connect(uri);
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "connection error: "));
+// db.once("open", async function(){
+//     console.log("connected successfully");
+// })
 
 const saltRounds = 10;
 router.post("/customer", async(req,res)=>{

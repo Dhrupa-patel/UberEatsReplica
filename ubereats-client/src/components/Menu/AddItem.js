@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import { connect } from "react-redux";
+import { addItem } from "../../actions/menuActions";
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -34,7 +36,7 @@ class AddItem extends Component{
             console.log("reaching here", this.state.selectedFile);
             form_data.append( 'profileImage', this.state.selectedFile, this.state.selectedFile.name );
             axios.defaults.headers.common.authorization = localStorage.getItem("token");
-            axios.post( `${backendServer}/images/profile-img-upload/1/xyz`, form_data, {
+            axios.post(`${backendServer}/images/profile-img-upload/1/xyz`, form_data, {
                 headers: {
                 'accept': 'application/json',
                 'Accept-Language': 'en-US,en;q=0.8',
@@ -93,8 +95,9 @@ class AddItem extends Component{
             "imagelocation":this.state.fileName
         }
         console.log(data,this.state);
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        var res = await axios.post(`${backendServer}/menu/addItem`, data);
+        await this.props.addItem(data);
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // var res = await axios.post(`${backendServer}/menu/addItem`, data);
         await this.setState({
             submit: true
         })
@@ -217,4 +220,4 @@ class AddItem extends Component{
     }
 
 }
-export default AddItem;
+export default connect(null, {addItem} )(AddItem);

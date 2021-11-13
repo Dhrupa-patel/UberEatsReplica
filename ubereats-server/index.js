@@ -26,9 +26,9 @@ mongoose.Promise = global.Promise;
 
 mongoose.connect(
     "mongodb+srv://ubereats:ubereats@cluster0.h92ks.mongodb.net/ubereats?retryWrites=true&w=majority",
-    {
-        poolSize: 10,
-    }
+    // {
+    //     poolSize: 10,
+    // }
 )
 .then(
     () => {

@@ -118,6 +118,7 @@ class CustomerHome extends Component{
     }
     search = async(e)=>{
         let search = e.target.value;
+        
         if(search===""){
             await this.setState({
                 newData:this.state.datas
@@ -125,7 +126,7 @@ class CustomerHome extends Component{
         }
         else{
             axios.defaults.headers.common.authorization = localStorage.getItem("token");
-            let searchData = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}`);
+            let searchData = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}/${this.state.delivery_type}/${this.state.menu_category}`);
             console.log(searchData.data);
             await this.setState({
                 newData:searchData.data

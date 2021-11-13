@@ -62,7 +62,7 @@ class OwnerProfile extends Component{
             "state":this.state.State || this.state.datas.State,
             "country":this.state.Country ||this.state.datas.Country,
             "name":this.state.Name || this.state.datas.Name,
-            "descripton":this.state.Description || this.state.datas.Description,
+            "descripton":this.state.description || this.state.datas.Description,
             "deliveryType":this.state.Delivery_Type || this.state.datas.DeliveryType,
             "user_id":sessionStorage.getItem("res_user_id")}
         console.log("sending data ",userID);

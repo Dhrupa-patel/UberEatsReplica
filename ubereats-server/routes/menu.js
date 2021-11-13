@@ -97,13 +97,16 @@ router.post("/delete", checkAuth, async (req,res)=>{
     // }
 });
 
-router.get("/getRestaurantIDs/:search", checkAuth, async (req, res)=>{
-    console.log("called resIDS", req.params);
+router.get("/getRestaurantIDs/:search/:deliveryType/:menuCategory", checkAuth, async (req, res)=>{
+    // console.log("called resIDS", req.params);
     var result = await Owner.find( {$or:[
         {name: {$regex: "^"+req.params.search+"+", $options: "i"}},
         {city: {$regex: "^"+req.params.search+"+", $options: "i"}},
         {"dishes.name": {$regex: "^"+req.params.search+"+", $options: "i"}}
-    ]});
+    ],
+        deliveryType:req.params.deliveryType,
+        menuCategory:req.params.menuCategory
+    });
     // console.log("unique res", result);
     if(result){
         if(result.length>=0){

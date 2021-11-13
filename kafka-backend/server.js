@@ -8,6 +8,7 @@ var updateStatus = require('./services/updateStatus.js');
 var placeOrder = require('./services/placeOrder.js');
 var addItemCart = require('./services/addItemCart.js');
 var deleteItemCart = require('./services/deleteItemCart');
+var updateProfile = require('./services/updateProfile');
 
 function handleTopicRequest(topic_name,fname){
     //var topic_name = 'root_topic';
@@ -48,3 +49,4 @@ handleTopicRequest("update_status", updateStatus)
 handleTopicRequest("place_order", placeOrder)
 handleTopicRequest("delete_item_cart", deleteItemCart)
 handleTopicRequest("add_item_cart", addItemCart)
+handleTopicRequest("update_profile", updateProfile)

@@ -51,7 +51,7 @@ router.get("/restaurantprofile/:user_id", checkAuth, async (req,res)=>{
 });
 
 router.post("/updaterestaurantprofile", checkAuth, async (req,res)=>{
-    // console.log("update res called",req.body);
+    console.log("update res called",req.body);
     var values = {
         email: req.body.email,
         name: req.body.name,
@@ -63,20 +63,26 @@ router.post("/updaterestaurantprofile", checkAuth, async (req,res)=>{
         deliveryType: req.body.deliveryType,
         images: req.body.images
     };
-    var result = await Owner.findOneAndUpdate({_id:req.body.user_id}, {$set:values}, {upsert: true});
+    req.body.type="owner";
+    req.body.values = values;
+    console.log("making kafka call to update profile");
+    kafka.make_request("update_profile", req.body, function(err, results){
+        console.log("in update profile result");
+    // var result = await Owner.findOneAndUpdate({_id:req.body.user_id}, {$set:values}, {upsert: true});
     // console.log(result);
-    if(result){
-        res.statusCode = 200;
-        res.setHeader("Content-Type","text/plain");
-        res.end("sucess");
-        return;
-    }
-    else{
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+            return;
+        }
+    });
 });
 
 router.post("/updatecustomerprofile", checkAuth, async (req,res)=>{
@@ -91,20 +97,24 @@ router.post("/updatecustomerprofile", checkAuth, async (req,res)=>{
         nickname: req.body.nickname,
         _id: req.body.user_id
     };
-    
-    var result = await Customer.findOneAndUpdate({_id:req.body.user_id}, {$set:values}, {upsert: true});
-
-    if(result){
-        res.statusCode = 200;
-        res.setHeader("Content-Type","text/plain");
-        res.end("success");
-    }
-    else{
-        res.statusCode = 500;
-        res.setHeader("Content-Type","text/plain");
-        res.end("Database Error");
-        return;
-    }
+    req.body.values = values;
+    req.body.type = "customer";
+    console.log("making kafka call to update profile");
+    kafka.make_request("update_profile", req.body, function(err, results){
+        console.log("in update profile result");
+    // var result = await Customer.findOneAndUpdate({_id:req.body.user_id}, {$set:values}, {upsert: true});
+        if(err){
+            res.statusCode = 500;
+            res.setHeader("Content-Type","text/plain");
+            res.end("Database Error");
+            return;
+        }
+        else{
+            res.statusCode = 200;
+            res.setHeader("Content-Type","text/plain");
+            res.end("success");
+        }
+    });
 });
 
 router.get("/customerprofile/:user_id", checkAuth, async (req,res)=>{

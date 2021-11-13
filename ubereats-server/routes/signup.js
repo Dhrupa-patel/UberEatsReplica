@@ -52,7 +52,7 @@ router.post("/customer", async(req,res)=>{
 });
 
 router.post("/owner", async(req, res)=>{
-    // console.log("owner Signup", req.body);
+    console.log("owner Signup", req.body);
     try{
         const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
         var new_id = await Owner.countDocuments({})+1
@@ -68,9 +68,9 @@ router.post("/owner", async(req, res)=>{
             timings: "8:00 AM - 12:00 PM",
             description: req.body.description,
             menuCategory: req.body.menucategory,
-            deliveryType: req.body.delivery.split(",")
+            deliveryType: req.body.delivery
         });
-
+        console.log(user);
         const saveOwn = await user.save();
         if(saveOwn){
             res.statusCode = 200;

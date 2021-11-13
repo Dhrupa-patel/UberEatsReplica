@@ -88,7 +88,7 @@ class OwnerSignup extends Component{
                 phonenumber: phone,
                 
             }
-            
+            console.log(data);
             this.props.ownerSignup(data);
             await this.setState({
                 signup:true
@@ -224,8 +224,9 @@ class OwnerSignup extends Component{
                                 <InputLabel id="Delivery_Type">Delivery Type</InputLabel>
                                 <Select
                                 labelId="Delivery_Type"
+                                multiple
                                 id="deliverytype"
-                                defaultValue={"Delivery"}
+                                defaultValue={["Delivery"]}
                                 label="Delivery Type"
                                 name="deliverytype"
                                 onChange={this.onChange}

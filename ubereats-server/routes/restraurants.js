@@ -36,8 +36,8 @@ router.get("/getDetails/:location/:deliveryType/:menuCategory", checkAuth, async
         result = await Owner.find({});
     }
     else{
-        result = await Owner.find({ $or: [
-        {deliveryType:[req.params.deliveryType]},
+        result = await Owner.find({ $and: [
+        {deliveryType: {$in :[req.params.deliveryType]}},
         {menuCategory: req.params.menuCategory},
         {city: req.params.location}
         ]})

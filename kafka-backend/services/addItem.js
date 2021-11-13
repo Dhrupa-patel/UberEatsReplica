@@ -13,7 +13,7 @@ async function handle_request(msg, callback){
         "image": msg.imagelocation,
         "category": msg.Dish_Category
     });
-    console.log(dish);
+    // console.log(dish);
     var values = {
         _id: msg.Res_ID, 
         dishes:dish,
@@ -21,7 +21,7 @@ async function handle_request(msg, callback){
     }
     
     var result = await mongo.Owners.findOneAndUpdate({_id: msg.Res_ID}, {$set:values}, {upsert:true})
-    console.log(result);
+    // console.log(result);
     if(result){
         callback(null, "success");
     }

@@ -19,7 +19,7 @@ const secret = "CMPE273";
 auth();
 
 router.get("/customer", async (req, res)=>{
-    console.log("customer get API called");
+    // console.log("customer get API called");
     const result = await Customer.find(); 
     if(result){
         var emails = {"Emails":[]};
@@ -35,10 +35,9 @@ router.get("/customer", async (req, res)=>{
 });
 
 router.post("/customer", async (req,res)=>{
-    console.log("Customer Login", req.body);
-
+    // console.log("Customer Login", req.body);
     var result = await Customer.find({email:req.body.email});
-    console.log("result", result);
+    // console.log("result", result);
     if(result){
         if(result.length>0){
             const encryptedPassword = await bcrypt.compare(
@@ -84,9 +83,9 @@ router.post("/customer", async (req,res)=>{
     }
 });
 router.get("/owner", async (req, res)=>{
-    console.log("owner get API called");
+    // console.log("owner get API called");
     const result = await Owner.find(); 
-    console.log("result", result);
+    // console.log("result", result);
     if(result){
         var emails = {"Emails":[]};
         for(let i=0; i<result.length;i++){
@@ -103,9 +102,9 @@ router.get("/owner", async (req, res)=>{
 });
 
 router.post("/owner", async (req, res)=>{
-    console.log("owner Login", req.body);
+    // console.log("owner Login", req.body);
     var result = await Owner.find({email:req.body.email});
-    console.log("result", result);
+    // console.log("result", result);
     if(result){
         if(result.length>0){
             const encryptedPassword = await bcrypt.compare(

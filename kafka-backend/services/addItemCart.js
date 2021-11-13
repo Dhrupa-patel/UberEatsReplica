@@ -13,7 +13,7 @@ async function handle_request(msg, callback){
     if(result){
         result.cart = result.cart.concat(values);
         var result = await mongo.Customers.findOneAndUpdate({_id:msg.Cust_ID},{$set: {cart:result.cart,cartResId:msg.Res_ID}},{upsert: true});
-        console.log("add_item_cart",result);
+        // console.log("add_item_cart",result);
         if(result){
             callback(null, "success");
         }

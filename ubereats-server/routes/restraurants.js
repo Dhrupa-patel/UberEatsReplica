@@ -30,7 +30,7 @@ const { checkAuth } = require("../Utils/passport");
 // })
 
 router.get("/getDetails/:location/:deliveryType/:menuCategory", checkAuth, async (req,res)=>{
-    console.log("called here",req.params);
+    // console.log("called here",req.params);
     let result = null;
     if(req.params.location==="~"){
         result = await Owner.find({});
@@ -42,7 +42,7 @@ router.get("/getDetails/:location/:deliveryType/:menuCategory", checkAuth, async
         {city: req.params.location}
         ]})
     }
-    console.log(result)
+    // console.log(result)
     if(result){
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");

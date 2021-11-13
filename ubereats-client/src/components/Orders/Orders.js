@@ -129,7 +129,7 @@ class Orders extends Component{
             "Order_Status": this.state.orderStatus
         }
 
-        this.props.updateStatus(data);
+        await this.props.updateStatus(data);
         // axios.defaults.headers.common.authorization = localStorage.getItem("token");
         // var res = await axios.post(`${backendServer}/orders/updateStatus`,data);
         await this.getOrders();
@@ -208,7 +208,7 @@ class Orders extends Component{
                         <Select
                         labelId="update"
                         id="update"
-                        defaultValue={"Order Recieved"}
+                        defaultValue={"Null"}
                         label="Order Status"
                         name="update"
                         onChange={this.onChange}
@@ -218,6 +218,7 @@ class Orders extends Component{
                         <MenuItem value={"On the Way"}>On the Way</MenuItem>
                         <MenuItem value={"Delivered"}>Delivered</MenuItem>
                         <MenuItem value={"Pickup Ready"}>Pickup Ready</MenuItem>
+                        <MenuItem value={"Cancelled Order"}>Cancel Order</MenuItem>
                         <MenuItem value={"Picked Up"}>Picked Up</MenuItem>
                         </Select>
                         </FormControl>
@@ -258,7 +259,7 @@ class Orders extends Component{
 
         </Table>
         <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
+                rowsPerPageOptions={[2, 5, 10]}
                 component="div"
                 count={this.state.rows.length}
                 rowsPerPage={this.state.rowsPerPage}

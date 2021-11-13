@@ -3,7 +3,7 @@ const mongo = require("./mongoose");
 
 async function handle_request(msg, callback){
     var result = await mongo.Orders.findOneAndUpdate({_id:msg.Order_ID},{$set:{orderStatus:msg.Order_Status}});     
-    console.log("delete_item", result);
+    // console.log("delete_item", result);
     if(result){
         callback(null, "success");
     }

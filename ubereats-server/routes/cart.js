@@ -31,10 +31,10 @@ var kafka = require("../kafka/client");
 // })
 
 router.post("/addItem", checkAuth, async (req,res)=>{
-    console.log("add item",req.body);
+    // console.log("add item",req.body);
     kafka.make_request("add_item_cart", req.body, function(err, results){
-        console.log("in result");
-        console.log("res ", results);
+        console.log("adding item to cart using add_item topic");
+        console.log("result from kafka ", results);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -51,10 +51,10 @@ router.post("/addItem", checkAuth, async (req,res)=>{
 });
 
 router.post("/removeitems", checkAuth, async (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     kafka.make_request("delete_item_cart", req.body, function(err, results){
-        console.log("in result");
-        console.log("res ", results);
+        console.log("deleted item from cart using delete_item topic");
+        console.log("result from kafka ", results);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -72,7 +72,7 @@ router.post("/removeitems", checkAuth, async (req,res)=>{
 
 
 router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
-    console.log("get items",req.params);
+    // console.log("get items",req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
     if(result){
         res.statusCode = 200;
@@ -90,9 +90,9 @@ router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
 
 
 router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
-    console.log(req.params,"called in get cart res");
+    // console.log(req.params,"called in get cart res");
     var result = await Customer.findOne({_id:req.params.cust_id});
-    console.log("Res ID",result);
+    // console.log("Res ID",result);
     if(result){
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");
@@ -109,7 +109,7 @@ router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
 
 
 router.get("/Order/:cust_id", checkAuth,  async (req,res)=>{
-    console.log(req.params);
+    // console.log(req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
     if(result){
         var total = 0;
@@ -119,7 +119,7 @@ router.get("/Order/:cust_id", checkAuth,  async (req,res)=>{
         }
         ans["total"] = total.toFixed(2);
         ans["resId"] = result.cartResId;
-        console.log("ans", ans);
+        // console.log("ans", ans);
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");
         res.end(JSON.stringify(ans));
@@ -135,10 +135,11 @@ router.get("/Order/:cust_id", checkAuth,  async (req,res)=>{
 
 
 router.post("/placeorder", checkAuth, async (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
+    console.log("making request to kafka for placing order using place_order topic");
     kafka.make_request("place_order", req.body, function(err, results){
         console.log("in result");
-        console.log("res ", results);
+        console.log("ordered Placed! ", results);
         if(results==="Database Error"){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -183,7 +184,7 @@ router.post("/placeorder", checkAuth, async (req,res)=>{
 });
 
 router.post("/removeItem", checkAuth, async (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     var result = await Customer.findOne({_id:req.body.Cust_ID});
     if(result){
         for(var idx = 0; idx<result["cart"].length; idx++){
@@ -195,7 +196,7 @@ router.post("/removeItem", checkAuth, async (req,res)=>{
 
         var ans = await Customer.findOneAndUpdate({_id:req.body.Cust_ID},{$set:{cart:result["cart"]}})
         if(ans){
-            console.log(ans)
+            // console.log(ans)
             res.statusCode = 200
             res.setHeader("Content-Type","text/plain");
             res.end("removed");
@@ -209,7 +210,7 @@ router.post("/removeItem", checkAuth, async (req,res)=>{
 });
 
 router.post("/updateQuantity", checkAuth, async (req,res)=>{
-    console.log("update quantity", req.body);
+    // console.log("update quantity", req.body);
     var result = await Customer.findOne({_id:req.body.Cust_ID})
     if(result){
         for(var idx = 0; idx<result["cart"].length; idx++){
@@ -221,7 +222,7 @@ router.post("/updateQuantity", checkAuth, async (req,res)=>{
 
         var ans = await Customer.findOneAndUpdate({_id:req.body.Cust_ID},{$set:{cart:result["cart"]}},{new:true})
         if(ans){
-            console.log(ans)
+            // console.log(ans)
             res.statusCode = 200
             res.setHeader("Content-Type","text/plain");
             res.end(JSON.stringify(ans["cart"]));

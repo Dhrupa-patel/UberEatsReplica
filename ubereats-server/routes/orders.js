@@ -32,10 +32,11 @@ const { checkAuth } = require("../Utils/passport");
 // })
 
 router.post("/updateStatus", checkAuth, async (req,res)=>{
-    console.log("update status",req.body);
+    // console.log("update status",req.body);
+    console.log("updating the status of order using kafka");
     kafka.make_request("update_status", req.body, function(err, results){
         console.log("in result");
-        console.log("res ", results);
+        console.log("result from kafka: ", results);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -65,10 +66,10 @@ router.post("/updateStatus", checkAuth, async (req,res)=>{
 
 router.post("/cancelOrder", checkAuth, async(req,res)=>{
 
-    console.log("cancel_order", req.body);
+    // console.log("cancel_order", req.body);
     var result = await Order.findOneAndUpdate({"_id":req.body.id},{$set:{"orderStatus":"Cancelled Order"}},{new:true});
     if (result){
-        console.log("after cancell", result);
+        // console.log("after cancell", result);
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");
         res.end("");
@@ -83,10 +84,10 @@ router.post("/cancelOrder", checkAuth, async(req,res)=>{
 });
 
 router.get("/ResOrders/:res_id",checkAuth, async(req,res)=>{
-    console.log("res", req.params);
+    // console.log("res", req.params);
     var result = await Order.find({"order.resID":req.params.res_id});
     if(result){
-        console.log(result);
+        // console.log(result);
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");
         res.end(JSON.stringify(result));
@@ -103,9 +104,8 @@ router.get("/ResOrders/:res_id",checkAuth, async(req,res)=>{
 router.get("/CustOrders/:cust_id",checkAuth, async (req,res)=>{
     // console.log(req.params);
     var result = await Order.find({custId:req.params.cust_id});
-    console.log(result);
     if(result){
-        console.log(result);
+        // console.log(result);
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");
         res.end(JSON.stringify(result));
@@ -120,9 +120,9 @@ router.get("/CustOrders/:cust_id",checkAuth, async (req,res)=>{
 });
 
 router.get("/getID", checkAuth, async (req,res)=>{
-    console.log("getID");
+    // console.log("getID");
     var result = await Order.find();
-    console.log(result.length);
+    // console.log(result.length);
     if(result){
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");
@@ -137,15 +137,15 @@ router.get("/getID", checkAuth, async (req,res)=>{
     }
 });
 router.get("/getdetails/:order_id", checkAuth, async(req,res)=>{
-    console.log("getdetails",req.params);
+    // console.log("getdetails",req.params);
     var result = await Order.find({_id:req.params.order_id});
-    console.log("get details", result[0]);
+    // console.log("get details", result[0]);
     if(result){
         var ans={}
         ans["items"]=result[0].order;
         ans["total"] = result[0].totalPrice;
         ans["special_instructions"] = result[0].special_instruct
-        console.log(ans);
+        // console.log(ans);
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");
         res.end(JSON.stringify(ans));

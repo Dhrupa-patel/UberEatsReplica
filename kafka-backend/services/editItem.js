@@ -25,7 +25,7 @@ async function handle_request(msg, callback){
         result = {dishes:values}
     }
     var result = await mongo.Owners.findOneAndUpdate({_id:msg.Res_ID},{$set:{dishes:result.dishes}},{upsert: true});
-    console.log("edit_item",result);
+    // console.log("edit_item",result);
     if(result){
         callback(null, "success");
     }

@@ -38,7 +38,7 @@ router.get("/restaurantprofile/:user_id", checkAuth, async (req,res)=>{
         let userObj = {"profile":{"Name":result.name, "Email_ID":result.email, "Description":result.description,
         "Country":result.country, "State":result.state, "City":result.city,
         "Timings":result.timings,"Delivery_Type":result.deliveryType},"fileName":result.images[0]};
-        console.log(userObj);
+        // console.log(userObj);
         res.end(JSON.stringify(userObj));
 
     }
@@ -51,7 +51,7 @@ router.get("/restaurantprofile/:user_id", checkAuth, async (req,res)=>{
 });
 
 router.post("/updaterestaurantprofile", checkAuth, async (req,res)=>{
-    console.log("update res called",req.body);
+    // console.log("update res called",req.body);
     var values = {
         email: req.body.email,
         name: req.body.name,
@@ -86,7 +86,7 @@ router.post("/updaterestaurantprofile", checkAuth, async (req,res)=>{
 });
 
 router.post("/updatecustomerprofile", checkAuth, async (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     var values = {
         email: req.body.email, 
         dateOfBirth: req.body.DOB,
@@ -118,10 +118,10 @@ router.post("/updatecustomerprofile", checkAuth, async (req,res)=>{
 });
 
 router.get("/customerprofile/:user_id", checkAuth, async (req,res)=>{
-    console.log("profile customer called",req.params);
+    // console.log("profile customer called",req.params);
     let sql = "SELECT * FROM Customers WHERE Cust_ID='"+req.params.user_id+"'";
     var result = await Customer.findOne({_id:req.params.user_id});
-    console.log(result);
+    // console.log(result);
     if(result){
         res.statusCode = 200;
         res.setHeader("Content-Type","text/plain");

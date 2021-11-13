@@ -32,7 +32,7 @@ const { checkAuth } = require("../Utils/passport");
 
 router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
     var result = await Owner.findOne({_id:req.params.user_id})
-    console.log("get details",result);
+    // console.log("get details",result);
     if(result){
         if(result.dishes.length>0){
             res.statusCode = 200;
@@ -53,10 +53,11 @@ router.get("/getDetails/:user_id", checkAuth, async (req,res)=>{
 });
 
 router.post("/delete", checkAuth, async (req,res)=>{
-    console.log("delete item called",req.body);
+    // console.log("delete item called",req.body);
+    console.log("deleting item from menu using kafka");
     kafka.make_request("delete_item", req.body, function(err, results){
         console.log("in result");
-        console.log("res ", results);
+        console.log("result from kafka ", results);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -129,10 +130,11 @@ router.get("/getRestaurantIDs/:search/:deliveryType/:menuCategory", checkAuth, a
 });
 
 router.post("/addItem", checkAuth, async (req,res)=>{
-    console.log("add item called",req.body);
+    // console.log("add item called",req.body);
+    console.log("adding item to the menu using kafka");
     kafka.make_request("add_item", req.body, function(err, results){
         console.log("in result");
-        console.log("res ", results);
+        console.log("result from kafka ", results);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");
@@ -179,10 +181,11 @@ router.post("/addItem", checkAuth, async (req,res)=>{
 });
 
 router.post("/edititem", checkAuth, async (req,res)=>{
-    console.log("edit item called",req.body);
+    // console.log("edit item called",req.body);
+    console.log("editing item using kafka");
     kafka.make_request("edit_item", req.body, function(err, results){
         console.log("in edit item result");
-        console.log("res ", results);
+        console.log("result from kafka", results);
         if(err){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");

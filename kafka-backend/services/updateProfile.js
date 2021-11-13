@@ -8,7 +8,7 @@ async function handle_request(msg, callback){
     else{
         var result = await mongo.Owners.findOneAndUpdate({_id:msg.user_id}, {$set:msg.values}, {upsert: true});
     }
-    console.log("update profile", result);
+    // console.log("update profile", result);
     if(result){
         callback(null, "success");
     }

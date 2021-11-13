@@ -43,7 +43,7 @@ router.post("/customer", async(req,res)=>{
             return;
         }
     } catch(err){
-        console.log(err);
+        // console.log(err);
         res.statusCode = 500;
         res.setHeader("Content-Type","text/plain");
         res.end("Error in Data");
@@ -52,7 +52,7 @@ router.post("/customer", async(req,res)=>{
 });
 
 router.post("/owner", async(req, res)=>{
-    console.log("owner Signup", req.body);
+    // console.log("owner Signup", req.body);
     try{
         const hashPassword = await bcrypt.hash(req.body.password, saltRounds);
         var new_id = await Owner.countDocuments({})+1
@@ -70,7 +70,7 @@ router.post("/owner", async(req, res)=>{
             menuCategory: req.body.menucategory,
             deliveryType: req.body.delivery
         });
-        console.log(user);
+        // console.log(user);
         const saveOwn = await user.save();
         if(saveOwn){
             res.statusCode = 200;
@@ -79,7 +79,7 @@ router.post("/owner", async(req, res)=>{
             return;
         }
     } catch(err){
-        console.log(err);
+        // console.log(err);
         res.statusCode = 500;
         res.setHeader("Content-Type","text/plain");
         res.end("Database Error");

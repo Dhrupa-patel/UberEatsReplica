@@ -31,7 +31,7 @@ const url = "http://localhost:3002";
 // })
 
 router.post("/addfavorites", checkAuth, async (req,res)=>{
-    console.log("add to favorites", req.body)
+    // console.log("add to favorites", req.body)
     var result = await Customer.findOne({_id:req.body.Cust_id});
     var fav;
     if(result && !result.favorites.includes(req.body.res_id)){
@@ -40,7 +40,7 @@ router.post("/addfavorites", checkAuth, async (req,res)=>{
     else if(!result){
         fav = [req.body.res_id]
     }
-    console.log(result.favorites.concat(req.body.res_id))
+    // console.log(result.favorites.concat(req.body.res_id))
     var values = {
         favorites:fav
     }
@@ -58,10 +58,10 @@ router.post("/addfavorites", checkAuth, async (req,res)=>{
 
 
 router.get("/getAddresses/:customerID", checkAuth, async (req,res)=>{
-    console.log("callled addresses", req.params);
+    // console.log("callled addresses", req.params);
     var result = await Customer.findOne({_id:req.params.customerID});
     if(result){
-        console.log(result);
+        // console.log(result);
         res.statusCode=200;
         res.setHeader("Content-Type","text/plain");
         res.end(JSON.stringify(result.address));
@@ -74,7 +74,7 @@ router.get("/getAddresses/:customerID", checkAuth, async (req,res)=>{
 });
 
 router.get("/getFavorites/:customerID", checkAuth, async (req,res)=>{
-    console.log("called favorites", req.params);
+    // console.log("called favorites", req.params);
     var result = await Customer.findOne({_id:req.params.customerID});
     if(result){
         var ans = [];

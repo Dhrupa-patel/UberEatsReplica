@@ -1,6 +1,6 @@
 To refer to these instructions while editing the flow.
 
-This flow retrieves salesforce account and if any account has more than 500 employees registered then a new entry is created in Google sheet.
+This flow is a scheduler which retrieves salesforce accounts and if any account has more than 500 employees then a new entry is created in Google sheet.
 
 Following are the steps to be followed to create template for above goal mentioned:
 - Click Create flow to start using the template.

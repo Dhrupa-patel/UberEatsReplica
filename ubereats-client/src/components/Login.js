@@ -13,6 +13,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from "axios";
+import backendServer from "../webConfig";
 
 class Login extends Component {
     constructor(){
@@ -35,9 +37,50 @@ class Login extends Component {
             email: this.state.email,
             password: this.state.password
         }
-        console.log("data",data);
-        this.props.userLogin(data);
-        console.log("onsubmit prop",this.props);
+        let query;
+        if(localStorage.getItem("userType")==="customer"){
+          query = await `mutation($email: String!, $password: String!, $usertype: String!){
+                customerlogin(email: $email, password: $password, usertype: $usertype){
+                      email
+                      _id
+                      state
+                      name
+                  }
+              }
+          `
+        }
+        else{
+          query = await `mutation($email: String!, $password: String!, $usertype: String!){
+                ownerlogin(email: $email, password: $password, usertype: $usertype){
+                      email
+                      _id
+                      state
+                      name
+                  }
+              }
+          `
+        }
+        var login = await axios.post(`${backendServer}/graphql`,
+            {query:query,
+            variables:{
+                email:data.email,
+                password:data.password,
+                usertype:"customer"
+            }
+        }
+        );
+        console.log("login ",login.data.data)
+        sessionStorage.setItem("username",login.data.data.customerlogin.name);
+        sessionStorage.setItem("email_id",login.data.data.customerlogin.email);
+        sessionStorage.setItem("location", login.data.data.customerlogin.state);
+        if(localStorage.getItem("userType")==="owner"){
+          sessionStorage.setItem("res_user_id",login.data.data.customerlogin._id);
+        }
+        else{
+          sessionStorage.setItem("cust_user_id",login.data.data.customerlogin._id);
+        }
+        // this.props.userLogin(data);
+        // console.log("onsubmit prop",this.props);
         await this.setState({
             loggedIn:true
         });
@@ -48,24 +91,8 @@ class Login extends Component {
         let redirectVar = null;
         let message="";
         let user="/customersignup";
-        if(this.props.user && this.props.user._id){
-            console.log("props called", this.props.user);
-            sessionStorage.setItem("username",this.props.user.name);
-            sessionStorage.setItem("email_id",this.props.user.email);
-            if(localStorage.getItem("userType")==="owner"){
-              sessionStorage.setItem("res_user_id",this.props.user._id);
-            }
-            else{
-              sessionStorage.setItem("cust_user_id",this.props.user._id);
-            }
-            sessionStorage.setItem("location", this.props.user.location);
+        if('location' in sessionStorage){
             redirectVar = <Redirect to="/home"/>
-        }
-        else if(this.props.user==="NO_USER" && this.state.loggedIn){
-            message = "No user registered with this email ID";
-        }
-        else if(this.props.user==="INCORRECT_PASSWORD" && this.state.loggedIn){
-            message = "Incorrect Password";
         }
         if(localStorage.getItem("userType")==="owner"){
             user = "/ownersignup";

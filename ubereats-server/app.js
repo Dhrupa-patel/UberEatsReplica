@@ -1,8 +1,9 @@
-
+const {graphqlHTTP} = require('express-graphql');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 //require express session
+const schema = require('./schema/schema');
 var session = require('express-session');
 const cors = require('cors');
 const corsConfig = {
@@ -29,6 +30,13 @@ app.use(function(req, res, next) {
   res.setHeader('Cache-Control', 'no-cache');
   next();
 });
+
+app.use("/graphql", 
+  graphqlHTTP({
+    schema,
+    graphiql: true,
+  })
+);
 
 app.get("/", (req,res)=>{
   //  console.log("hello world"); 

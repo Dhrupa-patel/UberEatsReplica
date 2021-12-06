@@ -28,7 +28,7 @@ const { checkAuth } = require("../Utils/passport");
 //     if (err) throw err;
 // })
 
-router.get("/restaurantprofile/:user_id", checkAuth, async (req,res)=>{
+router.get("/restaurantprofile/:user_id", async (req,res)=>{
     // console.log("profile res called",req.params);
     var result = await Owner.findOne({_id:req.params.user_id});
     // console.log(result);
@@ -50,7 +50,7 @@ router.get("/restaurantprofile/:user_id", checkAuth, async (req,res)=>{
     }
 });
 
-router.post("/updaterestaurantprofile", checkAuth, async (req,res)=>{
+router.post("/updaterestaurantprofile", async (req,res)=>{
     // console.log("update res called",req.body);
     var values = {
         email: req.body.email,
@@ -85,7 +85,7 @@ router.post("/updaterestaurantprofile", checkAuth, async (req,res)=>{
     });
 });
 
-router.post("/updatecustomerprofile", checkAuth, async (req,res)=>{
+router.post("/updatecustomerprofile", async (req,res)=>{
     // console.log(req.body);
     var values = {
         email: req.body.email, 
@@ -117,9 +117,9 @@ router.post("/updatecustomerprofile", checkAuth, async (req,res)=>{
     });
 });
 
-router.get("/customerprofile/:user_id", checkAuth, async (req,res)=>{
+router.get("/customerprofile/:user_id", async (req,res)=>{
     // console.log("profile customer called",req.params);
-    let sql = "SELECT * FROM Customers WHERE Cust_ID='"+req.params.user_id+"'";
+    // let sql = "SELECT * FROM Customers WHERE Cust_ID='"+req.params.user_id+"'";
     var result = await Customer.findOne({_id:req.params.user_id});
     // console.log(result);
     if(result){

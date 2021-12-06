@@ -93,7 +93,7 @@ class CustomerHome extends Component{
         }
     }
     getResDetails = async ()=>{
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/restaurants/getDetails/~/~/~`);
         await this.setState({
             datas:response.data
@@ -125,7 +125,7 @@ class CustomerHome extends Component{
             })
         }
         else{
-            axios.defaults.headers.common.authorization = localStorage.getItem("token");
+            // axios.defaults.headers.common.authorization = localStorage.getItem("token");
             let searchData = await axios.get(`${backendServer}/menu/getRestaurantIDs/${search}/${this.state.delivery_type}/${this.state.menu_category}`);
             console.log(searchData.data);
             await this.setState({
@@ -154,8 +154,8 @@ class CustomerHome extends Component{
     addFavorite = (res_id)=>{
         console.log(res_id);
         let data = {"Cust_id":sessionStorage.getItem("cust_user_id"), "res_id":res_id};
-        console.log("called addfav", data, localStorage.getItem("token"));
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        // console.log("called addfav", data, localStorage.getItem("token"));
+        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
         axios.post(`${backendServer}/customer/addfavorites`,data).then(response =>{
             console.log("Added to favorites");
         }).catch(error =>{

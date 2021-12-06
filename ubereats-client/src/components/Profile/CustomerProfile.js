@@ -7,8 +7,12 @@ import { Button } from "@mui/material";
 import Typography from '@mui/material/Typography';
 import { Redirect } from "react-router-dom";
 import TextField from '@mui/material/TextField';
+// import { getCustomerProfile } from "../../graphql/queries";
+import {graphql} from 'react-apollo';
 import axios from "axios";
 import backendServer from "../../webConfig";
+
+
 
 const Div = styled('div')(({ theme }) => ({
     ...theme.typography.button,
@@ -27,13 +31,34 @@ class CustomerProfile extends Component{
         }
     }
     getCustomerdetails = async()=>{
+        var cust = await axios.post(`${backendServer}/graphql`,
+            {query:
+                `
+                query($id: String!){
+                    customer(id: $id){
+                        email
+                        name
+                        city
+                    }
+                }
+            `,
+            variables:{
+                id:sessionStorage.getItem("cust_user_id")
+            }
+        }
+        );
+        console.log("data from graphql ", cust);
         axios.defaults.headers.common.authorization = localStorage.getItem("token");
         var response = await axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("cust_user_id")}`);
         await this.setState({
             datas:[response.data.profile],
             fileName:response.data.fileName
         })
+
         await console.log(this.state);
+        this.setState({
+            new_data: await this.props.data
+        })
     }
     componentDidMount(){
         this.getCustomerdetails();
@@ -194,5 +219,5 @@ class CustomerProfile extends Component{
     }
 
 }
-
-export default CustomerProfile;
+// graphql(getCustomerProfile)
+export default (CustomerProfile);

@@ -139,7 +139,7 @@ router.post("/placeorder", checkAuth, async (req,res)=>{
     console.log("making request to kafka for placing order using place_order topic");
     kafka.make_request("place_order", req.body, function(err, results){
         console.log("in result");
-        console.log("ordered Placed! ", results);
+        console.log("ordered Placed!");
         if(results==="Database Error"){
             res.statusCode = 500;
             res.setHeader("Content-Type","text/plain");

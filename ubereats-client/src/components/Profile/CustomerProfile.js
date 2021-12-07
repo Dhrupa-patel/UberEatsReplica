@@ -7,7 +7,7 @@ import { Button } from "@mui/material";
 import Typography from '@mui/material/Typography';
 import { Redirect } from "react-router-dom";
 import TextField from '@mui/material/TextField';
-// import { getCustomerProfile } from "../../graphql/queries";
+import {getCustomerProfile} from "../../graphql/queries";
 import {graphql} from 'react-apollo';
 import axios from "axios";
 import backendServer from "../../webConfig";
@@ -32,16 +32,7 @@ class CustomerProfile extends Component{
     }
     getCustomerdetails = async()=>{
         var cust = await axios.post(`${backendServer}/graphql`,
-            {query:
-                `
-                query($id: String!){
-                    customer(id: $id){
-                        email
-                        name
-                        city
-                    }
-                }
-            `,
+            {query: getCustomerProfile,
             variables:{
                 id:sessionStorage.getItem("cust_user_id")
             }

@@ -88,7 +88,7 @@ class OwnerSignup extends Component{
                 phonenumber: phone,
                 
             }
-            console.log(data);
+            console.log("data" ,data);
             this.props.ownerSignup(data);
             await this.setState({
                 signup:true

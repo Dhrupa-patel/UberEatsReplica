@@ -1,7 +1,8 @@
 const graphql = require('graphql');
 const Customer = require("../model/Customer");
+const Owner = require("../model/Owner");
 var bcrypt = require("bcrypt"); 
-
+const saltRounds = 10;
 const {
     GraphQLObjectType,
     GraphQLString,
@@ -12,6 +13,7 @@ const {
 
 const CustomerType = require('./typedefs/CustomerType');
 const LoginType = require('./typedefs/LoginType');
+const { argsToArgsConfig } = require('graphql/type/definition');
 
 // const CustomerType = new GraphQLObjectType({
 //     name: 'Customers',
@@ -105,6 +107,78 @@ const queryforOwnerLogin = async(args)=>{
     }  
 }
 
+const mutationforCustomerSignup = async(args)=>{
+    try{
+        // console.log("Customer signup", req.body);
+        const hashPassword = await bcrypt.hash(args.password, saltRounds);
+        var new_id = await Customer.countDocuments({})+1
+        console.log("new id ",new_id)
+        const user = new Customer({
+            _id: "Cust"+ String(new_id),
+            email: args.email,
+            password: hashPassword,
+            name: args.name,
+            dateOfBirth: args.dateOfBirth,
+            city: args.city,
+            state: args.state,
+            country: args.country,
+            address: ["null"],
+            nickname: args.nickname,
+        });
+        console.log("new user ",user)
+        const saveCus = await user.save();
+        if(saveCus){
+            // res.statusCode = 200;
+            // res.setHeader("Content-Type","text/plain");
+            // res.end("USER_ADDED");
+            return {"status":"USER_ADDED"};
+        }
+    } catch(err){
+        console.log("error ",err)
+        // console.log(err);
+        // res.statusCode = 500;
+        // res.setHeader("Content-Type","text/plain");
+        // res.end("Error in Data");
+        return {"status":"Error in Data"};
+    }
+}
+
+const mutationforOwnerSignup = async(args)=>{
+    try{
+        const hashPassword = await bcrypt.hash(args.password, saltRounds);
+        var new_id = await Owner.countDocuments({})+1
+        console.log("new_id ",new_id)
+        const user = new Owner({
+            _id: "Res"+String(new_id),
+            email: args.email,
+            password: hashPassword,
+            name: args.name,
+            city: args.city,
+            state: args.state,
+            country: args.country,
+            phoneNumber: args.phoneNumber,
+            timings: "8:00 AM - 12:00 PM",
+            description: args.description,
+            menuCategory: args.menuCategory,
+            deliveryType: args.deliveryType
+        });
+        console.log("usr ",user);
+        const saveOwn = await user.save();
+        if(saveOwn){
+            return{"status":"USER_ADDED"};
+        }
+    } catch(err){
+        console.log("errir",err)
+        return {"status":"Database Error"};
+    }
+}
+
+const status = new GraphQLObjectType({
+    name: 'status',
+    fields:() => ({
+        status: {type: GraphQLString},
+    })
+})
 
 const Mutations = new GraphQLObjectType({
     name: "Mutation",
@@ -137,6 +211,50 @@ const Mutations = new GraphQLObjectType({
                 console.log("results ",result);
                 return result;
             }
+        },
+
+        customersignup: {
+            type: status,
+            args:{
+                email: {type: GraphQLString},
+                password: {type: GraphQLString},
+                city: {type: GraphQLString},  
+                state: {type: GraphQLString}, 
+                country: {type: GraphQLString},
+                dateOfBirth: {type: GraphQLString},
+                nickname: {type: GraphQLString},
+                name: {type: GraphQLString}
+            },
+            async resolve(parent, args){
+                console.log("signup customer ",args);
+                let result = await mutationforCustomerSignup(args);
+                console.log("signup login ",result);
+                return result;
+            }
+        },
+
+        ownersignup: {
+            type: status,
+            args:{
+                email: {type: GraphQLString},
+                password:  {type: GraphQLString},
+                name:  {type: GraphQLString},
+                city:  {type: GraphQLString},
+                state:  {type: GraphQLString},
+                country:  {type: GraphQLString},
+                phoneNumber:  {type: GraphQLString},
+                timings: {type: GraphQLString},
+                description:  {type: GraphQLString},
+                menuCategory:  {type: GraphQLString},
+                deliveryType:  {type: GraphQLString}
+            },
+            async resolve(parent, args){
+                console.log("signup owner ",args);
+                let result = await mutationforOwnerSignup(args);
+                console.log("signup after ",result);
+                return result;
+            }
+
         }
     }
 })

@@ -1,14 +1,18 @@
 import {gql} from 'apollo-boost';
 
 const getCustomerProfile = `
-query {
-    customer(id: "Cust1"){
+query($id: String!){
+    customer(id: $id){
         email
         name
         city
-        state
     }
 }
 `
 
-export default getCustomerProfile;
+
+
+export {
+    getCustomerProfile
+} ;
+// export default customerLogin;

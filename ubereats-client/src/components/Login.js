@@ -7,6 +7,8 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
+import {customerLogin} from '../graphql/mutations';
+import {ownerLogin} from '../graphql/mutations';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -39,26 +41,10 @@ class Login extends Component {
         }
         let query;
         if(localStorage.getItem("userType")==="customer"){
-          query = await `mutation($email: String!, $password: String!, $usertype: String!){
-                customerlogin(email: $email, password: $password, usertype: $usertype){
-                      email
-                      _id
-                      state
-                      name
-                  }
-              }
-          `
+          query = await customerLogin;
         }
         else{
-          query = await `mutation($email: String!, $password: String!, $usertype: String!){
-                ownerlogin(email: $email, password: $password, usertype: $usertype){
-                      email
-                      _id
-                      state
-                      name
-                  }
-              }
-          `
+          query = await ownerLogin;
         }
         var login = await axios.post(`${backendServer}/graphql`,
             {query:query,

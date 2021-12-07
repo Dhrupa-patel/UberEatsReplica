@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
 import { connect } from "react-redux";
 import { customerSignup } from "../actions/signupActions";
+// import { customerSignup } from "../graphql/mutations";
 import axios from "axios";
 import backendServer from "../webConfig";
 import * as React from 'react';
@@ -53,17 +54,17 @@ class CustomerSignup extends Component{
         });
     }
 
-    onSubmit = (e) =>{
+    onSubmit = async(e) =>{
         e.preventDefault();
         console.log("called submit customersignup", this.state);
-        if (this.state.emails_ids["Emails"].includes(this.state.email)){
-            console.log("already exists");
-            this.setState({
-                email_id_exists:true
-            });
-            return;
-        }
-        else{
+        // if (this.state.emails_ids["Emails"].includes(this.state.email)){
+        //     console.log("already exists");
+        //     this.setState({
+        //         email_id_exists:true
+        //     });
+        //     return;
+        // }
+        // else{
             const data = {
                 firstName: this.state.firstName,
                 lastName: this.state.lastName,
@@ -76,13 +77,13 @@ class CustomerSignup extends Component{
                 country: this.state.country,
                 dob: this.state.dob
             }
-            
+            console.log("data ",data)
             this.props.customerSignup(data);
             this.setState({
                 signup:true
             });
             console.log(this.props)
-        }
+        // }
     }
 
     render(){

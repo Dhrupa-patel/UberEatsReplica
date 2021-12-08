@@ -1,38 +1,22 @@
 const graphql = require('graphql');
 const Customer = require("../model/Customer");
 const Owner = require("../model/Owner");
+const Order = require("../model/Orders");
 var bcrypt = require("bcrypt"); 
 const saltRounds = 10;
 const {
     GraphQLObjectType,
     GraphQLString,
     GraphQLSchema,
-    GraphQLID
+    GraphQLID,
+    GraphQLFloat
 
 } = graphql;
 
 const CustomerType = require('./typedefs/CustomerType');
 const LoginType = require('./typedefs/LoginType');
-const { argsToArgsConfig } = require('graphql/type/definition');
-
-// const CustomerType = new GraphQLObjectType({
-//     name: 'Customers',
-//     fields:() => ({
-//         email: {type: GraphQLString},
-//         name: {type: GraphQLString},
-//         city: {type: GraphQLString},
-//         state: {type: GraphQLString},
-
-//     })
-// })
-
-// const LoginType = new GraphQLObjectType({
-//     name: 'loginuser',
-//     fields:() => ({
-//         email: {type: GraphQLString},
-//         password: {type: GraphQLString}
-//     })
-// })
+const status = require("./typedefs/Status");
+const Dishes = require("./typedefs/DishType");
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
@@ -45,6 +29,28 @@ const RootQuery = new GraphQLObjectType({
                 // var result = 
                 // console.log("results ", result);
                 return await Customer.findOne({_id:args.id});
+            }
+        },
+
+        getdishes: {
+            type: Dishes,
+            args:{
+                user_id: {type: GraphQLString}
+            },
+            async resolve(parent, args){
+                console.log("args called ",args);
+                var result = await Owner.findOne({_id:args.user_id})
+                console.log("get details",result);
+                if(result){
+                    if(result.dishes.length>0){
+                        console.log(result);
+                        var ans = await {"dishes":result.dishes,"res":result._id}
+                        return ans;
+                    }
+                }
+                else{
+                    return {"dishes":[], "res":args.user_id};
+                }
             }
         }
 
@@ -122,23 +128,15 @@ const mutationforCustomerSignup = async(args)=>{
             city: args.city,
             state: args.state,
             country: args.country,
-            address: ["null"],
+            address: [args.address],
             nickname: args.nickname,
         });
         console.log("new user ",user)
         const saveCus = await user.save();
         if(saveCus){
-            // res.statusCode = 200;
-            // res.setHeader("Content-Type","text/plain");
-            // res.end("USER_ADDED");
             return {"status":"USER_ADDED"};
         }
     } catch(err){
-        console.log("error ",err)
-        // console.log(err);
-        // res.statusCode = 500;
-        // res.setHeader("Content-Type","text/plain");
-        // res.end("Error in Data");
         return {"status":"Error in Data"};
     }
 }
@@ -173,12 +171,94 @@ const mutationforOwnerSignup = async(args)=>{
     }
 }
 
-const status = new GraphQLObjectType({
-    name: 'status',
-    fields:() => ({
-        status: {type: GraphQLString},
-    })
-})
+const queriesforAddDish = async(args)=>{
+    var result = await Owner.findOne({_id:args.Res_ID});
+    var dish;
+    dish = result.dishes.concat({
+        "id":result.dish_id+1,
+        "name": args.name,
+        "price": args.price,
+        "description": args.description,
+        "ingredients": args.ingredients,
+        "image": args.image,
+        "category": args.category
+    });
+    // console.log(dish);
+    var values = {
+        _id: args.Res_ID, 
+        dishes:dish,
+        dish_id: result.dish_id+1
+    }
+    
+    var result = await Owner.findOneAndUpdate({_id: args.Res_ID}, {$set:values}, {upsert:true})
+    // console.log(result);
+    if(result){
+        return {"status":"success"};
+    }
+    else{
+        return {"status":"Database Error"};
+    }
+}
+
+const mutationforAddToCart = async(args)=>{
+    var values = {
+        dishId: args.Dish_ID,
+        resID: args.Res_ID,
+        dishName: args.Dish_Name,
+        quantity: args.Quantity,
+        dishPrice: args.Dish_Price
+    }
+    var result = await Customer.findOne({_id:args.Cust_ID});
+    if(result){
+        result.cart = result.cart.concat(values);
+        var result = await Customer.findOneAndUpdate({_id:args.Cust_ID},{$set: {cart:result.cart,cartResId:args.Res_ID}},{upsert: true});
+        console.log("add_item_cart",result);
+        if(result){
+            return {"status":"success"};
+        }
+        else{
+            return {"status":"Database Error"};
+        }
+    }
+}
+
+const mutationforPlaceOrder = async(args)=>{
+    let dateObj = new Date()
+    let date = dateObj.getFullYear()+"-"+dateObj.getMonth()+"-"+dateObj.getDate();
+    let time = dateObj.getHours()+":"+dateObj.getMinutes()+":"+dateObj.getSeconds();
+    console.log("Special Instructions: ",args.Special_Instruction)
+    var values= {
+        totalPrice: args.price,
+        order:args.items,
+        _id:args.Order_ID,
+        customerName: args.Cust_Name,
+        deliveryType: "New Order",
+        orderStatus: "Order Recieved",
+        orderMode: args.orderMode,
+        time: time,
+        date: date,
+        resId:args.Res_ID,
+        custId:args.Cust_ID,
+        special_instruct: args.Special_Instruction,
+        address: args.Address
+    }
+    var result = await Customer.findOneAndUpdate({_id:args.Cust_ID},{$addToSet: { address: args.Address}});
+    var result = await Order.findOneAndUpdate({_id:args.Order_ID},{$set:values},{upsert: true});
+    console.log("place order");
+    return {"status":"Order Placed"}
+}
+
+const mutationforUpdateStatus = async(args)=>{
+    var result = await Order.findOneAndUpdate({_id:args.Order_ID},{$set:{orderStatus:args.Order_Status}});     
+    // console.log("delete_item", result);
+    if(result){
+        return{"status":"success"};
+    }
+    else{
+        return {"status":"Database Error"};
+    }
+}
+
 
 const Mutations = new GraphQLObjectType({
     name: "Mutation",
@@ -221,6 +301,7 @@ const Mutations = new GraphQLObjectType({
                 city: {type: GraphQLString},  
                 state: {type: GraphQLString}, 
                 country: {type: GraphQLString},
+                address: {type: GraphQLString},
                 dateOfBirth: {type: GraphQLString},
                 nickname: {type: GraphQLString},
                 name: {type: GraphQLString}
@@ -255,6 +336,76 @@ const Mutations = new GraphQLObjectType({
                 return result;
             }
 
+        },
+
+        additem: {
+            type: status,
+            args:{
+                name: {type: GraphQLString},
+                price: {type: GraphQLString},
+                description: {type: GraphQLString},
+                ingredients: {type: GraphQLString},
+                image: {type: GraphQLString},
+                category: {type: GraphQLString},
+                Res_ID: {type: GraphQLString}
+            },
+            async resolve(parent, args){
+                console.log("add item called ",args);
+                let result = await queriesforAddDish(args);
+                console.log("queries after ",result);
+                return result
+            }
+        },
+
+        addtocart: {
+            type: status,
+            args:{
+                Dish_ID: {type: GraphQLString},
+                Res_ID: {type: GraphQLString},
+                Dish_Name: {type: GraphQLString},
+                Quantity: {type: GraphQLString},
+                Dish_Price: {type: GraphQLString},
+                Cust_ID: {type: GraphQLString}
+            },
+            async resolve(parent, args){
+                console.log("add to cart ",args);
+                let result = await mutationforAddToCart(args);
+                console.log("results ", result);
+                return result
+            }
+        },
+
+        // placeorder:{
+        //     type: status,
+        //     args:{
+        //         price: {type: GraphQLFloat},
+        //         items: {type: Dishes},
+        //         Order_ID: {type: GraphQLString},
+        //         Cust_Name: {type: GraphQLString},
+        //         orderMode: {type: GraphQLString},
+        //         Res_ID: {type: GraphQLString},
+        //         Cust_ID: {type: GraphQLString},
+        //         Special_Instruction: {type: GraphQLString},
+        //         Address: {type: GraphQLString}
+        //     },
+        //     async resolve(parent, args){
+        //         console.log("order placed called ",args);
+        //         let result = await mutationforPlaceOrder(args);
+        //     }
+        // },
+
+        changestatus:{
+            type: status,
+            args:{
+                Order_ID: {type: GraphQLString},
+                Order_Status: {type: GraphQLString}
+            },
+            async resolve(parent, args){
+                console.log("order status called ", args);
+                let result = await mutationforUpdateStatus(args);
+                console.log("status updated ", result);
+                return result
+            }
         }
     }
 })

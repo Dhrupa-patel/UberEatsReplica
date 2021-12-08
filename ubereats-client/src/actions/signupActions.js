@@ -15,6 +15,7 @@ export const customerSignup = (customerData) => dispatch => {
                 city: customerData.city,
                 state: customerData.state,
                 country: "United States",
+                address: customerData.address,
                 dateOfBirth: customerData.dob,
                 nickname: customerData.nickname,
                 name: customerData.firstName+" "+customerData.lastName

@@ -10,9 +10,26 @@ query($id: String!){
 }
 `
 
+const getDishes = `
+query ($user_id: String!){
+    getdishes(user_id:$user_id)
+    {
+      dishes{
+        name
+        id
+        price
+        description
+        ingredients
+        image
+        category
+      }
+        res
+    }
+}`
 
 
 export {
-    getCustomerProfile
+    getCustomerProfile,
+    getDishes
 } ;
 // export default customerLogin;

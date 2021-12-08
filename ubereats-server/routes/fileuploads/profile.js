@@ -86,7 +86,7 @@ const s3 = new aws.S3({
  * @desc Upload post image
  * @access public
  */
- router.post( '/profile-img-upload/:id/:type', checkAuth, async( req, res ) => {
+ router.post( '/profile-img-upload/:id/:type', async( req, res ) => {
     //  console.log(req.body, req.params);
     await profileImgUpload( req, res, async ( error ) => {
     // console.log( 'requestfile', req.file);

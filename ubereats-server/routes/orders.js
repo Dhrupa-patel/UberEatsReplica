@@ -31,7 +31,7 @@ const { checkAuth } = require("../Utils/passport");
 //     if (err) throw err;
 // })
 
-router.post("/updateStatus", checkAuth, async (req,res)=>{
+router.post("/updateStatus", async (req,res)=>{
     // console.log("update status",req.body);
     console.log("updating the status of order using kafka");
     kafka.make_request("update_status", req.body, function(err, results){
@@ -64,7 +64,7 @@ router.post("/updateStatus", checkAuth, async (req,res)=>{
     // }
 });
 
-router.post("/cancelOrder", checkAuth, async(req,res)=>{
+router.post("/cancelOrder", async(req,res)=>{
 
     // console.log("cancel_order", req.body);
     var result = await Order.findOneAndUpdate({"_id":req.body.id},{$set:{"orderStatus":"Cancelled Order"}},{new:true});
@@ -83,7 +83,7 @@ router.post("/cancelOrder", checkAuth, async(req,res)=>{
     }
 });
 
-router.get("/ResOrders/:res_id",checkAuth, async(req,res)=>{
+router.get("/ResOrders/:res_id", async(req,res)=>{
     // console.log("res", req.params);
     var result = await Order.find({"order.resID":req.params.res_id});
     if(result){
@@ -101,7 +101,7 @@ router.get("/ResOrders/:res_id",checkAuth, async(req,res)=>{
     }
 });
 
-router.get("/CustOrders/:cust_id",checkAuth, async (req,res)=>{
+router.get("/CustOrders/:cust_id", async (req,res)=>{
     // console.log(req.params);
     var result = await Order.find({custId:req.params.cust_id});
     if(result){
@@ -119,7 +119,7 @@ router.get("/CustOrders/:cust_id",checkAuth, async (req,res)=>{
     }
 });
 
-router.get("/getID", checkAuth, async (req,res)=>{
+router.get("/getID", async (req,res)=>{
     // console.log("getID");
     var result = await Order.find();
     // console.log(result.length);
@@ -136,7 +136,7 @@ router.get("/getID", checkAuth, async (req,res)=>{
         return;
     }
 });
-router.get("/getdetails/:order_id", checkAuth, async(req,res)=>{
+router.get("/getdetails/:order_id", async(req,res)=>{
     // console.log("getdetails",req.params);
     var result = await Order.find({_id:req.params.order_id});
     // console.log("get details", result[0]);

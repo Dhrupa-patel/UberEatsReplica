@@ -229,6 +229,22 @@ class CustomerSignup extends Component{
                                 <MenuItem value={"India"}>India</MenuItem>
                                 <MenuItem value={"United States"}>United States</MenuItem>
                                 <MenuItem value={"Australia"}>Australia</MenuItem>
+                                <MenuItem value={"Canada"}>Canada</MenuItem>
+                                <MenuItem value={"New Zealand"}>New Zealand</MenuItem>
+                                <MenuItem value={"Sri Lanka"}>Sri Lanka</MenuItem>
+                                <MenuItem value={"China"}>China</MenuItem>
+                                <MenuItem value={"Pakistan"}>Pakistan</MenuItem>
+                                <MenuItem value={"Brazil"}>Brazil</MenuItem>
+                                <MenuItem value={"Bangladesh"}>Bangladesh</MenuItem>
+                                <MenuItem value={"Russia"}>Russia</MenuItem>
+                                <MenuItem value={"Mexico"}>Mexico</MenuItem>
+                                <MenuItem value={"Japan"}>Japan</MenuItem>
+                                <MenuItem value={"Iran"}>Iran</MenuItem>
+                                <MenuItem value={"United Kingdom"}>United Kingdom</MenuItem>
+                                <MenuItem value={"France"}>France</MenuItem>
+                                <MenuItem value={"Germany"}>Germany</MenuItem>
+                                <MenuItem value={"South Africa"}>South Africa</MenuItem>
+                                <MenuItem value={"Spain"}>Spain</MenuItem>
                                 </Select>
                                 </FormControl>
                             </Grid>

@@ -30,7 +30,7 @@ const url = "http://localhost:3002";
 //     if (err) throw err;
 // })
 
-router.post("/addfavorites", checkAuth, async (req,res)=>{
+router.post("/addfavorites", async (req,res)=>{
     // console.log("add to favorites", req.body)
     var result = await Customer.findOne({_id:req.body.Cust_id});
     var fav;
@@ -57,7 +57,7 @@ router.post("/addfavorites", checkAuth, async (req,res)=>{
 });
 
 
-router.get("/getAddresses/:customerID", checkAuth, async (req,res)=>{
+router.get("/getAddresses/:customerID", async (req,res)=>{
     // console.log("callled addresses", req.params);
     var result = await Customer.findOne({_id:req.params.customerID});
     if(result){
@@ -73,7 +73,7 @@ router.get("/getAddresses/:customerID", checkAuth, async (req,res)=>{
     }
 });
 
-router.get("/getFavorites/:customerID", checkAuth, async (req,res)=>{
+router.get("/getFavorites/:customerID", async (req,res)=>{
     // console.log("called favorites", req.params);
     var result = await Customer.findOne({_id:req.params.customerID});
     if(result){

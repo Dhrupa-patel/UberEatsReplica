@@ -56,14 +56,17 @@ class Login extends Component {
         }
         );
         console.log("login ",login.data.data)
-        sessionStorage.setItem("username",login.data.data.customerlogin.name);
-        sessionStorage.setItem("email_id",login.data.data.customerlogin.email);
-        sessionStorage.setItem("location", login.data.data.customerlogin.state);
-        if(localStorage.getItem("userType")==="owner"){
-          sessionStorage.setItem("res_user_id",login.data.data.customerlogin._id);
+        if(localStorage.getItem("userType")==="customer"){
+          sessionStorage.setItem("username",login.data.data.customerlogin.name);
+          sessionStorage.setItem("email_id",login.data.data.customerlogin.email);
+          sessionStorage.setItem("location", login.data.data.customerlogin.state);
+          sessionStorage.setItem("cust_user_id",login.data.data.customerlogin._id);
         }
         else{
-          sessionStorage.setItem("cust_user_id",login.data.data.customerlogin._id);
+          sessionStorage.setItem("username",login.data.data.ownerlogin.name);
+          sessionStorage.setItem("email_id",login.data.data.ownerlogin.email);
+          sessionStorage.setItem("location", login.data.data.ownerlogin.state);
+          sessionStorage.setItem("res_user_id",login.data.data.ownerlogin._id); 
         }
         // this.props.userLogin(data);
         // console.log("onsubmit prop",this.props);

@@ -19,6 +19,7 @@ import Box from '@mui/material/Box';
 import { withRouter } from "react-router";
 import Grid from '@mui/material/Grid';
 import NavigationBar from "../../NavigationBar";
+import { getDishes } from "../../graphql/queries";
 import axios from "axios";
 import backendServer from "../../webConfig";
 
@@ -36,20 +37,19 @@ class Menu extends Component{
 
     async getDishItems(){
         if("res_user_id"in sessionStorage){
-            axios.defaults.headers.common.authorization = localStorage.getItem("token");
-            await axios.get(`${backendServer}/menu/getDetails/${sessionStorage.getItem("res_user_id")}`).then(response =>{
-                console.log("response data", response.data);
-                if(response.data){
-                    this.setState({
-                        datas:response.data.dishes,
-                        resid:response.data.res
-                    })
+            var dishesData = await axios.post(`${backendServer}/graphql`,
+                {query: getDishes,
+                    variables:{
+                        user_id: sessionStorage.getItem("res_user_id")
+                    }
                 }
-            }).catch(error =>{
-                if(error.response && error.response.data){
-                    console.log(error.response.data);
-                }
-            })
+            );
+            if(dishesData.data.data.getdishes){
+                await this.setState({
+                    datas:dishesData.data.data.getdishes.dishes,
+                    resid:dishesData.data.data.getdishes.res
+                })
+            }
         }
     }
 
@@ -79,8 +79,6 @@ class Menu extends Component{
 
     addItem = async(data)=>{
         this.props.addCart(data);
-        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        // var response = await axios.post(`${backendServer}/cart/additem`,data);
         await sessionStorage.setItem("cart_res_id",data.Res_ID);
         await this.setState({
             cartRes: data.Res_ID,
@@ -91,16 +89,6 @@ class Menu extends Component{
         console.log("resid", Cust_ID);
         await this.props.deleteCart(Cust_ID);
         await this.addItem(item);
-        // axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        // axios.post(`${backendServer}/cart/removeitems`,Cust_ID).then(response =>{
-        //     console.log("items deleted");
-        //     console.log("confirm", item);
-        //     this.addItem(item);
-        // }).catch(error =>{
-        //     if(error.response && error.response.data){
-        //         console.log(error.response.data);
-        //     }
-        // });
     }
 
     addToCart = (item,idx)=>{

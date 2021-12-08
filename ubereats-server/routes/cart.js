@@ -30,7 +30,7 @@ var kafka = require("../kafka/client");
 //     if (err) throw err;
 // })
 
-router.post("/addItem", checkAuth, async (req,res)=>{
+router.post("/addItem", async (req,res)=>{
     // console.log("add item",req.body);
     kafka.make_request("add_item_cart", req.body, function(err, results){
         console.log("adding item to cart using add_item topic");
@@ -50,7 +50,7 @@ router.post("/addItem", checkAuth, async (req,res)=>{
     
 });
 
-router.post("/removeitems", checkAuth, async (req,res)=>{
+router.post("/removeitems", async (req,res)=>{
     // console.log(req.body);
     kafka.make_request("delete_item_cart", req.body, function(err, results){
         console.log("deleted item from cart using delete_item topic");
@@ -71,7 +71,7 @@ router.post("/removeitems", checkAuth, async (req,res)=>{
 });
 
 
-router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
+router.get("/getItems/:cust_id", async(req,res)=>{
     // console.log("get items",req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
     if(result){
@@ -89,7 +89,7 @@ router.get("/getItems/:cust_id", checkAuth, async(req,res)=>{
 });
 
 
-router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
+router.get("/getCartResID/:cust_id", async (req,res)=>{
     // console.log(req.params,"called in get cart res");
     var result = await Customer.findOne({_id:req.params.cust_id});
     // console.log("Res ID",result);
@@ -108,7 +108,7 @@ router.get("/getCartResID/:cust_id", checkAuth, async (req,res)=>{
 });
 
 
-router.get("/Order/:cust_id", checkAuth,  async (req,res)=>{
+router.get("/Order/:cust_id",  async (req,res)=>{
     // console.log(req.params);
     var result = await Customer.findOne({_id:req.params.cust_id});
     if(result){
@@ -134,7 +134,7 @@ router.get("/Order/:cust_id", checkAuth,  async (req,res)=>{
 });
 
 
-router.post("/placeorder", checkAuth, async (req,res)=>{
+router.post("/placeorder", async (req,res)=>{
     // console.log(req.body);
     console.log("making request to kafka for placing order using place_order topic");
     kafka.make_request("place_order", req.body, function(err, results){
@@ -183,7 +183,7 @@ router.post("/placeorder", checkAuth, async (req,res)=>{
     // }
 });
 
-router.post("/removeItem", checkAuth, async (req,res)=>{
+router.post("/removeItem", async (req,res)=>{
     // console.log(req.body);
     var result = await Customer.findOne({_id:req.body.Cust_ID});
     if(result){
@@ -209,7 +209,7 @@ router.post("/removeItem", checkAuth, async (req,res)=>{
     }
 });
 
-router.post("/updateQuantity", checkAuth, async (req,res)=>{
+router.post("/updateQuantity", async (req,res)=>{
     // console.log("update quantity", req.body);
     var result = await Customer.findOne({_id:req.body.Cust_ID})
     if(result){

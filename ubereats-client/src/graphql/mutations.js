@@ -138,7 +138,6 @@ mutation changestatus(
 }
 `
 
-
 export {
     ownerLogin,
     customerLogin,

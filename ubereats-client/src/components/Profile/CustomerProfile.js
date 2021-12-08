@@ -31,20 +31,24 @@ class CustomerProfile extends Component{
         }
     }
     getCustomerdetails = async()=>{
-        var cust = await axios.post(`${backendServer}/graphql`,
-            {query: getCustomerProfile,
+        axios.defaults.headers.common.authorization = localStorage.getItem("token");
+        var profile = await axios.post(`${backendServer}/graphql`,
+            {query:getCustomerProfile,
             variables:{
-                id:sessionStorage.getItem("cust_user_id")
+                user_id:sessionStorage.getItem("cust_user_id")
             }
         }
         );
-        console.log("data from graphql ", cust);
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        var response = await axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("cust_user_id")}`);
+        console.log("data from graphql ",profile)
         await this.setState({
-            datas:[response.data.profile],
-            fileName:response.data.fileName
+            datas:[profile.data.data.getCustomerProfile.profile],
+            fileName:profile.data.data.getCustomerProfile.fileName
         })
+        // var response = await axios.get(`${backendServer}/profile/customerprofile/${sessionStorage.getItem("cust_user_id")}`);
+        // await this.setState({
+        //     datas:[response.data.profile],
+        //     fileName:response.data.fileName
+        // })
 
         await console.log(this.state);
         this.setState({

@@ -15,6 +15,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import { getOrders } from "../../graphql/queries";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -35,12 +36,26 @@ class Receipt extends Component{
     }
     async componentDidMount(){
         axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        var response = await axios.get(`${backendServer}/orders/getdetails/${sessionStorage.getItem("order_id")}`);
+        var orders = await axios.post(`${backendServer}/graphql`,
+            {query: getOrders,
+                variables: {
+                    order_id:sessionStorage.getItem("order_id"),
+                }
+            }
+        );
+        console.log("order from graphql ",orders.data);
         await this.setState({
-            rows:response.data["items"],
-            total:response.data["total"],
-            special_instructions: response.data["special_instructions"]
+            rows: orders.data.data.getreceipt.orders,
+            total: orders.data.data.getreceipt.totalPrice,
+            special_instructions: orders.data.data.getreceipt.special_instructions
         })
+
+        // var response = await axios.get(`${backendServer}/orders/getdetails/${sessionStorage.getItem("order_id")}`);
+        // await this.setState({
+        //     rows:response.data["items"],
+        //     total:response.data["total"],
+        //     special_instructions: response.data["special_instructions"]
+        // })
         console.log(this.state)
     }
 

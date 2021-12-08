@@ -9,6 +9,7 @@ import { Button } from "@mui/material";
 import Typography from '@mui/material/Typography';
 import { Redirect } from "react-router-dom";
 import TextField from '@mui/material/TextField';
+import { getRestaurantProfile } from "../../graphql/queries";
 
 
 const Div = styled('div')(({ theme }) => ({
@@ -29,11 +30,16 @@ class OwnerProfile extends Component{
         };
     }
     getRestaurantdetails = async()=>{
-        axios.defaults.headers.common.authorization = localStorage.getItem("token");
-        var response = await axios.get(`${backendServer}/profile/restaurantprofile/${sessionStorage.getItem("res_user_id")}`);
+        var restaurant = await axios.post(`${backendServer}/graphql`,
+            {query: getRestaurantProfile,
+            variables:{
+                user_id:sessionStorage.getItem("res_user_id")
+            }
+        }
+        );
         await this.setState({
-            datas:[response.data.profile],
-            fileName:response.data.fileName
+            datas:[restaurant.data.data.getRestaurantProfile.profile],
+            fileName:restaurant.data.data.getRestaurantProfile.fileName
         })
         console.log("here",this.state.datas);
     }

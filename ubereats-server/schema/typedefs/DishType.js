@@ -28,5 +28,4 @@ const Dishes = new GraphQLObjectType({
     })
 })
 
-
 module.exports = Dishes

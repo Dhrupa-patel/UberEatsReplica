@@ -8,7 +8,7 @@ const {
     GraphQLObjectType,
     GraphQLString,
     GraphQLSchema,
-    GraphQLID,
+    GraphQLInt,
     GraphQLFloat
 
 } = graphql;
@@ -17,20 +17,12 @@ const CustomerType = require('./typedefs/CustomerType');
 const LoginType = require('./typedefs/LoginType');
 const status = require("./typedefs/Status");
 const Dishes = require("./typedefs/DishType");
+const ProfileType = require("./typedefs/ProfileType");
+const Orders = require("./typedefs/OrderType");
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        customer: {
-            type: CustomerType,
-            args: {id: {type: GraphQLString}},
-            async resolve(parent, args){
-                console.log(args.id);
-                // var result = 
-                // console.log("results ", result);
-                return await Customer.findOne({_id:args.id});
-            }
-        },
 
         getdishes: {
             type: Dishes,
@@ -50,6 +42,64 @@ const RootQuery = new GraphQLObjectType({
                 }
                 else{
                     return {"dishes":[], "res":args.user_id};
+                }
+            }
+        },
+
+        getreceipt:{
+            type: Orders,
+            args:{
+                order_id:{type: GraphQLString}
+            },
+            async resolve(parent, args){
+                console.log("receipt args ", args);
+                var result = await Order.find({_id:args.order_id});
+                console.log("get details", result[0]);
+                var ans = {"orders":[], "totalPrice":0.0, special_instructions:""}
+                if(result){
+                    ans["orders"] = result[0].order;
+                    ans["totalPrice"] = result[0].totalPrice;
+                    ans["special_instructions"] = result[0].special_instruct
+                    console.log("ans ",ans);
+                    return ans;
+                }
+                else{
+                    return ans;
+                }
+            }
+        },
+
+        getCustomerProfile:{
+            type: ProfileType,
+            args:{
+                user_id: {type: GraphQLString}
+            },
+            async resolve(parent, args){
+                var result = await Customer.findOne({_id:args.user_id});
+                // console.log(result);
+                if(result){
+                    let userObj = {"profile":{"Name":result.name, "Email_ID":result.email, "Country":result.country, "State":result.state, 
+                    "City":result.city, "Date_of_Birth": result.dateOfBirth}, "Nickname": result.nickname, "fileName":result.image};
+                    return userObj
+                }
+            }
+        },
+
+        getRestaurantProfile:{
+            type:ProfileType,
+            args:{
+                user_id:{type: GraphQLString}
+            },
+            async resolve(parent, args){
+                var result = await Owner.findOne({_id:args.user_id});
+                console.log("called here ",result);
+                if(result){
+                    let userObj = {"profile":{"Name":result.name, "Email_ID":result.email, "Description":result.description,
+                    "Country":result.country, "State":result.state, "City":result.city,
+                    "Timings":result.timings,"Delivery_Type":result.deliveryType[0]||"None"},"fileName":result.images[0]};
+                    // console.log(userObj);
+                    return userObj
+
                 }
             }
         }
@@ -262,6 +312,7 @@ const mutationforUpdateStatus = async(args)=>{
 
 const Mutations = new GraphQLObjectType({
     name: "Mutation",
+    
     fields: {
         customerlogin:{
             type: CustomerType,
@@ -379,7 +430,13 @@ const Mutations = new GraphQLObjectType({
         //     type: status,
         //     args:{
         //         price: {type: GraphQLFloat},
-        //         items: {type: Dishes},
+        //         items: [{
+        //             dishId: {type: GraphQLInt},
+        //             resID: {type: GraphQLString},
+        //             dishName: {type: GraphQLString},
+        //             quantity: {type: GraphQLString},
+        //             dishPrice: {type: GraphQLString}
+        //         }],
         //         Order_ID: {type: GraphQLString},
         //         Cust_Name: {type: GraphQLString},
         //         orderMode: {type: GraphQLString},
@@ -391,6 +448,8 @@ const Mutations = new GraphQLObjectType({
         //     async resolve(parent, args){
         //         console.log("order placed called ",args);
         //         let result = await mutationforPlaceOrder(args);
+        //         console.log("order placed ",result);
+        //         return result
         //     }
         // },
 

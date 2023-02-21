@@ -2,9 +2,9 @@ const mysql = require("mysql");
 const myPort = 3306;
 
 const con = mysql.createConnection({
-    host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
+    host:"hostname",
     user:"admin",
-    password:"Siddhi*5501",
+    password:"password",
     ssl: true,
     port: myPort,
     database:"UberEats",

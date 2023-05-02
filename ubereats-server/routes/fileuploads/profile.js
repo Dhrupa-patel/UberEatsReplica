@@ -9,7 +9,7 @@ const router = express.Router();
 const con = mysql.createConnection({
     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
     user:"admin",
-    password:"Siddhi*5501",
+    password:"pwd",
     ssl: true,
     port: 3306,
     database:"UberEats",
@@ -20,8 +20,8 @@ con.connect(function(err){
 })
 
 const s3 = new aws.S3({
-    accessKeyId: 'AKIASRTSBCEJVE6F26UK',
-    secretAccessKey: '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',
+    accessKeyId: 'accesskey',
+    secretAccessKey: 'secret_key',
     Bucket: 'myubereatsbucket',
     region: 'us-west-1'
    });

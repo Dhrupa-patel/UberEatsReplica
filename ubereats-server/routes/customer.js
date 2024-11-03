@@ -19,8 +19,8 @@ const url = "http://localhost:3002";
 
 // const con = mysql.createConnection({
 //     host:"ubereats.c15mrha1l62l.us-west-1.rds.amazonaws.com",
-//     user:"admin",
-//     password:"Siddhi*5501",
+//     user:"username",
+//     password:"password",
 //     ssl: true,
 //     port: 3306,
 //     database:"UberEats",
